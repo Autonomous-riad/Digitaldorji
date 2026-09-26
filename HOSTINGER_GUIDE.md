@@ -1,103 +1,117 @@
-# Google AI Studio → GitHub → Hostinger Live Deployment Guide
+# Hostinger Deployment Guide via GitHub (Digital Dorji)
 
-This guide details the complete deployment workflow for **Digital Dorji BD** to ensure changes made in Google AI Studio immediately reflect on your live Hostinger website.
-
----
-
-## The Workflow Overview
-
-```
-Google AI Studio (Code & Build) 
-        ↓  (Push to GitHub)
-GitHub Repository (branch: main)
-        ↓  (Hostinger Webhook / Auto-Deploy Git Pull)
-Hostinger (public_html)
-        ↓
-Live Website (Instant updates)
-```
+This guide walks you through deploying **Digital Dorji** from GitHub to your **Hostinger Web Hosting** account.
 
 ---
 
-## 1. Required GitHub Settings
+## 🚀 Choose Your Preferred Deployment Method
 
-- **Repository Branch**: `main`
-- **Tracked Build Artifacts**: The production `dist/` directory is now tracked and pre-built in Git, guaranteeing that Hostinger immediately receives the compiled production bundle upon `git pull`.
+| Method | Best For | Difficulty | Setup Time |
+| :--- | :--- | :--- | :--- |
+| **Method 1: GitHub Actions FTP (Recommended)** | Standard Shared Hosting, Premium, or Business Web Hosting | Easiest | ~3 minutes |
+| **Method 2: Hostinger Git Deployment (hPanel Git)** | If you prefer Hostinger pulling directly from GitHub | Simple | ~4 minutes |
+| **Method 3: Hostinger Node.js Application Manager** | Cloud Startup, Cloud Professional, or VPS with Node.js support | Advanced | ~5 minutes |
 
 ---
 
-## 2. Hostinger Configuration
+## Method 1: GitHub Actions FTP Auto-Deploy (Recommended)
 
-### Option A: Standard Web Hosting (Shared Hosting / LiteSpeed Apache)
-*Most common for Single Page React/Tailwind Apps*
+With this method, every time you push code to your GitHub `main` branch, GitHub Actions will automatically:
+1. Install dependencies and verify TypeScript
+2. Compile and minify the production bundle (`npm run build`)
+3. Automatically upload the generated `dist/` files to your Hostinger `public_html` directory via secure FTP!
 
-1. **Go to Hostinger hPanel**:
-   - Open **Websites** → click **Manage** on your domain.
-   - Under **Advanced**, click **Git**.
-2. **Connect Git Repository**:
-   - **Repository**: Enter your GitHub repo HTTPS URL (e.g., `https://github.com/your-username/your-repo.git`).
-   - **Branch**: Set to `main`.
-   - **Directory**: `/public_html` (or leave as default root).
-   - Click **Create**.
-3. **Setup Auto-Deployment Webhook (Crucial)**:
-   - Hostinger will display an **Auto-Deployment Webhook URL**.
-   - Copy that URL.
-   - Go to your GitHub repository → **Settings** → **Webhooks** → **Add webhook**.
-   - Paste the Hostinger URL into **Payload URL**.
-   - Set **Content type** to `application/json`.
-   - Select **Just the push event**.
+### Step 1: Get Your Hostinger FTP Details
+1. Log in to **[Hostinger hPanel](https://hpanel.hostinger.com/)**.
+2. Click **Websites** → **Manage** next to your domain.
+3. In the sidebar or search bar, look for **FTP Accounts** (under *Files*).
+4. Note down:
+   - **FTP Host / IP** (e.g. `ftp.yourdomain.com` or an IP address like `185.xxx.xxx.xxx`)
+   - **FTP Username** (e.g. `u123456789`)
+   - **FTP Password** (click *Change password* if you don't remember it)
+   - **Port**: `21` (default)
+
+### Step 2: Add FTP Credentials to GitHub Secrets
+1. Go to your GitHub repository (e.g. `https://github.com/Autonomous-riad/dorji`).
+2. Click **Settings** (top right tab).
+3. In the left menu, select **Secrets and variables** → **Actions**.
+4. Click **New repository secret** and add these three secrets:
+
+   | Secret Name | Value |
+   | :--- | :--- |
+   | `HOSTINGER_FTP_SERVER` | Your FTP Host (e.g. `ftp.yourdomain.com` or Hostinger IP) |
+   | `HOSTINGER_FTP_USERNAME` | Your Hostinger FTP username (e.g. `u123456789`) |
+   | `HOSTINGER_FTP_PASSWORD` | Your Hostinger FTP password |
+
+### Step 3: Push to GitHub & Deploy!
+1. Commit and push any change to your `main` branch.
+2. Go to the **Actions** tab in your GitHub repository.
+3. You will see the **Hostinger Build & Deploy Workflow** running.
+4. Once completed (takes ~1 minute), visit your domain — your website is live!
+
+---
+
+## Method 2: Hostinger Git Deployment (hPanel Git)
+
+If you prefer using Hostinger's native Git integration:
+
+### Step 1: Connect GitHub in Hostinger hPanel
+1. Open **Hostinger hPanel** → **Websites** → **Manage**.
+2. In the left navigation or search box, click **Git** (under *Advanced*).
+3. Fill in:
+   - **Repository**: Your GitHub repository URL (e.g. `https://github.com/Autonomous-riad/dorji.git`)
+   - **Branch**: `main`
+   - **Install directory**: Leave empty or enter `public_html`
+4. Click **Create**.
+
+### Step 2: Enable Auto-Deployment via GitHub Webhook
+1. After creating the repository in Hostinger, you will see an **Auto-Deployment Webhook URL**.
+2. Copy that URL.
+3. Open your GitHub repository in your browser:
+   - Go to **Settings** → **Webhooks** → **Add webhook**.
+   - **Payload URL**: Paste the Hostinger Webhook URL.
+   - **Content type**: Select `application/json`.
+   - **Which events would you like to trigger this webhook?**: Choose **Just the push event**.
    - Click **Add webhook**.
-4. **How Routing Works**:
-   - Root `.htaccess` automatically routes incoming web requests to `dist/index.html` and `dist/assets/`, preventing 404 errors on `/catalog`, `/ready-made`, and `/admin`.
+4. Now, every push to GitHub will automatically trigger Hostinger to pull the latest changes.
+
+> **Note on Client Routing (.htaccess)**: The repository already includes a pre-configured `.htaccess` in root and `public/` that ensures all routes like `/catalog`, `/customize`, `/ready-made`, and `/admin` rewrite properly to `index.html` without 404 errors.
 
 ---
 
-### Option B: Hostinger Node.js Application Manager (Cloud / VPS / Business)
-*If you are running the custom Express API backend*
+## Method 3: Hostinger Node.js Application Manager (Cloud / VPS)
 
-1. **In Hostinger hPanel**:
-   - Navigate to **Advanced** → **Node.js**.
-2. **Configuration Settings**:
-   - **Node.js Version**: `20.x` or `22.x`
-   - **Application Mode**: `Production`
-   - **Application Root**: `/home/uXXXXX/domains/yourdomain.com/public_html`
-   - **Application Startup File**: `server.js` (or `dist/server.cjs`)
-3. **Build Command**:
-   ```bash
-   npm run build
-   ```
-4. **Output Directory**:
-   ```
-   dist
-   ```
-5. **Restart**:
-   - After code updates, click **Restart** in the Node.js manager panel (or use terminal/SSH `npm run build && pm2 restart ...`).
+If your Hostinger plan includes Node.js (Hostinger Cloud Hosting or VPS) and you want the full-stack Express server running:
+
+1. In hPanel, go to **Advanced** → **Node.js**.
+2. Configure:
+   - **Node.js version**: `20.x` or `22.x`
+   - **Application mode**: `Production`
+   - **Application root**: `/home/uXXXXX/domains/yourdomain.com/public_html`
+   - **Application startup file**: `server.js` (or `dist/server.cjs`)
+3. Run `npm run build` in the Hostinger terminal or SSH.
+4. Click **Start / Restart** application.
 
 ---
 
-## 3. Environment Variables & API Keys
+## ⚙️ Environment Variables (Optional)
 
-Environment variables are defined in `.env.example`. Secrets are never committed to GitHub.
+If using external services, add these in Hostinger hPanel under **Advanced** → **Environment Variables** (or in a `.env` file in your root directory):
 
-Configure the following in Hostinger hPanel (Environment Variables) or `.env` file in Hostinger root:
-- `PORT=3000` (or assigned automatically by Hostinger)
 - `NODE_ENV=production`
-- `VITE_SUPABASE_URL` & `VITE_SUPABASE_ANON_KEY` (Optional cloud database)
-- `SSLCZ_STORE_ID` & `SSLCZ_STORE_PASSWORD` (SSLCommerz payment gateway)
+- `PORT=3000`
+- `VITE_SUPABASE_URL` *(Optional: Supabase Project URL)*
+- `VITE_SUPABASE_ANON_KEY` *(Optional: Supabase Anon Key)*
+- `SSLCZ_STORE_ID` & `SSLCZ_STORE_PASSWORD` *(Optional: SSLCommerz Payment Gateway)*
 
-*Note: If Supabase or SSLCommerz credentials are omitted or left default, the app safely runs in graceful offline/mock fallback mode without crashing.*
+*Note: If Supabase or SSLCommerz are omitted, Digital Dorji runs safely with built-in client fallbacks.*
 
 ---
 
-## 4. Exact Steps to Follow for Future Changes
+## 🛠️ Verification Checklist
 
-Every time you edit code in Google AI Studio:
-
-1. **Build the production assets**:
-   Ensure `npm run build` is run (or run via terminal). This updates `dist/`.
-2. **Push to GitHub**:
-   Use Google AI Studio's **Push to GitHub / Sync** button. It commits the changes and `dist/` to the `main` branch.
-3. **Hostinger Auto-Deploys**:
-   - GitHub triggers the Hostinger webhook.
-   - Hostinger executes `git pull origin main`.
-   - Your live website updates immediately with the new changes.
+- [x] Production build passes (`npm run build`)
+- [x] TypeScript verification passes (`npm run lint`)
+- [x] `.htaccess` configured for HTTPS redirection, Gzip compression, and React SPA routing
+- [x] GitHub Actions workflow `.github/workflows/deploy.yml` configured for automatic builds & FTP deploy
 

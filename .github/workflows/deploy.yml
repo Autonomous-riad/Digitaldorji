@@ -45,3 +45,19 @@ jobs:
         run: |
           echo "Triggering Hostinger Webhook..."
           curl -X GET "$HOSTINGER_DEPLOY_WEBHOOK" || curl -X POST "$HOSTINGER_DEPLOY_WEBHOOK"
+
+      # Optional: Auto-deploy dist/ directory to Hostinger via FTP if secrets are configured
+      - name: Deploy to Hostinger via FTP (Optional)
+        if: env.FTP_SERVER != '' && env.FTP_USERNAME != '' && env.FTP_PASSWORD != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        env:
+          FTP_SERVER: ${{ secrets.HOSTINGER_FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+        with:
+          server: ${{ secrets.HOSTINGER_FTP_SERVER }}
+          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ./public_html/
+          dangerous-clean-slate: false
