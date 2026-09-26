@@ -1,0 +1,135 @@
+# ----------------------------------------------------------------------
+# Hostinger Web Hosting / LiteSpeed & Apache Optimization Configuration
+# Digital Dorji Bespoke Tailoring & E-Commerce Platform
+# ----------------------------------------------------------------------
+
+# Disable directory browsing
+Options -Indexes
+
+# Enable Follow SymLinks
+Options +FollowSymLinks
+
+# Character encoding
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Redirect HTTP to HTTPS (Hostinger SSL)
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Do not rewrite existing files or directories
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Allow direct access to API endpoints when running with backend
+  RewriteCond %{REQUEST_URI} ^/api/ [NC]
+  RewriteRule ^ - [L]
+
+  # Rewrite all other routes to index.html for Single Page Application (React Router)
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ----------------------------------------------------------------------
+# Gzip and Brotli Compression
+# ----------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE application/rss+xml
+  AddOutputFilterByType DEFLATE application/atom+xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE image/x-icon
+  AddOutputFilterByType DEFLATE font/ttf
+  AddOutputFilterByType DEFLATE font/otf
+  AddOutputFilterByType DEFLATE font/woff
+  AddOutputFilterByType DEFLATE font/woff2
+  AddOutputFilterByType DEFLATE application/font-woff
+  AddOutputFilterByType DEFLATE application/font-woff2
+</IfModule>
+
+# ----------------------------------------------------------------------
+# Browser Caching & Performance (Expires Headers)
+# ----------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+
+  # HTML documents (always revalidate to get fresh app updates)
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # Data & Manifests
+  ExpiresByType application/json "access plus 0 seconds"
+  ExpiresByType application/xml "access plus 0 seconds"
+  ExpiresByType text/xml "access plus 0 seconds"
+
+  # Media: Images, Icons, Video
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+  ExpiresByType image/vnd.microsoft.icon "access plus 1 year"
+
+  # Web Fonts
+  ExpiresByType font/ttf "access plus 1 year"
+  ExpiresByType font/otf "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/font-woff "access plus 1 year"
+  ExpiresByType application/font-woff2 "access plus 1 year"
+
+  # CSS and JavaScript (Vite bundles have content hashes)
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# Cache-Control Headers
+# ----------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Hashed assets cache immutable
+  <FilesMatch "\.(js|css|webp|png|jpg|jpeg|svg|woff2|woff|ttf)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+
+  # HTML entry files should always check for new releases
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+  </FilesMatch>
+
+  # Security Headers
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ----------------------------------------------------------------------
+# MIME Types Configuration
+# ----------------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType application/javascript js mjs
+  AddType text/css css
+  AddType image/svg+xml svg svgz
+  AddType image/webp webp
+  AddType font/woff2 woff2
+  AddType font/woff woff
+  AddType application/json json
+</IfModule>

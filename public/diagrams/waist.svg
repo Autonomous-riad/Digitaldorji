@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Body Silhouette Outline -->
+  <path d="M100 40 C90 40 85 45 80 50 C60 55 45 65 35 90 L50 100 L60 85 L60 170 L140 170 L140 85 L150 100 L165 90 C155 65 140 55 120 50 C115 45 110 40 100 40 Z" fill="#F3F0FF" stroke="#7E22CE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Waist Measurement Line -->
+  <line x1="60" y1="125" x2="140" y2="125" stroke="#EA580C" stroke-width="3" stroke-dasharray="4 2"/>
+  <circle cx="60" cy="125" r="4" fill="#EA580C"/>
+  <circle cx="140" cy="125" r="4" fill="#EA580C"/>
+  <!-- Arrows -->
+  <path d="M67 121 L60 125 L67 129 M133 121 L140 125 L133 129" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
+  <!-- Label Badge -->
+  <rect x="55" y="15" width="90" height="22" rx="6" fill="#EA580C"/>
+  <text x="100" y="30" fill="#FFFFFF" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">Waist / কোমর</text>
+</svg>

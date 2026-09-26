@@ -1,0 +1,47 @@
+name: Hostinger Build & Deploy Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  build-and-verify:
+    name: Build & Verify Production Assets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run TypeScript & Type Verification
+        run: npm run lint
+
+      - name: Build Production Client & Server
+        run: npm run build
+
+      - name: Verify Dist Artifacts
+        run: |
+          test -f dist/index.html || (echo "dist/index.html missing!" && exit 1)
+          test -f dist/server.cjs || (echo "dist/server.cjs missing!" && exit 1)
+          echo "Production build verified successfully."
+
+      # Optional: Trigger Hostinger Git Webhook if configured in GitHub Secrets
+      - name: Trigger Hostinger Auto-Deploy Webhook (Optional)
+        if: env.HOSTINGER_DEPLOY_WEBHOOK != ''
+        env:
+          HOSTINGER_DEPLOY_WEBHOOK: ${{ secrets.HOSTINGER_DEPLOY_WEBHOOK }}
+        run: |
+          echo "Triggering Hostinger Webhook..."
+          curl -X GET "$HOSTINGER_DEPLOY_WEBHOOK" || curl -X POST "$HOSTINGER_DEPLOY_WEBHOOK"

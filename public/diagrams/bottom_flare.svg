@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Flared Skirt / Abaya Silhouette -->
+  <path d="M80 40 L120 40 L160 170 L40 170 Z" fill="#F3F0FF" stroke="#7E22CE" stroke-width="2"/>
+  <!-- Bottom Flare Tape -->
+  <line x1="40" y1="170" x2="160" y2="170" stroke="#EA580C" stroke-width="3" stroke-dasharray="4 2"/>
+  <circle cx="40" cy="170" r="4" fill="#EA580C"/>
+  <circle cx="160" cy="170" r="4" fill="#EA580C"/>
+  <!-- Arrows -->
+  <path d="M47 166 L40 170 L47 174 M153 166 L160 170 L153 174" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
+  <!-- Label Badge -->
+  <rect x="40" y="15" width="120" height="22" rx="6" fill="#EA580C"/>
+  <text x="100" y="30" fill="#FFFFFF" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">Bottom Flare / নিচের ঘের</text>
+</svg>

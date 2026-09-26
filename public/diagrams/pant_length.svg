@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Trousers Silhouette -->
+  <path d="M60 40 L140 40 L145 175 L115 175 L100 85 L85 175 L55 175 Z" fill="#F3F0FF" stroke="#7E22CE" stroke-width="2"/>
+  <!-- Pant Length Tape from Waist down to Ankle -->
+  <line x1="148" y1="40" x2="148" y2="175" stroke="#EA580C" stroke-width="3" stroke-dasharray="4 2"/>
+  <circle cx="148" cy="40" r="4" fill="#EA580C"/>
+  <circle cx="148" cy="175" r="4" fill="#EA580C"/>
+  <!-- Arrows -->
+  <path d="M144 48 L148 40 L152 48 M144 167 L148 175 L152 167" stroke="#EA580C" stroke-width="2" stroke-linecap="round"/>
+  <!-- Label Badge -->
+  <rect x="40" y="15" width="120" height="22" rx="6" fill="#EA580C"/>
+  <text x="100" y="30" fill="#FFFFFF" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">Pant Length / প্যান্টের লম্বা</text>
+</svg>

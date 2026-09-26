@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="collarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E2E8F0" />
+    </linearGradient>
+    <filter id="collarShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  <!-- Classic Pointed Collar Leaves with 3D Stand -->
+  <g filter="url(#collarShadow)">
+    <path d="M190 110 C220 95 280 95 310 110 L285 130 C260 125 240 125 215 130 Z" fill="#CBD5E1" />
+    <!-- Left Leaf -->
+    <path d="M190 110 L250 130 L205 190 L165 115 Z" fill="url(#collarGrad)" stroke="#CBD5E1" stroke-width="0.5" />
+    <!-- Right Leaf -->
+    <path d="M310 110 L250 130 L295 190 L335 115 Z" fill="url(#collarGrad)" stroke="#CBD5E1" stroke-width="0.5" />
+  </g>
+</svg>

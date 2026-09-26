@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Body Shoulder and Arm joint -->
+  <path d="M100 40 C80 40 60 50 40 70 L55 85 L70 75 L70 160 L130 160 L130 75 L145 85 L160 70 C140 50 120 40 100 40 Z" fill="#F3F0FF" stroke="#7E22CE" stroke-width="2"/>
+  <!-- Armhole Circle Tape -->
+  <ellipse cx="60" cy="80" rx="16" ry="24" stroke="#EA580C" stroke-width="3" stroke-dasharray="4 2" fill="none"/>
+  <circle cx="60" cy="56" r="4" fill="#EA580C"/>
+  <circle cx="60" cy="104" r="4" fill="#EA580C"/>
+  <!-- Label Badge -->
+  <rect x="50" y="15" width="100" height="22" rx="6" fill="#EA580C"/>
+  <text x="100" y="30" fill="#FFFFFF" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">Armhole / আর্মহোল</text>
+</svg>

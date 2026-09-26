@@ -1,0 +1,8 @@
+{
+  "name": "Digital Dorji",
+  "description": "Bespoke tailoring, fabric service, and complete Ready-Made products commerce in Bangladesh with real-time stock management, size guides, custom tailoring options, promo coupons, and doorstep delivery.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
