@@ -100,52 +100,16 @@ async function startServer() {
     next(err);
   });
 
-  // Dynamic XML Sitemap with actual domain and ready-made products
-  app.get('/sitemap.xml', (req, res) => {
-    const host = req.get('host') || 'localhost:3000';
-    const protocol = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https' ? 'https' : 'http';
-    const baseUrl = `${protocol}://${host}`;
-
-    const staticRoutes = [
-      { path: '/', priority: '1.0', changefreq: 'daily' },
-      { path: '/catalog', priority: '0.9', changefreq: 'daily' },
-      { path: '/fabric-catalog', priority: '0.9', changefreq: 'daily' },
-      { path: '/ready-made', priority: '1.0', changefreq: 'daily' },
-      { path: '/track-orders', priority: '0.8', changefreq: 'weekly' },
-      { path: '/legal/terms', priority: '0.3', changefreq: 'monthly' },
-      { path: '/legal/privacy', priority: '0.3', changefreq: 'monthly' },
-      { path: '/legal/refund', priority: '0.3', changefreq: 'monthly' }
-    ];
-
-    const readyMadeProducts = db.getReadyMadeProducts().filter(p => p.status === 'published');
-    const productRoutes = readyMadeProducts.map(p => ({
-      path: `/ready-made/${p.slug}`,
-      priority: '0.8',
-      changefreq: 'weekly'
-    }));
-
-    const allRoutes = [...staticRoutes, ...productRoutes];
-    const today = new Date().toISOString().split('T')[0];
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allRoutes.map(r => `  <url>
-    <loc>${baseUrl}${r.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${r.changefreq}</changefreq>
-    <priority>${r.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`;
-
-    res.header('Content-Type', 'application/xml');
-    res.send(xml);
-  });
-
   // Serve static files from public directory
   app.use(express.static(path.join(process.cwd(), 'public')));
 
+  // Determine if running in production mode (or compiled bundle)
+  const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    (typeof __filename !== 'undefined' && __filename.includes('dist'));
+
   // Vite middleware in development or static serve in production
-  if (process.env.NODE_ENV !== 'production') {
+  if (!isProduction) {
     const vite = await createViteServer({
       server: { middlewareMode: true, hmr: false },
       appType: 'spa',

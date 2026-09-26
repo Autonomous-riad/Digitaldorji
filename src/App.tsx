@@ -55,6 +55,11 @@ import { ReadyMadeAdminSection } from './components/admin/ReadyMadeAdminSection'
 import { LoginPage } from './components/auth/LoginPage';
 import { SignupPage } from './components/auth/SignupPage';
 
+// Payment Gateway & Order Confirmation Pages
+import { OrderPaymentSuccess } from './components/payment/OrderPaymentSuccess';
+import { OrderPaymentFailed } from './components/payment/OrderPaymentFailed';
+import { SSLCommerzSandboxGateway } from './components/payment/SSLCommerzSandboxGateway';
+
 // Lazy Loaded Admin Components for Performance & Code Splitting
 const AdminLogin = lazy(() => import('./components/admin/AdminLogin').then(m => ({ default: m.AdminLogin })));
 const AdminLayout = lazy(() => import('./components/admin/AdminLayout').then(m => ({ default: m.AdminLayout })));
@@ -102,7 +107,7 @@ const AppRouterContent: React.FC = () => {
       setActiveStep('fabric_catalog');
     } else if (currentPath === '/customize') {
       setActiveStep('customize');
-    } else if (currentPath === '/track-orders') {
+    } else if (currentPath === '/track-orders' || currentPath === '/track') {
       setActiveStep('track_orders');
     }
   }, [currentPath, setActiveStep]);
@@ -279,13 +284,63 @@ const AppRouterContent: React.FC = () => {
   }
 
   // ==========================================
-  // 4. LEGAL & INFORMATIONAL PAGES
+  // 4. PAYMENT GATEWAY SANDBOX & ORDER CONFIRMATION
+  // ==========================================
+  if (currentPath === '/sandbox/sslcommerz' || currentPath === '/payment/sandbox') {
+    return (
+      <>
+        <SEOHead title="SSLCommerz Sandbox Gateway | Digital Dorji" />
+        <SSLCommerzSandboxGateway />
+      </>
+    );
+  }
+
+  if (currentPath.startsWith('/order/') && currentPath.includes('/success')) {
+    const pathParts = currentPath.split('/');
+    const orderNum = pathParts[2] || 'success';
+    return (
+      <div className="min-h-screen bg-purple-50 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+        <SEOHead title="অর্ডার কনফার্মেশন (Order Confirmed) | Digital Dorji" />
+        <Header />
+        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
+          <OrderPaymentSuccess orderNumber={orderNum} />
+        </main>
+        <Footer />
+        <MobileQuickTrack />
+        <MobileBottomNav />
+      </div>
+    );
+  }
+
+  if (currentPath.startsWith('/order/') && currentPath.includes('/failed')) {
+    const pathParts = currentPath.split('/');
+    const orderNum = pathParts[2] || '';
+    return (
+      <div className="min-h-screen bg-purple-50 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+        <SEOHead title="পেমেন্ট ব্যর্থ হয়েছে (Payment Failed) | Digital Dorji" />
+        <Header />
+        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
+          <OrderPaymentFailed orderNumber={orderNum} />
+        </main>
+        <Footer />
+        <MobileQuickTrack />
+        <MobileBottomNav />
+      </div>
+    );
+  }
+
+  // ==========================================
+  // 5. LEGAL & INFORMATIONAL PAGES
   // ==========================================
   if (
     currentPath === '/privacy-policy' ||
     currentPath === '/terms' ||
     currentPath === '/refund-policy' ||
     currentPath === '/shipping-policy' ||
+    currentPath === '/legal/privacy' ||
+    currentPath === '/legal/terms' ||
+    currentPath === '/legal/refund' ||
+    currentPath === '/legal/shipping' ||
     currentPath === '/about' ||
     currentPath === '/contact'
   ) {
@@ -294,10 +349,10 @@ const AppRouterContent: React.FC = () => {
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
-          {currentPath === '/privacy-policy' && <PrivacyPolicy />}
-          {currentPath === '/terms' && <TermsOfService />}
-          {currentPath === '/refund-policy' && <RefundPolicy />}
-          {currentPath === '/shipping-policy' && <ShippingPolicy />}
+          {(currentPath === '/privacy-policy' || currentPath === '/legal/privacy') && <PrivacyPolicy />}
+          {(currentPath === '/terms' || currentPath === '/legal/terms') && <TermsOfService />}
+          {(currentPath === '/refund-policy' || currentPath === '/legal/refund') && <RefundPolicy />}
+          {(currentPath === '/shipping-policy' || currentPath === '/legal/shipping') && <ShippingPolicy />}
           {currentPath === '/about' && <AboutPage />}
           {currentPath === '/contact' && <ContactPage />}
         </main>
@@ -309,7 +364,7 @@ const AppRouterContent: React.FC = () => {
   }
 
   // ==========================================
-  // 5. READY-MADE PRODUCTS COMMERCE (/ready-made, /ready-made/:slug)
+  // 6. READY-MADE PRODUCTS COMMERCE (/ready-made, /ready-made/:slug)
   // ==========================================
   if (currentPath === '/ready-made' || currentPath === '/ready-made/') {
     return (

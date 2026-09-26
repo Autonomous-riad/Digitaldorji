@@ -1,5 +1,7 @@
 // Hostinger Node.js Application Entry Point
 // hPanel Node.js Application Manager supports server.js or index.js as the startup file.
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
+
 import { createRequire } from 'module';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
