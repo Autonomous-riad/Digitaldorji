@@ -1,6 +1,15 @@
 @import "tailwindcss";
 
 @theme {
+  /* Atelier warm light cream palette */
+  --color-cream: #faf6f0;
+  --color-cream-50: #fdfbf7;
+  --color-cream-100: #faf6f0;
+  --color-cream-200: #f5eedf;
+  --color-cream-300: #ece0cc;
+  --color-cream-400: #decbb2;
+  --color-cream-500: #cca785;
+
   /* Rich warm orange palette — slightly deepened for visibility & comfort while remaining undeniably vibrant orange */
   --color-orange-50: #fff8f3;
   --color-orange-100: #ffeedf;
@@ -15,7 +24,7 @@
   --color-orange-950: #330f00;
 
   /* Lighter, softer royal purple palette — avoids dark near-black shades for improved clarity and charm */
-  --color-purple-50: #faf7fe;
+  --color-purple-50: #faf6f0;
   --color-purple-100: #f3ecfc;
   --color-purple-200: #e8dbf9;
   --color-purple-300: #d6bdf5;
@@ -32,10 +41,12 @@
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    background-color: #faf6f0;
   }
   body {
     font-family: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, -apple-system, sans-serif;
     touch-action: manipulation;
+    background-color: #faf6f0;
   }
   button, input, select, textarea {
     touch-action: manipulation;

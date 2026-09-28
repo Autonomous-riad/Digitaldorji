@@ -99,7 +99,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center p-6">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-700 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-semibold text-slate-600">{t('Loading Atelier Product...', 'পণ্য লোড হচ্ছে...')}</p>
@@ -110,7 +110,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-cream-100 flex items-center justify-center p-6">
         <div className="bg-white p-8 rounded-2xl border border-slate-200 max-w-md w-full text-center space-y-4 shadow-sm">
           <AlertCircle className="w-12 h-12 text-rose-500 mx-auto" />
           <h2 className="text-lg font-bold text-slate-900">{t('Product Not Found', 'পণ্যটি খুঁজে পাওয়া যায়নি')}</h2>
@@ -164,7 +164,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-slate-50/70 pb-20">
+    <div className="min-h-screen bg-cream-100/70 pb-20">
       
       {/* Breadcrumbs */}
       <div className="bg-white border-b border-slate-200">

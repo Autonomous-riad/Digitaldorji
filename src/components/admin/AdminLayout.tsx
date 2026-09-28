@@ -45,7 +45,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   ];
 
   return (
-    <div className="h-screen bg-slate-50 flex flex-col font-sans overflow-hidden">
+    <div className="h-screen bg-cream-100 flex flex-col font-sans overflow-hidden">
       {/* Top Header Navigation */}
       <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 z-20">
         <div className="flex items-center gap-3">
@@ -227,7 +227,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         )}
 
         {/* Main Admin Content View Area */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-50">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-cream-100">
           <div className="max-w-7xl mx-auto space-y-6">
             {children}
           </div>

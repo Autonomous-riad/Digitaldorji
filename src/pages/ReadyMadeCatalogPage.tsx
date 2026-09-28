@@ -233,7 +233,7 @@ export const ReadyMadeCatalogPage: React.FC = () => {
   const hasActiveFilters = selectedCategory !== 'all' || searchQuery || selectedSize || onlyInStock || sortBy !== 'featured';
 
   return (
-    <div className="min-h-screen bg-slate-50/70 pb-28 sm:pb-24">
+    <div className="min-h-screen bg-cream-100/70 pb-28 sm:pb-24">
       
       {/* Hero Banner Section */}
       <div className="bg-gradient-to-b from-indigo-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden py-10 sm:py-14 border-b border-indigo-900/50">

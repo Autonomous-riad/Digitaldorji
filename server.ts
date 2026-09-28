@@ -66,7 +66,7 @@ async function startServer() {
   app.use('/api/auth/admin-login', loginRateLimiter);
   app.use('/api/auth', authRouter);
 
-  app.use('/api/orders', orderPlacementRateLimiter, ordersRouter);
+  app.use('/api/orders', ordersRouter);
   app.use('/api/payment', paymentRouter);
   app.use('/api/customer', customerRouter);
   app.use('/api/admin', adminRouter);

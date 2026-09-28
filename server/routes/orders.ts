@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { db } from '../db';
+import { db, RelationalOrder } from '../db';
 import { optionalAuth, AuthenticatedRequest } from '../auth';
+import { orderPlacementRateLimiter } from '../lib/security';
 
 export const ordersRouter = Router();
 
@@ -22,7 +23,7 @@ function normalizePhone(phone: string): string {
  * Collects customer name, phone number, delivery address, measurements, garment details,
  * fabric pickup info, and payment information.
  */
-ordersRouter.post('/', optionalAuth, (req: AuthenticatedRequest, res: Response) => {
+ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: AuthenticatedRequest, res: Response) => {
   const orderData = req.body;
 
   if (!orderData) {
@@ -212,6 +213,36 @@ ordersRouter.post('/', optionalAuth, (req: AuthenticatedRequest, res: Response) 
       status: 'sent',
       sent_at: new Date().toISOString()
     });
+
+    // Also sync 12-table relational_orders
+    if (data.relational_orders) {
+      const relRow: RelationalOrder = {
+        id: newOrder.id,
+        order_number: newOrder.orderNumber,
+        customer_id: isGuest ? null : userId,
+        guest_phone: isGuest ? phone : null,
+        status: newOrder.currentStage,
+        payment_status: newOrder.paymentStatus,
+        payment_method: newOrder.paymentMethod,
+        subtotal: newOrder.basePrice,
+        delivery_charge: newOrder.doorstepPickupFee + newOrder.deliverySpeedFee,
+        total: newOrder.grandTotal,
+        pickup_address_id: null,
+        delivery_address_id: null,
+        pickup_date: newOrder.pickupAddress.pickupDate,
+        pickup_time_slot: newOrder.pickupAddress.pickupTimeSlot,
+        expected_delivery_date: newOrder.estimatedDeliveryDate,
+        special_instructions: newOrder.tailorNotes,
+        created_at: newOrder.createdAt,
+        updated_at: newOrder.createdAt
+      };
+      const relIdx = data.relational_orders.findIndex(r => r.id === newOrder.id || r.order_number === newOrder.orderNumber);
+      if (relIdx >= 0) {
+        data.relational_orders[relIdx] = relRow;
+      } else {
+        data.relational_orders.unshift(relRow);
+      }
+    }
   });
 
   res.status(201).json({

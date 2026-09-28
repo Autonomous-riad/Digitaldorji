@@ -206,7 +206,7 @@ const AppRouterContent: React.FC = () => {
   if (currentPath === '/admin' || currentPath.startsWith('/admin/')) {
     if (isLoading) {
       return (
-        <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-cream-100 flex flex-col items-center justify-center p-4">
           <Loader2 className="w-8 h-8 animate-spin text-orange-600 mb-2" />
           <p className="text-xs text-purple-950/70 font-medium">Verifying administrator credentials...</p>
         </div>
@@ -250,7 +250,7 @@ const AppRouterContent: React.FC = () => {
   if (currentPath === '/account' || currentPath === '/dashboard' || currentPath.startsWith('/customer')) {
     if (isLoading) {
       return (
-        <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-cream-100 flex flex-col items-center justify-center p-4">
           <Loader2 className="w-8 h-8 animate-spin text-orange-600 mb-2" />
           <p className="text-xs text-purple-950/70 font-medium">Loading your atelier account...</p>
         </div>
@@ -266,7 +266,7 @@ const AppRouterContent: React.FC = () => {
     }
 
     return (
-      <div className="min-h-screen bg-purple-50 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
         <SEOHead title="আমার একাউন্ট (Customer Portal) | Digital Dorji" />
         <Header />
         <main className="flex-1 w-full pb-20 md:pb-12">
@@ -299,7 +299,7 @@ const AppRouterContent: React.FC = () => {
     const pathParts = currentPath.split('/');
     const orderNum = pathParts[2] || 'success';
     return (
-      <div className="min-h-screen bg-purple-50 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
         <SEOHead title="অর্ডার কনফার্মেশন (Order Confirmed) | Digital Dorji" />
         <Header />
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
@@ -316,7 +316,7 @@ const AppRouterContent: React.FC = () => {
     const pathParts = currentPath.split('/');
     const orderNum = pathParts[2] || '';
     return (
-      <div className="min-h-screen bg-purple-50 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
         <SEOHead title="পেমেন্ট ব্যর্থ হয়েছে (Payment Failed) | Digital Dorji" />
         <Header />
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
@@ -345,7 +345,7 @@ const AppRouterContent: React.FC = () => {
     currentPath === '/contact'
   ) {
     return (
-      <div className="min-h-screen bg-purple-50 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
@@ -368,7 +368,7 @@ const AppRouterContent: React.FC = () => {
   // ==========================================
   if (currentPath === '/ready-made' || currentPath === '/ready-made/') {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 w-full">
@@ -385,7 +385,7 @@ const AppRouterContent: React.FC = () => {
 
   if (currentPath.startsWith('/ready-made/') && currentPath !== '/ready-made/') {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 w-full">
@@ -404,7 +404,7 @@ const AppRouterContent: React.FC = () => {
   // 6. PUBLIC STOREFRONT & BESPOKE ORDERING FLOW
   // ==========================================
   return (
-    <div className="min-h-screen bg-purple-50 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+    <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
       <SEOHead {...seo} />
       <Header />
 

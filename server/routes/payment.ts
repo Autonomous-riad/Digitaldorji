@@ -299,7 +299,7 @@ async function processSuccessfulPayment(payload: any, res: Response) {
       d.notifications.unshift(notification);
 
       // Update relational orders if present
-      const relOrder = d.relational_orders.find(ro => ro.order_number === matchedOrder.orderNumber || ro.id === matchedOrder.id);
+      const relOrder = d.relational_orders?.find(ro => ro.order_number === matchedOrder.orderNumber || ro.id === matchedOrder.id);
       if (relOrder) {
         relOrder.payment_status = isAdvance ? 'advance_paid' : 'paid';
         relOrder.updated_at = new Date().toISOString();

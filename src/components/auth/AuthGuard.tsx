@@ -32,7 +32,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requiredRole }) 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-purple-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-cream-100 flex flex-col items-center justify-center p-4">
         <Loader2 className="w-8 h-8 animate-spin text-orange-600 mb-3" />
         <p className="text-xs text-purple-950/70 font-medium">Verifying secure session...</p>
       </div>
