@@ -421,31 +421,84 @@ export const DatabaseSchemaViewer: React.FC = () => {
         </div>
       )}
 
-      {/* TAB 3: SQL SCHEMA DDL */}
+      {/* TAB 3: SQL SCHEMA DDL & HOSTINGER EXPORT */}
       {activeTab === 'sql' && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-bold text-slate-950">
-                PostgreSQL / Supabase Schema Definition (DDL)
-              </h2>
-              <p className="text-xs text-slate-600 mt-0.5">
-                Execute this SQL script directly in Supabase SQL Editor or any PostgreSQL database to provision all 12 tables, indexes, triggers, and RLS policies.
-              </p>
+        <div className="space-y-6">
+          {/* Hostinger Setup Quick Card */}
+          <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-6 shadow-md border border-purple-800 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span className="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-500/20 text-orange-300 border border-orange-500/30">
+                  Hostinger Web Hosting Database Export
+                </span>
+                <h2 className="text-lg font-bold text-white mt-1">
+                  Export MySQL / phpMyAdmin Dump for Hostinger
+                </h2>
+                <p className="text-xs text-purple-200 mt-1 max-w-2xl">
+                  Download the complete SQL script pre-configured with table definitions and initial seed data, ready to import directly into Hostinger hPanel ➔ phpMyAdmin.
+                </p>
+              </div>
+
+              <a
+                href="/api/schema/export-sql"
+                download="digital_dorji_hostinger_db.sql"
+                className="shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+              >
+                <FileCode className="w-4 h-4" />
+                <span>Download Hostinger .SQL Dump</span>
+              </a>
             </div>
-            <button
-              onClick={copySqlToClipboard}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
-            >
-              {copiedSql ? <Check className="w-3.5 h-3.5 text-green-300" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedSql ? 'Copied to Clipboard!' : 'Copy SQL Schema'}</span>
-            </button>
+
+            {/* Step-by-Step Hostinger Instructions */}
+            <div className="pt-4 border-t border-purple-800/80 grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+              <div className="bg-white/10 p-3 rounded-xl border border-white/10 space-y-1">
+                <span className="font-bold text-orange-300 font-mono">STEP 1</span>
+                <p className="font-bold text-white">Log in to Hostinger hPanel</p>
+                <p className="text-purple-200 text-[11px]">Navigate to <span className="text-white font-mono">Databases ➔ MySQL Databases</span>.</p>
+              </div>
+              <div className="bg-white/10 p-3 rounded-xl border border-white/10 space-y-1">
+                <span className="font-bold text-orange-300 font-mono">STEP 2</span>
+                <p className="font-bold text-white">Create MySQL Database</p>
+                <p className="text-purple-200 text-[11px]">Set database name, username, and password.</p>
+              </div>
+              <div className="bg-white/10 p-3 rounded-xl border border-white/10 space-y-1">
+                <span className="font-bold text-orange-300 font-mono">STEP 3</span>
+                <p className="font-bold text-white">Open phpMyAdmin</p>
+                <p className="text-purple-200 text-[11px]">Click <span className="text-white font-mono">Enter phpMyAdmin</span> for your database.</p>
+              </div>
+              <div className="bg-white/10 p-3 rounded-xl border border-white/10 space-y-1">
+                <span className="font-bold text-orange-300 font-mono">STEP 4</span>
+                <p className="font-bold text-white">Import SQL File</p>
+                <p className="text-purple-200 text-[11px]">Click <span className="text-white font-mono">Import ➔ Choose File</span> and select the downloaded <span className="text-white font-mono font-bold">.sql</span> file.</p>
+              </div>
+            </div>
           </div>
 
-          <div className="relative rounded-xl overflow-hidden border border-slate-800">
-            <pre className="p-4 bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto max-h-[520px] leading-relaxed">
-              <code>{rawSqlSchema}</code>
-            </pre>
+          {/* Raw SQL Preview */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-bold text-slate-950">
+                  PostgreSQL / Supabase & MySQL Schema Definition (DDL)
+                </h2>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  Execute this SQL script directly in Supabase SQL Editor, PostgreSQL, or Hostinger phpMyAdmin to provision tables and RLS policies.
+                </p>
+              </div>
+              <button
+                onClick={copySqlToClipboard}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs"
+              >
+                {copiedSql ? <Check className="w-3.5 h-3.5 text-green-300" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedSql ? 'Copied to Clipboard!' : 'Copy SQL Schema'}</span>
+              </button>
+            </div>
+
+            <div className="relative rounded-xl overflow-hidden border border-slate-800">
+              <pre className="p-4 bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto max-h-[520px] leading-relaxed">
+                <code>{rawSqlSchema}</code>
+              </pre>
+            </div>
           </div>
         </div>
       )}

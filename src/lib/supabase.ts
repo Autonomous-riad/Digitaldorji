@@ -7,12 +7,15 @@ const procEnv = typeof process !== 'undefined' ? (process as any).env || {} : {}
 export const supabaseUrl: string = 
   metaEnv.VITE_SUPABASE_URL ||
   metaEnv.NEXT_PUBLIC_SUPABASE_URL ||
+  procEnv.SUPABASE_URL ||
   procEnv.NEXT_PUBLIC_SUPABASE_URL ||
   '';
 
 export const supabaseAnonKey: string = 
   metaEnv.VITE_SUPABASE_ANON_KEY ||
   metaEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  procEnv.SUPABASE_API_KEY ||
+  procEnv.SUPABASE_SERVICE_ROLE_KEY ||
   procEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   '';
 

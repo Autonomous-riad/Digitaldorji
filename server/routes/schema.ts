@@ -469,11 +469,215 @@ schemaRouter.get('/staff', (req: Request, res: Response) => {
 });
 
 // ==============================================================================
-// 13. Notifications
+// 14. SQL Export Generator for Hostinger / phpMyAdmin / MySQL
 // ==============================================================================
-schemaRouter.get('/notifications', (req: Request, res: Response) => {
-  const { order_id } = req.query;
-  let list = db.getNotifications();
-  if (order_id) list = list.filter(n => n.order_id === order_id);
-  res.json({ count: list.length, data: list });
+function escapeSqlString(str: any): string {
+  if (str === null || str === undefined) return 'NULL';
+  if (typeof str === 'boolean') return str ? '1' : '0';
+  if (typeof str === 'number') return isNaN(str) ? '0' : String(str);
+  if (typeof str === 'object') {
+    const json = JSON.stringify(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    return `'${json}'`;
+  }
+  const clean = String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+  return `'${clean}'`;
+}
+
+function generateHostingerSqlDump(): string {
+  const data = db.getData();
+  const timestamp = new Date().toISOString();
+
+  let sql = `-- ==============================================================================\n`;
+  sql += `-- Digital Dorji Atelier - Complete MySQL / MariaDB Hostinger Database Dump\n`;
+  sql += `-- Generated on: ${timestamp}\n`;
+  sql += `-- Compatible with Hostinger hPanel, phpMyAdmin, MySQL 5.7+, MariaDB 10.3+\n`;
+  sql += `-- ==============================================================================\n\n`;
+
+  sql += `SET FOREIGN_KEY_CHECKS = 0;\n`;
+  sql += `SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";\n`;
+  sql += `SET NAMES utf8mb4;\n\n`;
+
+  // 1. Users Table
+  sql += `-- Table: users\n`;
+  sql += `CREATE TABLE IF NOT EXISTS \`users\` (\n`;
+  sql += `  \`id\` VARCHAR(100) NOT NULL PRIMARY KEY,\n`;
+  sql += `  \`name\` VARCHAR(255) NOT NULL,\n`;
+  sql += `  \`email\` VARCHAR(255) NOT NULL UNIQUE,\n`;
+  sql += `  \`password\` VARCHAR(255) NOT NULL,\n`;
+  sql += `  \`role\` ENUM('admin', 'staff', 'customer') NOT NULL DEFAULT 'customer',\n`;
+  sql += `  \`phone\` VARCHAR(50) DEFAULT '',\n`;
+  sql += `  \`address\` TEXT,\n`;
+  sql += `  \`city\` VARCHAR(100) DEFAULT 'Dhaka',\n`;
+  sql += `  \`gender\` VARCHAR(20) DEFAULT 'men',\n`;
+  sql += `  \`avatar\` TEXT,\n`;
+  sql += `  \`createdAt\` VARCHAR(100) NOT NULL\n`;
+  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n`;
+
+  if (data.users && data.users.length > 0) {
+    sql += `INSERT INTO \`users\` (\`id\`, \`name\`, \`email\`, \`password\`, \`role\`, \`phone\`, \`address\`, \`city\`, \`gender\`, \`avatar\`, \`createdAt\`) VALUES\n`;
+    sql += data.users.map(u => 
+      `(${escapeSqlString(u.id)}, ${escapeSqlString(u.name)}, ${escapeSqlString(u.email)}, ${escapeSqlString(u.password)}, ${escapeSqlString(u.role)}, ${escapeSqlString(u.phone)}, ${escapeSqlString(u.address)}, ${escapeSqlString(u.city)}, ${escapeSqlString(u.gender)}, ${escapeSqlString(u.avatar)}, ${escapeSqlString(u.createdAt)})`
+    ).join(',\n') + `;\n\n`;
+  }
+
+  // 2. Customers Table
+  sql += `-- Table: customers\n`;
+  sql += `CREATE TABLE IF NOT EXISTS \`customers\` (\n`;
+  sql += `  \`id\` VARCHAR(100) NOT NULL PRIMARY KEY,\n`;
+  sql += `  \`phone\` VARCHAR(50) NOT NULL,\n`;
+  sql += `  \`email\` VARCHAR(255) DEFAULT NULL,\n`;
+  sql += `  \`name\` VARCHAR(255) NOT NULL,\n`;
+  sql += `  \`created_at\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`updated_at\` VARCHAR(100) NOT NULL\n`;
+  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n`;
+
+  if (data.customers && data.customers.length > 0) {
+    sql += `INSERT INTO \`customers\` (\`id\`, \`phone\`, \`email\`, \`name\`, \`created_at\`, \`updated_at\`) VALUES\n`;
+    sql += data.customers.map(c => 
+      `(${escapeSqlString(c.id)}, ${escapeSqlString(c.phone)}, ${escapeSqlString(c.email)}, ${escapeSqlString(c.name)}, ${escapeSqlString(c.created_at)}, ${escapeSqlString(c.updated_at)})`
+    ).join(',\n') + `;\n\n`;
+  }
+
+  // 3. Addresses Table
+  sql += `-- Table: addresses\n`;
+  sql += `CREATE TABLE IF NOT EXISTS \`addresses\` (\n`;
+  sql += `  \`id\` VARCHAR(100) NOT NULL PRIMARY KEY,\n`;
+  sql += `  \`customer_id\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`label\` VARCHAR(100) DEFAULT 'Home',\n`;
+  sql += `  \`district\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`thana\` VARCHAR(100) DEFAULT NULL,\n`;
+  sql += `  \`area\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`street\` TEXT NOT NULL,\n`;
+  sql += `  \`landmark\` TEXT DEFAULT NULL,\n`;
+  sql += `  \`is_default\` TINYINT(1) DEFAULT 0,\n`;
+  sql += `  \`created_at\` VARCHAR(100) NOT NULL\n`;
+  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n`;
+
+  if (data.addresses && data.addresses.length > 0) {
+    sql += `INSERT INTO \`addresses\` (\`id\`, \`customer_id\`, \`label\`, \`district\`, \`thana\`, \`area\`, \`street\`, \`landmark\`, \`is_default\`, \`created_at\`) VALUES\n`;
+    sql += data.addresses.map(a => 
+      `(${escapeSqlString(a.id)}, ${escapeSqlString(a.customer_id)}, ${escapeSqlString(a.label)}, ${escapeSqlString(a.district)}, ${escapeSqlString(a.thana)}, ${escapeSqlString(a.area)}, ${escapeSqlString(a.street)}, ${escapeSqlString(a.landmark)}, ${a.is_default ? 1 : 0}, ${escapeSqlString(a.created_at)})`
+    ).join(',\n') + `;\n\n`;
+  }
+
+  // 4. Garments Catalog Table
+  sql += `-- Table: garments\n`;
+  sql += `CREATE TABLE IF NOT EXISTS \`garments\` (\n`;
+  sql += `  \`id\` VARCHAR(100) NOT NULL PRIMARY KEY,\n`;
+  sql += `  \`slug\` VARCHAR(255) NOT NULL UNIQUE,\n`;
+  sql += `  \`name_bn\` VARCHAR(255) NOT NULL,\n`;
+  sql += `  \`name_en\` VARCHAR(255) NOT NULL,\n`;
+  sql += `  \`gender\` VARCHAR(20) NOT NULL DEFAULT 'men',\n`;
+  sql += `  \`base_price\` DECIMAL(10,2) NOT NULL DEFAULT 0.00,\n`;
+  sql += `  \`fabric_yards\` DECIMAL(5,2) DEFAULT 2.50,\n`;
+  sql += `  \`delivery_days\` INT DEFAULT 4,\n`;
+  sql += `  \`measurement_schema\` LONGTEXT DEFAULT NULL,\n`;
+  sql += `  \`image_url\` TEXT DEFAULT NULL,\n`;
+  sql += `  \`is_active\` TINYINT(1) DEFAULT 1\n`;
+  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n`;
+
+  if (data.garments && data.garments.length > 0) {
+    sql += `INSERT INTO \`garments\` (\`id\`, \`slug\`, \`name_bn\`, \`name_en\`, \`gender\`, \`base_price\`, \`fabric_yards\`, \`delivery_days\`, \`measurement_schema\`, \`image_url\`, \`is_active\`) VALUES\n`;
+    sql += data.garments.map(g => 
+      `(${escapeSqlString(g.id)}, ${escapeSqlString(g.slug)}, ${escapeSqlString(g.name_bn)}, ${escapeSqlString(g.name_en)}, ${escapeSqlString(g.gender)}, ${g.base_price}, ${g.fabric_yards}, ${g.delivery_days}, ${escapeSqlString(g.measurement_schema)}, ${escapeSqlString(g.image_url)}, ${g.is_active ? 1 : 0})`
+    ).join(',\n') + `;\n\n`;
+  }
+
+  // 5. Relational Orders Table
+  sql += `-- Table: relational_orders\n`;
+  sql += `CREATE TABLE IF NOT EXISTS \`relational_orders\` (\n`;
+  sql += `  \`id\` VARCHAR(100) NOT NULL PRIMARY KEY,\n`;
+  sql += `  \`order_number\` VARCHAR(100) NOT NULL UNIQUE,\n`;
+  sql += `  \`customer_id\` VARCHAR(100) DEFAULT NULL,\n`;
+  sql += `  \`guest_phone\` VARCHAR(50) DEFAULT NULL,\n`;
+  sql += `  \`status\` VARCHAR(100) NOT NULL DEFAULT 'pickup_scheduled',\n`;
+  sql += `  \`payment_status\` VARCHAR(100) NOT NULL DEFAULT 'pending',\n`;
+  sql += `  \`payment_method\` VARCHAR(100) DEFAULT 'cod',\n`;
+  sql += `  \`subtotal\` DECIMAL(10,2) DEFAULT 0.00,\n`;
+  sql += `  \`delivery_charge\` DECIMAL(10,2) DEFAULT 0.00,\n`;
+  sql += `  \`total\` DECIMAL(10,2) NOT NULL DEFAULT 0.00,\n`;
+  sql += `  \`pickup_address_id\` VARCHAR(100) DEFAULT NULL,\n`;
+  sql += `  \`delivery_address_id\` VARCHAR(100) DEFAULT NULL,\n`;
+  sql += `  \`pickup_date\` VARCHAR(100) DEFAULT NULL,\n`;
+  sql += `  \`pickup_time_slot\` VARCHAR(100) DEFAULT NULL,\n`;
+  sql += `  \`expected_delivery_date\` VARCHAR(100) DEFAULT NULL,\n`;
+  sql += `  \`special_instructions\` TEXT DEFAULT NULL,\n`;
+  sql += `  \`created_at\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`updated_at\` VARCHAR(100) NOT NULL\n`;
+  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n`;
+
+  if (data.relational_orders && data.relational_orders.length > 0) {
+    sql += `INSERT INTO \`relational_orders\` (\`id\`, \`order_number\`, \`customer_id\`, \`guest_phone\`, \`status\`, \`payment_status\`, \`payment_method\`, \`subtotal\`, \`delivery_charge\`, \`total\`, \`pickup_address_id\`, \`delivery_address_id\`, \`pickup_date\`, \`pickup_time_slot\`, \`expected_delivery_date\`, \`special_instructions\`, \`created_at\`, \`updated_at\`) VALUES\n`;
+    sql += data.relational_orders.map(ro => 
+      `(${escapeSqlString(ro.id)}, ${escapeSqlString(ro.order_number)}, ${escapeSqlString(ro.customer_id)}, ${escapeSqlString(ro.guest_phone)}, ${escapeSqlString(ro.status)}, ${escapeSqlString(ro.payment_status)}, ${escapeSqlString(ro.payment_method)}, ${ro.subtotal}, ${ro.delivery_charge}, ${ro.total}, ${escapeSqlString(ro.pickup_address_id)}, ${escapeSqlString(ro.delivery_address_id)}, ${escapeSqlString(ro.pickup_date)}, ${escapeSqlString(ro.pickup_time_slot)}, ${escapeSqlString(ro.expected_delivery_date)}, ${escapeSqlString(ro.special_instructions)}, ${escapeSqlString(ro.created_at)}, ${escapeSqlString(ro.updated_at)})`
+    ).join(',\n') + `;\n\n`;
+  }
+
+  // 6. Payments Table
+  sql += `-- Table: payments\n`;
+  sql += `CREATE TABLE IF NOT EXISTS \`payments\` (\n`;
+  sql += `  \`id\` VARCHAR(100) NOT NULL PRIMARY KEY,\n`;
+  sql += `  \`order_id\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`provider\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`provider_txn_id\` VARCHAR(255) DEFAULT NULL,\n`;
+  sql += `  \`amount\` DECIMAL(10,2) NOT NULL DEFAULT 0.00,\n`;
+  sql += `  \`status\` VARCHAR(100) NOT NULL DEFAULT 'completed',\n`;
+  sql += `  \`raw_response\` LONGTEXT DEFAULT NULL,\n`;
+  sql += `  \`created_at\` VARCHAR(100) NOT NULL\n`;
+  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n`;
+
+  if (data.payments && data.payments.length > 0) {
+    sql += `INSERT INTO \`payments\` (\`id\`, \`order_id\`, \`provider\`, \`provider_txn_id\`, \`amount\`, \`status\`, \`raw_response\`, \`created_at\`) VALUES\n`;
+    sql += data.payments.map(p => 
+      `(${escapeSqlString(p.id)}, ${escapeSqlString(p.order_id)}, ${escapeSqlString(p.provider)}, ${escapeSqlString(p.provider_txn_id)}, ${p.amount}, ${escapeSqlString(p.status)}, ${escapeSqlString(p.raw_response)}, ${escapeSqlString(p.created_at)})`
+    ).join(',\n') + `;\n\n`;
+  }
+
+  // 7. Ready Made Products Table
+  sql += `-- Table: ready_made_products\n`;
+  sql += `CREATE TABLE IF NOT EXISTS \`ready_made_products\` (\n`;
+  sql += `  \`id\` VARCHAR(100) NOT NULL PRIMARY KEY,\n`;
+  sql += `  \`slug\` VARCHAR(255) NOT NULL UNIQUE,\n`;
+  sql += `  \`category\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`category_slug\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`name_en\` VARCHAR(255) NOT NULL,\n`;
+  sql += `  \`name_bn\` VARCHAR(255) NOT NULL,\n`;
+  sql += `  \`description_en\` TEXT,\n`;
+  sql += `  \`description_bn\` TEXT,\n`;
+  sql += `  \`fabric_description\` TEXT,\n`;
+  sql += `  \`base_price\` DECIMAL(10,2) NOT NULL DEFAULT 0.00,\n`;
+  sql += `  \`sale_price\` DECIMAL(10,2) DEFAULT NULL,\n`;
+  sql += `  \`status\` VARCHAR(50) DEFAULT 'published',\n`;
+  sql += `  \`featured\` TINYINT(1) DEFAULT 0,\n`;
+  sql += `  \`rating\` DECIMAL(3,2) DEFAULT 5.00,\n`;
+  sql += `  \`created_at\` VARCHAR(100) NOT NULL,\n`;
+  sql += `  \`updated_at\` VARCHAR(100) NOT NULL\n`;
+  sql += `) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n`;
+
+  if (data.ready_made_products && data.ready_made_products.length > 0) {
+    sql += `INSERT INTO \`ready_made_products\` (\`id\`, \`slug\`, \`category\`, \`category_slug\`, \`name_en\`, \`name_bn\`, \`description_en\`, \`description_bn\`, \`fabric_description\`, \`base_price\`, \`sale_price\`, \`status\`, \`featured\`, \`rating\`, \`created_at\`, \`updated_at\`) VALUES\n`;
+    sql += data.ready_made_products.map(rmp => 
+      `(${escapeSqlString(rmp.id)}, ${escapeSqlString(rmp.slug)}, ${escapeSqlString(rmp.category)}, ${escapeSqlString(rmp.category_slug)}, ${escapeSqlString(rmp.name_en)}, ${escapeSqlString(rmp.name_bn)}, ${escapeSqlString(rmp.description_en)}, ${escapeSqlString(rmp.description_bn)}, ${escapeSqlString(rmp.fabric_description)}, ${rmp.base_price}, ${rmp.sale_price !== null ? rmp.sale_price : 'NULL'}, ${escapeSqlString(rmp.status)}, ${rmp.featured ? 1 : 0}, ${rmp.rating || 5.0}, ${escapeSqlString(rmp.created_at)}, ${escapeSqlString(rmp.updated_at)})`
+    ).join(',\n') + `;\n\n`;
+  }
+
+  sql += `SET FOREIGN_KEY_CHECKS = 1;\n`;
+  sql += `-- ==============================================================================\n`;
+  sql += `-- Hostinger MySQL Import Ready. Run in Hostinger phpMyAdmin -> SQL tab.\n`;
+  sql += `-- ==============================================================================\n`;
+
+  return sql;
+}
+
+schemaRouter.get('/export-sql', (req: Request, res: Response) => {
+  try {
+    const sqlContent = generateHostingerSqlDump();
+    res.setHeader('Content-Type', 'application/sql');
+    res.setHeader('Content-Disposition', 'attachment; filename="digital_dorji_hostinger_db.sql"');
+    res.send(sqlContent);
+  } catch (err: any) {
+    console.error('Error generating Hostinger SQL dump:', err);
+    res.status(500).json({ error: 'Failed to generate SQL dump' });
+  }
 });
+
