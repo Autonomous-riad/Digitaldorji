@@ -180,54 +180,54 @@ export const FabricPickupForm: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-32 sm:pb-12">
       {/* Step Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-xs">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-700 shrink-0">
-            <Store className="w-6 h-6 text-orange-700" />
+          <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 shrink-0">
+            <Store className="w-6 h-6 text-amber-800" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-orange-900 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+              <span className="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
                 {t('Step 3 of 4: Atelier Fabric & Delivery', 'ধাপ ৩/৪: অ্যাটেলিয়ার কাপড় ও ডেলিভারি')}
               </span>
-              <span className="text-xs text-slate-600 font-medium">{t(activeGarment.nameEn, activeGarment.nameBn)}</span>
+              <span className="text-xs text-stone-600 font-medium">{t(activeGarment.nameEn, activeGarment.nameBn)}</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-950 mt-1 font-serif-title">
+            <h2 className="text-xl sm:text-2xl font-bold text-stone-900 mt-1 font-serif-title">
               {t('Atelier Fabric Selection & Delivery Address', 'অ্যাটেলিয়ার কাপড় নির্বাচন ও ডেলিভারি ঠিকানা')}
             </h2>
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-stone-600">
               {t('Choose your premium atelier fabric and provide the destination address for your custom tailored garment.', 'আপনার পছন্দের প্রিমিয়াম অ্যাটেলিয়ার কাপড় বেছে নিন এবং তৈরি পোশাক পৌঁছানোর ঠিকানা দিন।')}
             </p>
           </div>
         </div>
 
         {/* Total Badge */}
-        <div className="bg-slate-50 p-3 sm:p-4 rounded-xl border border-slate-200 text-right w-full sm:w-auto">
-          <span className="text-xs text-slate-600 block">{t('Current Order Total', 'বর্তমান সর্বমোট')}</span>
-          <span className="text-2xl font-black text-slate-950 font-mono">৳{pricing.grandTotal}</span>
+        <div className="bg-stone-50 p-3 sm:p-4 rounded-xl border border-stone-200 text-right w-full sm:w-auto">
+          <span className="text-xs text-stone-600 block">{t('Current Order Total', 'বর্তমান সর্বমোট')}</span>
+          <span className="text-2xl font-black text-stone-900 font-mono">৳{pricing.grandTotal}</span>
         </div>
       </div>
 
       {/* SECTION 1: ATELIER FABRIC CATALOG SELECTION */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-6">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <h3 className="text-base font-bold text-slate-950 flex items-center gap-2 font-serif-title">
-            <Layers className="w-5 h-5 text-indigo-700" />
+      <div className="bg-white rounded-2xl border border-stone-200 p-5 sm:p-6 shadow-xs space-y-6">
+        <div className="flex items-center justify-between pb-3 border-b border-stone-100">
+          <h3 className="text-base font-bold text-stone-900 flex items-center gap-2 font-serif-title">
+            <Layers className="w-5 h-5 text-amber-800" />
             <span>{t('1. Selected Atelier Fabric', '১. বাছাইকৃত অ্যাটেলিয়ার কাপড়')}</span>
           </h3>
-          <span className="text-xs bg-indigo-50 text-indigo-900 font-bold px-3 py-1 rounded-lg border border-indigo-200">
+          <span className="text-xs bg-amber-50 text-amber-950 font-bold px-3 py-1 rounded-lg border border-amber-200">
             {t('Required: ', 'প্রয়োজনীয়: ')} {activeGarment.recommendedFabricGaz} {t('Gaz (গজ)', 'গজ')}
           </span>
         </div>
 
         {/* SHOP-PROVIDED FABRIC SELECTION CARD */}
-        <div className="p-4 sm:p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4 animate-in fade-in">
+        <div className="p-4 sm:p-5 bg-stone-50 rounded-xl border border-stone-200 space-y-4 animate-in fade-in">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-white px-2.5 py-0.5 rounded border border-slate-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-white px-2.5 py-0.5 rounded border border-stone-200">
                 {t('Catalog Fabric', 'ক্যাটালগ কাপড়')}
               </span>
-              <h4 className="text-base font-bold text-slate-950 mt-1">
+              <h4 className="text-base font-bold text-stone-900 mt-1">
                 {selectedShopFabric ? t(selectedShopFabric.nameEn, selectedShopFabric.nameBn) : t('Select a Fabric from Catalog', 'ক্যাটালগ থেকে কাপড় বেছে নিন')}
               </h4>
             </div>
@@ -235,7 +235,7 @@ export const FabricPickupForm: React.FC = () => {
             <button
               type="button"
               onClick={() => setShowFabricPicker(!showFabricPicker)}
-              className="px-4 py-2 bg-orange-700 hover:bg-orange-800 active:bg-orange-900 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-md shadow-orange-700/20"
+              className="px-4 py-2 bg-amber-900 hover:bg-amber-950 active:bg-amber-950 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
             >
               <Scissors className="w-3.5 h-3.5" />
               <span>{showFabricPicker ? t('Hide Fabric Picker', 'হাইড করুন') : t('Browse / Change Fabric', 'কাপড় পরিবর্তন / ব্রাউজ')}</span>
@@ -243,29 +243,29 @@ export const FabricPickupForm: React.FC = () => {
           </div>
 
           {selectedShopFabric && (
-            <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="bg-white p-4 rounded-xl border border-stone-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <img
                   src={selectedShopFabric.image}
                   alt={selectedShopFabric.nameEn}
-                  className="w-16 h-16 rounded-xl object-cover border border-slate-200 shrink-0"
+                  className="w-16 h-16 rounded-xl object-cover border border-stone-200 shrink-0"
                   referrerPolicy="no-referrer"
                 />
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full border border-slate-300" style={{ backgroundColor: selectedShopFabric.colorHex }} />
-                    <span className="font-bold text-xs text-slate-900">{selectedShopFabric.colorName}</span>
-                    <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-600">{selectedShopFabric.pattern}</span>
+                    <span className="w-3 h-3 rounded-full border border-stone-300" style={{ backgroundColor: selectedShopFabric.colorHex }} />
+                    <span className="font-bold text-xs text-stone-900">{selectedShopFabric.colorName}</span>
+                    <span className="text-[10px] bg-stone-100 px-2 py-0.5 rounded text-stone-600">{selectedShopFabric.pattern}</span>
                   </div>
-                  <p className="text-xs text-slate-600 mt-1">
+                  <p className="text-xs text-stone-600 mt-1">
                     {selectedShopFabric.materialComposition} • {selectedShopFabric.weightGsm} GSM ({selectedShopFabric.yarnCount})
                   </p>
                 </div>
               </div>
 
-              <div className="text-right sm:border-l sm:border-slate-100 sm:pl-4">
-                <span className="text-[11px] text-slate-600 block">{activeGarment.recommendedFabricGaz} {t('Gaz × ৳', 'গজ × ৳')}{selectedShopFabric.pricePerGaz}</span>
-                <span className="text-lg font-black text-slate-950 font-mono">
+              <div className="text-right sm:border-l sm:border-stone-100 sm:pl-4">
+                <span className="text-[11px] text-stone-600 block">{activeGarment.recommendedFabricGaz} {t('Gaz × ৳', 'গজ × ৳')}{selectedShopFabric.pricePerGaz}</span>
+                <span className="text-lg font-black text-stone-900 font-mono">
                   ৳{Math.round(activeGarment.recommendedFabricGaz * selectedShopFabric.pricePerGaz)}
                 </span>
               </div>
@@ -521,7 +521,7 @@ export const FabricPickupForm: React.FC = () => {
 
         <button
           onClick={validateAndProceed}
-          className="px-7 py-3.5 bg-orange-700 hover:bg-orange-800 active:bg-orange-900 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-lg shadow-orange-700/20 cursor-pointer"
+          className="px-7 py-3.5 bg-amber-900 hover:bg-stone-900 active:bg-black text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-xs cursor-pointer"
         >
           <span>{t('Proceed to Review & Checkout', 'রিভিউ ও পেমেন্টে যান')}</span>
           <ArrowRight className="w-4 h-4" />

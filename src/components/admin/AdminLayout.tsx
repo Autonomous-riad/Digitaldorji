@@ -47,30 +47,30 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   return (
     <div className="h-screen bg-cream-100 flex flex-col font-sans overflow-hidden">
       {/* Top Header Navigation */}
-      <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 z-20">
+      <header className="h-16 bg-cream-50 border-b border-cream-300 flex items-center justify-between px-4 sm:px-6 shrink-0 z-20">
         <div className="flex items-center gap-3">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-1.5 -ml-1.5 text-slate-700 hover:text-slate-950 focus:outline-none rounded-lg hover:bg-slate-100 transition-colors"
+            className="lg:hidden p-1.5 -ml-1.5 text-purple-950 hover:text-purple-900 focus:outline-none rounded-lg hover:bg-cream-200 transition-colors"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-indigo-700 flex items-center justify-center text-white shadow-sm">
+            <div className="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-cream-50 shadow-sm">
               <Scissors className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tracking-tight text-slate-950 font-serif-title">
+                <span className="text-sm font-bold tracking-tight text-purple-950 font-serif-title">
                   Digital Dorji Atelier
                 </span>
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-md bg-slate-100 text-slate-700 border border-slate-200 uppercase">
+                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-md bg-cream-200 text-purple-950 border border-cream-300 uppercase">
                   Admin Portal
                 </span>
               </div>
-              <p className="text-[11px] text-slate-600 hidden sm:block">
+              <p className="text-[11px] text-purple-900/80 hidden sm:block">
                 {t('Master Workshop & Executive Control Center', 'প্রধান সেলাই কারখানা ও অ্যাডমিন কন্ট্রোল সেন্টার')}
               </p>
             </div>
@@ -79,11 +79,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Language Switcher */}
-          <div className="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs">
+          <div className="flex items-center bg-cream-200 rounded-lg p-0.5 border border-cream-300 text-xs">
             <button
               onClick={() => setLang('en')}
               className={`px-2 py-1 rounded font-semibold cursor-pointer ${
-                lang === 'en' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                lang === 'en' ? 'bg-cream-50 text-purple-950 shadow-sm' : 'text-purple-900/80 hover:text-purple-950'
               }`}
             >
               EN
@@ -91,7 +91,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
             <button
               onClick={() => setLang('bn')}
               className={`px-2 py-1 rounded font-semibold cursor-pointer ${
-                lang === 'bn' ? 'bg-white text-slate-950 font-bengali shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                lang === 'bn' ? 'bg-cream-50 text-purple-950 font-bengali shadow-sm' : 'text-purple-900/80 hover:text-purple-950'
               }`}
             >
               বাংলা
@@ -101,24 +101,24 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           {/* Switch to Storefront Button */}
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-indigo-700 hover:text-indigo-800 text-xs font-semibold rounded-xl border border-slate-200 transition-colors cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-cream-50 hover:bg-cream-200 text-purple-950 hover:text-purple-900 text-xs font-semibold rounded-xl border border-cream-300 transition-colors cursor-pointer shadow-xs"
           >
-            <ExternalLink className="w-3.5 h-3.5 text-indigo-700" />
+            <ExternalLink className="w-3.5 h-3.5 text-purple-950" />
             <span className="hidden sm:inline">{t('Customer Storefront', 'গ্রাহক ভিউ')}</span>
           </button>
 
           {/* Admin User Profile Pill */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-cream-50 rounded-xl border border-cream-300 shadow-sm">
             <img
               src={user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'}
               alt={user?.name}
-              className="w-6 h-6 rounded-full object-cover border border-slate-200"
+              className="w-6 h-6 rounded-full object-cover border border-cream-300"
             />
             <div className="text-left">
-              <span className="text-xs font-semibold text-slate-950 block leading-tight truncate max-w-[120px]">
+              <span className="text-xs font-semibold text-purple-950 block leading-tight truncate max-w-[120px]">
                 {user?.name || 'Master Kabir'}
               </span>
-              <span className="text-[10px] text-slate-600 block font-mono leading-tight">
+              <span className="text-[10px] text-purple-900/70 block font-mono leading-tight">
                 Shop Master
               </span>
             </div>
@@ -127,7 +127,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           {/* Logout button */}
           <button
             onClick={handleLogout}
-            className="p-2 text-slate-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors cursor-pointer"
+            className="p-2 text-purple-950/80 hover:text-red-700 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
             title={t('Sign Out Admin Session', 'লগআউট')}
           >
             <LogOut className="w-4 h-4" />
@@ -137,8 +137,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
       <div className="flex-1 flex overflow-hidden">
         {/* Desktop Sidebar Navigation */}
-        <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-slate-200 p-4 space-y-1 shrink-0 overflow-y-auto">
-          <div className="px-3 py-2 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+        <aside className="hidden lg:flex flex-col w-64 bg-cream-50 border-r border-cream-300 p-4 space-y-1 shrink-0 overflow-y-auto">
+          <div className="px-3 py-2 text-[11px] font-bold text-purple-950/70 uppercase tracking-wider">
             {t('Atelier Management', 'কারখানা ব্যবস্থাপনা')}
           </div>
           
@@ -152,26 +152,26 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                 onClick={() => navigate(item.path)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-indigo-700 text-white shadow-md'
-                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-purple-950 text-cream-50 shadow-xs'
+                    : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-200'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-700'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-cream-50' : 'text-purple-950'}`} />
                   <span>{t(item.labelEn, item.labelBn)}</span>
                 </div>
-                {isActive && <ChevronRight className="w-3.5 h-3.5 text-white/80" />}
+                {isActive && <ChevronRight className="w-3.5 h-3.5 text-cream-50/80" />}
               </button>
             );
           })}
 
-          <div className="mt-auto pt-6 border-t border-slate-200 px-2 space-y-2">
-            <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-600">
-              <div className="flex items-center gap-1.5 text-slate-950 font-bold mb-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-green-700" />
+          <div className="mt-auto pt-6 border-t border-cream-300 px-2 space-y-2">
+            <div className="p-2.5 bg-cream-200/60 rounded-xl border border-cream-300 text-[11px] text-purple-950/80">
+              <div className="flex items-center gap-1.5 text-purple-950 font-bold mb-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 <span>{t('Strict RBAC Active', 'নিরাপদ আরব্যাক')}</span>
               </div>
-              <p className="text-[10px] text-slate-600 leading-tight">
+              <p className="text-[10px] text-purple-950/70 leading-tight">
                 {t('Server verifies Shop Master token on every API call.', 'প্রতিটি এপিআই কলে সার্ভার টোকেন ও রোল যাচাই করা হয়।')}
               </p>
             </div>
@@ -182,19 +182,19 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         {mobileMenuOpen && (
           <div className="fixed inset-0 z-40 lg:hidden flex">
             <div 
-              className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm"
+              className="fixed inset-0 bg-purple-950/40 backdrop-blur-xs"
               onClick={() => setMobileMenuOpen(false)}
             />
             
-            <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white border-r border-slate-200 p-4 space-y-1 z-50 overflow-y-auto shadow-xl">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-2">
+            <div className="relative flex-1 flex flex-col max-w-xs w-full bg-cream-50 border-r border-cream-300 p-4 space-y-1 z-50 overflow-y-auto shadow-xl">
+              <div className="flex items-center justify-between pb-3 border-b border-cream-300 mb-2">
                 <div className="flex items-center gap-2">
-                  <Scissors className="w-4 h-4 text-slate-950" />
-                  <span className="font-bold text-sm text-slate-950 font-serif-title">Digital Dorji Admin</span>
+                  <Scissors className="w-4 h-4 text-purple-950" />
+                  <span className="font-bold text-sm text-purple-950 font-serif-title">Digital Dorji Admin</span>
                 </div>
                 <button 
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1 text-slate-600 hover:text-slate-950"
+                  className="p-1 text-purple-950/80 hover:text-purple-950"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -213,11 +213,11 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold cursor-pointer ${
                       isActive
-                        ? 'bg-indigo-700 text-white'
-                        : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
+                        ? 'bg-purple-950 text-cream-50'
+                        : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-200'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-700'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-cream-50' : 'text-purple-950'}`} />
                     <span>{t(item.labelEn, item.labelBn)}</span>
                   </button>
                 );

@@ -701,17 +701,17 @@ export const ReadyMadeAdminSection: React.FC = () => {
       )}
 
       {/* Top Header Card */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-cream-50 p-5 rounded-2xl border border-cream-300 shadow-2xs">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-indigo-700 text-white flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center shadow-xs">
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-extrabold text-slate-950 font-serif-title">
+              <h2 className="text-lg font-extrabold text-purple-950 font-serif-title">
                 {t('Ready-Made Atelier Management', 'রেডিমেড পোশাক ও ইনভেন্টরি কন্ট্রোল')}
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-purple-950/70 mt-0.5">
                 {t('Full CRUD operations on products, multi-variant SKU configuration, and real-time inventory adjustments', 'পণ্য তৈরি ও এডিট, ভ্যারিয়েন্ট ব্যবস্থাপনা এবং লাইভ স্টক নিয়ন্ত্রণ')}
               </p>
             </div>
@@ -719,11 +719,11 @@ export const ReadyMadeAdminSection: React.FC = () => {
         </div>
 
         {/* Navigation Sub-tabs */}
-        <div className="flex items-center bg-slate-100 p-1.5 rounded-xl gap-1 text-xs font-bold overflow-x-auto">
+        <div className="flex items-center bg-cream-100 p-1.5 rounded-xl gap-1 text-xs font-bold overflow-x-auto border border-cream-300">
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeTab === 'products' ? 'bg-white text-indigo-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'products' ? 'bg-purple-950 text-cream-50 shadow-2xs' : 'text-purple-950/70 hover:text-purple-950'
             }`}
           >
             <Package className="w-3.5 h-3.5" />
@@ -731,8 +731,8 @@ export const ReadyMadeAdminSection: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('inventory')}
-            className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-              activeTab === 'inventory' ? 'bg-white text-indigo-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+              activeTab === 'inventory' ? 'bg-purple-950 text-cream-50 shadow-2xs' : 'text-purple-950/70 hover:text-purple-950'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />

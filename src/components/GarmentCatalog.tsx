@@ -38,14 +38,14 @@ export const GarmentCatalog: React.FC = () => {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-12">
-      {/* Hero Banner with Doorstep Process Workflow - Rich Warm Dark Orange with Subtle Purple Accent */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-700 via-orange-600 to-amber-700 text-white p-4 sm:p-8 lg:p-10 border border-orange-600 shadow-md">
+      {/* Hero Banner with Doorstep Process Workflow - Warm Atelier Amber Theme */}
+      <div className="relative overflow-hidden rounded-2xl bg-stone-900 text-white p-4 sm:p-8 lg:p-10 border border-stone-800 shadow-md">
         {/* Subtle decorative glow circles */}
-        <div className="absolute -top-24 -right-24 w-80 h-80 bg-amber-300/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-amber-900/20 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-slate-900/80 text-white text-[11px] sm:text-xs font-semibold border border-slate-700/80 mb-2.5 sm:mb-4 backdrop-blur-xs min-w-0 overflow-hidden shadow-xs">
+          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-amber-950/80 text-amber-200 text-[11px] sm:text-xs font-semibold border border-amber-800/80 mb-2.5 sm:mb-4 backdrop-blur-xs min-w-0 overflow-hidden shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
             <span className="truncate min-w-0">{t('Doorstep Tailoring in Bangladesh', 'সারা বাংলাদেশে ডোরস্টেপ টেইলারিং')}</span>
           </div>
@@ -54,7 +54,7 @@ export const GarmentCatalog: React.FC = () => {
             {t("Bespoke Tailoring from Your Own Fabric — At Your Doorstep", 'আপনার কেনা কাপড় দিয়েই নিখুঁত মাপে ঘরে বসেই মাস্টার সেলাই')}
           </h1>
 
-          <p className="text-xs sm:text-sm text-orange-50 mb-4 sm:mb-6 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
+          <p className="text-xs sm:text-sm text-stone-300 mb-4 sm:mb-6 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
             {t(
               'Have unstitched Panjabi cloth, suit length, shirt piece, unstitched Three-Piece or saree blouse at home? Choose custom cuts & measurements. Courier collects your cloth in a sealed bag and delivers master-tailored garments in 4 days.',
               'আপনার কেনা পাঞ্জাবির থান, শার্ট-প্যান্ট, স্যুট, থ্রি-পিস বা ব্লাউজের কাপড় ঘরে আছে? পছন্দের স্টাইল ও মাপ দিন—রাইডার বাসা থেকে কাপড় সিলগালা ব্যাগে সংগ্রহ করে মাত্র ৪ দিনে নিখুঁত সেলাই করে পৌঁছে দিবে।'
@@ -62,22 +62,22 @@ export const GarmentCatalog: React.FC = () => {
           </p>
 
           {/* 4-Step Visual Process - Responsive for mobile */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 pt-3 sm:pt-4 border-t border-orange-400/40">
-            <div className="p-2 sm:p-3 bg-white/10 hover:bg-white/15 rounded-xl border border-white/20 transition-colors">
-              <span className="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">01. {t('Style & Size', 'ডিজাইন ও মাপ')}</span>
-              <p className="text-[11px] sm:text-xs text-orange-100 font-medium leading-tight">{t('Panjabi, Suit, 3-Piece & inches', 'পোশাক, কলার ও মাপ দিন')}</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 pt-3 sm:pt-4 border-t border-stone-800">
+            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">01. {t('Style & Size', 'ডিজাইন ও মাপ')}</span>
+              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Panjabi, Suit, 3-Piece & inches', 'পোশাক, কলার ও মাপ দিন')}</p>
             </div>
-            <div className="p-2 sm:p-3 bg-white/10 hover:bg-white/15 rounded-xl border border-white/20 transition-colors">
-              <span className="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">02. {t('Home Pickup', 'ফ্রি পিকআপ')}</span>
-              <p className="text-[11px] sm:text-xs text-orange-100 font-medium leading-tight">{t('Courier collects fabric safely', 'বাসা থেকে কাপড় সংগ্রহ')}</p>
+            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">02. {t('Home Pickup', 'ফ্রি পিকআপ')}</span>
+              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Courier collects fabric safely', 'বাসা থেকে কাপড় সংগ্রহ')}</p>
             </div>
-            <div className="p-2 sm:p-3 bg-white/10 hover:bg-white/15 rounded-xl border border-white/20 transition-colors">
-              <span className="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">03. {t('Stitching', 'মাস্টার কাটিং')}</span>
-              <p className="text-[11px] sm:text-xs text-orange-100 font-medium leading-tight">{t('Hand & machine tailored in 4 days', '৪ দিনে প্রিমিয়াম সেলাই')}</p>
+            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">03. {t('Stitching', 'মাস্টার কাটিং')}</span>
+              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Hand & machine tailored in 4 days', '৪ দিনে প্রিমিয়াম সেলাই')}</p>
             </div>
-            <div className="p-2 sm:p-3 bg-white/10 hover:bg-white/15 rounded-xl border border-white/20 transition-colors">
-              <span className="text-white font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">04. {t('Door Delivery', 'হোম ডেলিভারি')}</span>
-              <p className="text-[11px] sm:text-xs text-orange-100 font-medium leading-tight">{t('Delivered + 7-Day free alteration', 'হোম ডেলিভারি + ৭ দিনে ফ্রি অলটার')}</p>
+            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">04. {t('Door Delivery', 'হোম ডেলিভারি')}</span>
+              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Delivered + 7-Day free alteration', 'হোম ডেলিভারি + ৭ দিনে ফ্রি অলটার')}</p>
             </div>
           </div>
         </div>
@@ -85,21 +85,21 @@ export const GarmentCatalog: React.FC = () => {
 
       {/* Filter and Search Bar */}
       <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-stone-200 shadow-xs">
           {/* Gender Tabs: Balanced Men, Women & All */}
-          <div className="grid grid-cols-3 sm:flex bg-slate-100 p-1 rounded-xl border border-slate-200 w-full sm:w-auto gap-1" role="tablist" aria-label="লিঙ্গ অনুসারে পোশাক ফিল্টার">
+          <div className="grid grid-cols-3 sm:flex bg-stone-100 p-1 rounded-xl border border-stone-200 w-full sm:w-auto gap-1" role="tablist" aria-label="লিঙ্গ অনুসারে পোশাক ফিল্টার">
             <button
               onClick={() => { setSelectedGender('all'); setSelectedSubCategory('all'); }}
               aria-label="সব পোশাক (All garments)"
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-orange-500 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-amber-500 ${
                 selectedGender === 'all'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'text-slate-700 hover:text-slate-900'
+                  ? 'bg-amber-900 text-white shadow-xs font-bold'
+                  : 'text-stone-700 hover:text-stone-900'
               }`}
             >
               <span className="truncate">{t('All', 'সব')}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
-                selectedGender === 'all' ? 'bg-orange-950 text-white' : 'bg-slate-200 text-slate-900'
+                selectedGender === 'all' ? 'bg-amber-950 text-white' : 'bg-stone-200 text-stone-900'
               }`}>
                 {GARMENTS_DATA.length}
               </span>
@@ -108,16 +108,16 @@ export const GarmentCatalog: React.FC = () => {
             <button
               onClick={() => { setSelectedGender('men'); setSelectedSubCategory('all'); }}
               aria-label="পুরুষদের পোশাক (Men garments)"
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-orange-500 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-amber-500 ${
                 selectedGender === 'men'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'text-slate-700 hover:text-slate-900'
+                  ? 'bg-amber-900 text-white shadow-xs font-bold'
+                  : 'text-stone-700 hover:text-stone-900'
               }`}
             >
-              <User className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'men' ? 'text-white' : 'text-slate-700'}`} />
+              <User className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'men' ? 'text-white' : 'text-stone-700'}`} />
               <span className="truncate">{t("Men's", 'পুরুষ')}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
-                selectedGender === 'men' ? 'bg-orange-950 text-white' : 'bg-slate-200 text-slate-900'
+                selectedGender === 'men' ? 'bg-amber-950 text-white' : 'bg-stone-200 text-stone-900'
               }`}>
                 {menGarmentsCount}
               </span>
@@ -126,16 +126,16 @@ export const GarmentCatalog: React.FC = () => {
             <button
               onClick={() => { setSelectedGender('women'); setSelectedSubCategory('all'); }}
               aria-label="মহিলাদের পোশাক (Women garments)"
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-orange-500 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-amber-500 ${
                 selectedGender === 'women'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'text-slate-700 hover:text-slate-900'
+                  ? 'bg-amber-900 text-white shadow-xs font-bold'
+                  : 'text-stone-700 hover:text-stone-900'
               }`}
             >
-              <Heart className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'women' ? 'fill-white text-white' : 'text-slate-700'}`} />
+              <Heart className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'women' ? 'fill-white text-white' : 'text-stone-700'}`} />
               <span className="truncate">{t("Women's", 'মহিলা')}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
-                selectedGender === 'women' ? 'bg-orange-950 text-white' : 'bg-slate-200 text-slate-900'
+                selectedGender === 'women' ? 'bg-amber-950 text-white' : 'bg-stone-200 text-stone-900'
               }`}>
                 {womenGarmentsCount}
               </span>

@@ -30,7 +30,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className = '', count = 1 })
 
 export const GarmentCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-white rounded-2xl p-4 shadow-sm border border-purple-100 space-y-4">
+    <div className="bg-cream-50 rounded-2xl p-4 shadow-sm border border-cream-300 space-y-4">
       <Skeleton className="w-full h-48 rounded-xl" />
       <div className="space-y-2">
         <Skeleton className="w-3/4 h-5" />
@@ -46,8 +46,8 @@ export const GarmentCardSkeleton: React.FC = () => {
 
 export const OrderTimelineSkeleton: React.FC = () => {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-purple-100 space-y-6">
-      <div className="flex justify-between items-center pb-4 border-b border-purple-100">
+    <div className="bg-cream-50 rounded-2xl p-6 shadow-sm border border-cream-300 space-y-6">
+      <div className="flex justify-between items-center pb-4 border-b border-cream-300">
         <div className="space-y-2">
           <Skeleton className="w-36 h-6" />
           <Skeleton className="w-24 h-4" />
@@ -71,13 +71,13 @@ export const OrderTimelineSkeleton: React.FC = () => {
 
 export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ rows = 5, cols = 6 }) => {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-purple-100 overflow-hidden">
-      <div className="p-4 border-b border-purple-100 bg-purple-50/50 flex gap-4">
+    <div className="bg-cream-50 rounded-xl shadow-sm border border-cream-300 overflow-hidden">
+      <div className="p-4 border-b border-cream-300 bg-cream-100 flex gap-4">
         {Array.from({ length: cols }).map((_, i) => (
           <Skeleton key={i} className="h-4 flex-1" />
         ))}
       </div>
-      <div className="divide-y divide-purple-100">
+      <div className="divide-y divide-cream-300">
         {Array.from({ length: rows }).map((_, r) => (
           <div key={r} className="p-4 flex gap-4 items-center">
             {Array.from({ length: cols }).map((_, c) => (
@@ -92,7 +92,7 @@ export const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ rows
 
 export const SkeletonCard: React.FC = () => {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-purple-100 space-y-4 shadow-xs">
+    <div className="bg-cream-50 rounded-2xl p-5 border border-cream-300 space-y-4 shadow-xs">
       <div className="flex items-center justify-between">
         <Skeleton className="w-28 h-4" />
         <Skeleton className="w-16 h-4" />
@@ -111,7 +111,7 @@ export const SkeletonCard: React.FC = () => {
 
 export const SkeletonStat: React.FC = () => {
   return (
-    <div className="bg-white p-5 rounded-2xl border border-purple-100 shadow-xs space-y-3">
+    <div className="bg-cream-50 p-5 rounded-2xl border border-cream-300 shadow-xs space-y-3">
       <div className="flex items-center justify-between">
         <Skeleton className="w-20 h-3" />
         <Skeleton className="w-8 h-8 rounded-xl" />

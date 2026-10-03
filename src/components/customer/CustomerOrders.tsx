@@ -77,7 +77,7 @@ export const CustomerOrders: React.FC = () => {
         <button
           onClick={fetchOrders}
           aria-label={t('Refresh orders list', 'অর্ডার তালিকা রিফ্রেশ')}
-          className="p-2.5 bg-white hover:bg-purple-50 text-purple-900 rounded-xl border border-purple-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-xs focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none"
+          className="p-2.5 bg-cream-50 hover:bg-cream-100 text-purple-950 rounded-xl border border-cream-300 cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-xs focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:outline-none"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>{t('Refresh Orders', 'রিফ্রেশ')}</span>
@@ -121,19 +121,19 @@ export const CustomerOrders: React.FC = () => {
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedOrder(order); }}
                   aria-selected={isSelected}
                   aria-label={`${order.orderNumber} ${order.garment?.nameEn}`}
-                  className={`p-4 bg-white rounded-2xl border transition-all cursor-pointer space-y-2 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none ${
-                    isSelected ? 'border-orange-500 shadow-md ring-1 ring-orange-500' : 'border-purple-200/80 hover:border-purple-300 shadow-xs'
+                  className={`p-4 bg-cream-50 rounded-2xl border transition-all cursor-pointer space-y-2 focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:outline-none ${
+                    isSelected ? 'border-purple-950 shadow-md ring-1 ring-purple-950 bg-cream-100' : 'border-cream-300 hover:border-purple-950 shadow-xs'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-orange-600">{order.orderNumber}</span>
+                    <span className="font-mono text-xs font-bold text-purple-900">{order.orderNumber}</span>
                     <span className="text-xs font-mono font-bold text-purple-950">৳{order.grandTotal}</span>
                   </div>
                   <h4 className="text-sm font-bold text-purple-950">{order.garment?.nameEn}</h4>
-                  <div className="flex items-center justify-between text-xs text-purple-950/60 pt-1 border-t border-purple-100">
+                  <div className="flex items-center justify-between text-xs text-purple-950/70 pt-1 border-t border-cream-300">
                     <span className="capitalize">{order.currentStage?.replace(/_/g, ' ')}</span>
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                      order.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                      order.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-950'
                     }`}>
                       {order.paymentStatus}
                     </span>
@@ -145,14 +145,14 @@ export const CustomerOrders: React.FC = () => {
 
           {/* Selected Order Stage Tracker Dossier */}
           {selectedOrder && (
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-purple-200/80 p-6 space-y-6 shadow-xs">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-purple-100 pb-4">
+            <div className="lg:col-span-2 bg-cream-50 rounded-2xl border border-cream-300 p-6 space-y-6 shadow-xs">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-cream-300 pb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">
+                    <span className="font-mono text-sm font-bold text-purple-950 bg-cream-200 px-2 py-0.5 rounded">
                       {selectedOrder.orderNumber}
                     </span>
-                    <span className="text-xs text-purple-950/60">
+                    <span className="text-xs text-purple-950/70">
                       Booked on {new Date(selectedOrder.createdAt).toLocaleDateString()}
                     </span>
                   </div>

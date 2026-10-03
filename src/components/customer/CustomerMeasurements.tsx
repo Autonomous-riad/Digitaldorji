@@ -121,15 +121,15 @@ export const CustomerMeasurements: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {profiles.map((profile) => (
-            <div key={profile.id} className="bg-white rounded-2xl border border-purple-200/80 p-5 space-y-4 shadow-xs hover:shadow-md transition-shadow">
+            <div key={profile.id} className="bg-cream-50 rounded-2xl border border-cream-300 p-5 space-y-4 shadow-xs hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider">
+                  <span className="text-[10px] font-bold text-purple-900 uppercase tracking-wider">
                     {profile.gender} • {profile.garmentName}
                   </span>
                   <h3 className="text-base font-bold text-purple-950 mt-0.5">{profile.profileName}</h3>
-                  <span className="text-xs text-purple-950/60 flex items-center gap-1 mt-0.5">
-                    <User className="w-3.5 h-3.5 text-purple-950/60" />
+                  <span className="text-xs text-purple-950/70 flex items-center gap-1 mt-0.5">
+                    <User className="w-3.5 h-3.5 text-purple-950/70" />
                     {profile.personName}
                   </span>
                 </div>
@@ -145,17 +145,17 @@ export const CustomerMeasurements: React.FC = () => {
               {/* Inch Grid */}
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 {Object.entries(profile.measurements || {}).map(([key, val]) => (
-                  <div key={key} className="p-2 bg-purple-50 rounded-xl border border-purple-100">
-                    <span className="text-[10px] text-purple-950/60 uppercase block truncate">{key}</span>
+                  <div key={key} className="p-2 bg-cream-100 rounded-xl border border-cream-300">
+                    <span className="text-[10px] text-purple-950/70 uppercase block truncate">{key}</span>
                     <span className="text-sm font-bold text-purple-950 font-mono">{val as number}"</span>
                   </div>
                 ))}
               </div>
 
-              <div className="pt-2 border-t border-purple-100 flex items-center justify-between text-xs text-purple-950/60">
+              <div className="pt-2 border-t border-cream-300 flex items-center justify-between text-xs text-purple-950/70">
                 <span>{t('Saved on', 'সংরক্ষণ তারিখ')} {profile.updatedAt}</span>
-                <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" />
+                <span className="text-emerald-700 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-700" />
                   Verified Fit
                 </span>
               </div>
@@ -167,14 +167,14 @@ export const CustomerMeasurements: React.FC = () => {
       {/* Modal to Add New Measurement Profile */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-purple-200 space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="bg-cream-50 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-cream-300 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-purple-950 font-serif-title">
                 {t('Add New Anatomical Measurement Profile', 'নতুন বডি মেজারমেন্ট প্রোফাইল যোগ করুন')}
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="p-1 text-purple-950/60 hover:text-purple-900 cursor-pointer"
+                className="p-1 text-purple-950/60 hover:text-purple-950 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

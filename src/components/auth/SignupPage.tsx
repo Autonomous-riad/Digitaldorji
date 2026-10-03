@@ -72,8 +72,8 @@ export const SignupPage: React.FC = () => {
           className="inline-flex items-center gap-2.5 mx-auto focus:outline-none cursor-pointer group"
           id="signup-brand-button"
         >
-          <div className="w-11 h-11 rounded-2xl bg-purple-950 text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-            <Scissors className="w-5 h-5 text-orange-400" />
+          <div className="w-11 h-11 rounded-2xl bg-purple-950 text-cream-50 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <Scissors className="w-5 h-5 text-purple-200" />
           </div>
           <span className="text-2xl font-bold font-serif-title text-purple-950 tracking-tight">
             Digital Dorji
@@ -82,13 +82,13 @@ export const SignupPage: React.FC = () => {
         <h2 className="mt-4 text-2xl sm:text-3xl font-bold tracking-tight text-purple-950 font-serif-title">
           {t('Create your account', 'নতুন অ্যাকাউন্ট তৈরি করুন')}
         </h2>
-        <p className="mt-2 text-sm text-purple-900/70">
+        <p className="mt-2 text-sm text-purple-900/80">
           {t('Order bespoke tailoring with free doorstep fabric pickup & measurement', 'ডোরস্টেপ মাপ ও কাপড়ের পিকআপসহ সহজে সেলাই সেবা নিন')}
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 shadow-xl rounded-3xl border border-purple-200/80 sm:px-10">
+        <div className="bg-cream-50 py-8 px-6 shadow-xl rounded-3xl border border-cream-300 sm:px-10">
           {errorMsg && (
             <div 
               id="signup-error-alert"
@@ -109,7 +109,7 @@ export const SignupPage: React.FC = () => {
                 {t('Full Name', 'পুরো নাম')}
               </label>
               <div className="relative rounded-xl shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-950/50">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -120,7 +120,7 @@ export const SignupPage: React.FC = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Rahim Chowdhury"
-                  className="block w-full pl-10 pr-3 py-2.5 text-sm bg-purple-50/40 border border-purple-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white text-purple-950 placeholder-purple-400 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-2.5 text-sm bg-cream-100 border border-cream-300 rounded-xl focus:ring-2 focus:ring-purple-950 focus:border-purple-950 focus:bg-cream-50 text-purple-950 placeholder-purple-950/40 outline-none transition-all"
                 />
               </div>
             </div>
@@ -134,7 +134,7 @@ export const SignupPage: React.FC = () => {
                 {t('Email address', 'ইমেইল এড্রেস')}
               </label>
               <div className="relative rounded-xl shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-950/50">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
@@ -146,7 +146,7 @@ export const SignupPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="block w-full pl-10 pr-3 py-2.5 text-sm bg-purple-50/40 border border-purple-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white text-purple-950 placeholder-purple-400 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-2.5 text-sm bg-cream-100 border border-cream-300 rounded-xl focus:ring-2 focus:ring-purple-950 focus:border-purple-950 focus:bg-cream-50 text-purple-950 placeholder-purple-950/40 outline-none transition-all"
                 />
               </div>
             </div>
@@ -160,7 +160,7 @@ export const SignupPage: React.FC = () => {
                 {t('Phone number', 'মোবাইল নম্বর')}
               </label>
               <div className="relative rounded-xl shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-950/50">
                   <Phone className="w-4 h-4" />
                 </div>
                 <input
@@ -171,7 +171,7 @@ export const SignupPage: React.FC = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="01711-000000"
-                  className="block w-full pl-10 pr-3 py-2.5 text-sm bg-purple-50/40 border border-purple-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white text-purple-950 placeholder-purple-400 outline-none transition-all"
+                  className="block w-full pl-10 pr-3 py-2.5 text-sm bg-cream-100 border border-cream-300 rounded-xl focus:ring-2 focus:ring-purple-950 focus:border-purple-950 focus:bg-cream-50 text-purple-950 placeholder-purple-950/40 outline-none transition-all"
                 />
               </div>
             </div>
@@ -185,7 +185,7 @@ export const SignupPage: React.FC = () => {
                 {t('Password', 'পাসওয়ার্ড')}
               </label>
               <div className="relative rounded-xl shadow-xs">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-950/50">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -198,18 +198,18 @@ export const SignupPage: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 6 characters"
-                  className="block w-full pl-10 pr-10 py-2.5 text-sm bg-purple-50/40 border border-purple-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:bg-white text-purple-950 placeholder-purple-400 outline-none transition-all"
+                  className="block w-full pl-10 pr-10 py-2.5 text-sm bg-cream-100 border border-cream-300 rounded-xl focus:ring-2 focus:ring-purple-950 focus:border-purple-950 focus:bg-cream-50 text-purple-950 placeholder-purple-950/40 outline-none transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-purple-400 hover:text-purple-700 cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-purple-950/50 hover:text-purple-950 cursor-pointer"
                   title={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-[11px] text-purple-700/60 mt-1">
+              <p className="text-[11px] text-purple-950/70 mt-1">
                 {t('Role will be set to customer with instant profile access.', 'স্বয়ংক্রিয়ভাবে গ্রাহক প্রোফাইল তৈরি হবে।')}
               </p>
             </div>
@@ -218,7 +218,7 @@ export const SignupPage: React.FC = () => {
               type="submit"
               disabled={submitting || authLoading}
               id="signup-submit-button"
-              className="w-full mt-3 py-3 px-4 bg-orange-700 hover:bg-orange-800 disabled:opacity-60 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-lg shadow-orange-700/20 transition-all cursor-pointer"
+              className="w-full mt-3 py-3 px-4 bg-purple-950 hover:bg-purple-900 disabled:opacity-60 text-cream-50 font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
             >
               {submitting ? (
                 <>
@@ -235,13 +235,13 @@ export const SignupPage: React.FC = () => {
           </form>
 
           {/* Link to Login */}
-          <div className="mt-6 text-center pt-2 border-t border-purple-100">
-            <p className="text-xs text-purple-900/70">
+          <div className="mt-6 text-center pt-2 border-t border-cream-300">
+            <p className="text-xs text-purple-950/80">
               {t('Already have an account?', 'ইতিমধ্যে অ্যাকাউন্ট আছে?')}{' '}
               <button
                 onClick={() => navigate('/login')}
                 id="signup-to-login-link"
-                className="font-bold text-orange-600 hover:text-orange-700 underline underline-offset-2 cursor-pointer"
+                className="font-bold text-purple-950 hover:underline underline-offset-2 cursor-pointer"
               >
                 {t('Log in', 'লগইন করুন')}
               </button>
@@ -253,7 +253,7 @@ export const SignupPage: React.FC = () => {
         <div className="mt-4 text-center">
           <button
             onClick={() => navigate('/')}
-            className="text-xs text-purple-900/60 hover:text-purple-950 cursor-pointer"
+            className="text-xs text-purple-950/70 hover:text-purple-950 cursor-pointer"
           >
             ← {t('Back to Digital Dorji Storefront', 'স্টোরফ্রন্টে ফিরে যান')}
           </button>

@@ -19,29 +19,29 @@ export const Footer: React.FC = () => {
   const { navigate } = useRouter();
 
   return (
-    <footer className="bg-white border-t border-slate-200 mt-auto pt-10 pb-8 text-slate-900 font-sans shadow-2xs">
+    <footer className="bg-cream-100 border-t border-cream-300 mt-auto pt-10 pb-8 text-purple-950 font-sans shadow-2xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 text-xs text-slate-600">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 text-xs text-purple-950/80">
           {/* Col 1: Business Identity & Overview */}
           <div className="space-y-3 lg:col-span-2">
             <button
               onClick={() => navigate('/')}
               className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-xl bg-indigo-700 text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-                <Scissors className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
+                <Scissors className="w-5 h-5 text-cream-50" />
               </div>
               <div>
-                <span className="text-xl font-bold tracking-tight text-slate-950 font-serif-title">
-                  Digital Dorji <span className="text-indigo-700 font-serif-title">BD</span>
+                <span className="text-xl font-bold tracking-tight text-purple-950 font-serif-title">
+                  Digital Dorji <span className="text-purple-800 font-serif-title">BD</span>
                 </span>
-                <span className="block text-[10px] text-slate-600 font-medium">
+                <span className="block text-[10px] text-purple-900/80 font-medium">
                   {t('Doorstep Bespoke Tailoring Atelier', 'ডোরস্টেপ কাস্টম সেলাই ও টেইলারিং')}
                 </span>
               </div>
             </button>
 
-            <p className="text-xs text-slate-600 leading-relaxed max-w-md">
+            <p className="text-xs text-purple-950/70 leading-relaxed max-w-md">
               {t(
                 "Bangladesh's premier doorstep bespoke tailoring platform. We collect your unstitched fabric from your doorstep across Dhaka, Chattogram & Sylhet, digitize your anatomical measurements, hand-cut with master dorjis, and deliver in 4 days with a 100% fit guarantee.",
                 'বাংলাদেশের শীর্ষস্থানীয় ডোরস্টেপ টেইলারিং সেবা। আপনার বাসা থেকে আনস্টিচ কাপড় সংগ্রহ, মাস্টার কারিগরের নিখুঁত কাটিং এবং ৪ দিনে পারফেক্ট ফিটিংসহ হোম ডেলিভারি নিশ্চিত করছি আমরা।'
@@ -51,14 +51,14 @@ export const Footer: React.FC = () => {
 
           {/* Col 2: Legal & Consumer Rights */}
           <div className="space-y-3">
-            <h4 className="font-bold text-slate-900 uppercase text-xs tracking-wider font-serif-title">
+            <h4 className="font-bold text-purple-950 uppercase text-xs tracking-wider font-serif-title">
               {t('Legal & Policies', 'নীতিমালা ও শর্তাবলী')}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <button
                   onClick={() => navigate('/privacy-policy')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('Privacy Policy', 'গোপনীয়তা নীতিমালা')}
                 </button>
@@ -66,7 +66,7 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => navigate('/terms')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('Terms of Service', 'সেবার শর্তাবলী')}
                 </button>
@@ -74,7 +74,7 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => navigate('/refund-policy')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('Refund & Alteration Policy', 'রিফান্ড ও অলটারেশন')}
                 </button>
@@ -82,7 +82,7 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => navigate('/shipping-policy')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('Shipping & Pickup Policy', 'শিপিং ও পিকআপ নীতি')}
                 </button>
@@ -92,14 +92,14 @@ export const Footer: React.FC = () => {
 
           {/* Col 3: Company & Information */}
           <div className="space-y-3">
-            <h4 className="font-bold text-slate-900 uppercase text-xs tracking-wider font-serif-title">
+            <h4 className="font-bold text-purple-950 uppercase text-xs tracking-wider font-serif-title">
               {t('Company & Craft', 'প্রতিষ্ঠান ও তথ্য')}
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <button
                   onClick={() => navigate('/about')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('About Digital Dorji', 'আমাদের সম্পর্কে')}
                 </button>
@@ -107,7 +107,7 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => navigate('/contact')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('Contact & Support', 'যোগাযোগ ও সাপোর্ট')}
                 </button>
@@ -115,7 +115,7 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => navigate('/track-orders')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('Track Live Order', 'লাইভ অর্ডার ট্র্যাকিং')}
                 </button>
@@ -123,7 +123,7 @@ export const Footer: React.FC = () => {
               <li>
                 <button
                   onClick={() => navigate('/account')}
-                  className="text-slate-600 hover:text-indigo-700 transition-colors cursor-pointer text-left"
+                  className="text-purple-950/70 hover:text-purple-950 transition-colors cursor-pointer text-left"
                 >
                   {t('Customer Account', 'গ্রাহক অ্যাকাউন্ট')}
                 </button>
@@ -133,24 +133,24 @@ export const Footer: React.FC = () => {
 
           {/* Col 4: Real Business Address & Hotline */}
           <div className="space-y-3">
-            <h4 className="font-bold text-slate-900 uppercase text-xs tracking-wider font-serif-title">
+            <h4 className="font-bold text-purple-950 uppercase text-xs tracking-wider font-serif-title">
               {t('Atelier & Hotline', 'কারখানা ও হটলাইন')}
             </h4>
-            <div className="space-y-2 text-xs text-slate-600">
+            <div className="space-y-2 text-xs text-purple-950/80">
               <p className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-indigo-700 shrink-0 mt-0.5" />
+                <MapPin className="w-3.5 h-3.5 text-purple-800 shrink-0 mt-0.5" />
                 <span>House 42, Road 9/A, Dhanmondi & 114 Elephant Road, Dhaka-1205</span>
               </p>
-              <p className="flex items-center gap-2 font-bold text-slate-900 font-mono">
-                <Phone className="w-3.5 h-3.5 text-indigo-700 shrink-0" />
+              <p className="flex items-center gap-2 font-bold text-purple-950 font-mono">
+                <Phone className="w-3.5 h-3.5 text-purple-800 shrink-0" />
                 <span>09612-445566 / 01711-002233</span>
               </p>
               <p className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-indigo-700 shrink-0" />
-                <a href="mailto:contact@digitaldorji.com" className="text-indigo-700 hover:underline">contact@digitaldorji.com</a>
+                <Mail className="w-3.5 h-3.5 text-purple-800 shrink-0" />
+                <a href="mailto:contact@digitaldorji.com" className="text-purple-900 hover:underline">contact@digitaldorji.com</a>
               </p>
-              <p className="flex items-center gap-2 text-[11px] text-slate-600">
-                <Clock className="w-3.5 h-3.5 text-slate-700 shrink-0" />
+              <p className="flex items-center gap-2 text-[11px] text-purple-950/70">
+                <Clock className="w-3.5 h-3.5 text-purple-800 shrink-0" />
                 <span>{t('Sat - Thu: 9:00 AM - 10:00 PM', 'শনি - বৃহস্পতি: সকাল ৯টা - রাত ১০টা')}</span>
               </p>
             </div>
@@ -158,7 +158,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar: Copyright */}
-        <div className="pt-8 mt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-600">
+        <div className="pt-8 mt-8 border-t border-cream-300 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-purple-950/70">
           <p>© {new Date().getFullYear()} Digital Dorji BD. {t('All rights reserved.', 'সর্বস্বত্ব সংরক্ষিত।')}</p>
         </div>
       </div>

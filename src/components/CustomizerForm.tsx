@@ -88,25 +88,25 @@ export const CustomizerForm: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-5 sm:space-y-7 pb-32 sm:pb-16">
       {/* Step Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-xl border border-purple-200 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-2xl border border-stone-200 shadow-xs">
         <div className="flex items-center gap-3 sm:gap-4">
           <img
             src={activeGarment.image}
             alt={activeGarment.nameEn}
-            className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover border border-purple-200 shadow-xs shrink-0"
+            className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover border border-stone-200 shadow-xs shrink-0"
             referrerPolicy="no-referrer"
           />
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-orange-950 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+              <span className="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
                 {t('Step 2 of 4: Custom Styling', 'ধাপ ২/৪: স্টাইল নির্বাচন')}
               </span>
-              <span className="text-xs text-purple-950/60 font-medium">{t(activeGarment.categoryEn, activeGarment.categoryBn)}</span>
+              <span className="text-xs text-stone-600 font-medium">{t(activeGarment.categoryEn, activeGarment.categoryBn)}</span>
             </div>
-            <h2 className="text-lg sm:text-2xl font-bold text-purple-950 mt-1 font-serif-title">
+            <h2 className="text-lg sm:text-2xl font-bold text-stone-900 mt-1 font-serif-title">
               {t(activeGarment.nameEn, activeGarment.nameBn)}
             </h2>
-            <p className="text-xs text-purple-950/60 hidden sm:block">
+            <p className="text-xs text-stone-600 hidden sm:block">
               {t(
                 'Configure neck designs, sleeve cuts, collar or bottom styles, lining & bespoke monogramming with realistic live preview.',
                 'বাস্তবসম্মত লাইভ প্রিভিউ সহ কলার/গলার ডিজাইন, হাতা, কাটিং ও কাস্টম বিবরণী বেছে নিন।'
@@ -116,13 +116,13 @@ export const CustomizerForm: React.FC = () => {
         </div>
 
         {/* Live Running Total Card */}
-        <div className="bg-purple-50 p-3 sm:p-4 rounded-xl border border-purple-200 w-full sm:w-auto text-right flex sm:flex-col justify-between items-center sm:items-end">
-          <span className="text-xs text-purple-950/60">{t('Tailoring Fee', 'সেলাই চার্জ')}</span>
-          <span className="text-xl sm:text-2xl font-black text-purple-950 font-mono">
+        <div className="bg-stone-50 p-3 sm:p-4 rounded-xl border border-stone-200 w-full sm:w-auto text-right flex sm:flex-col justify-between items-center sm:items-end">
+          <span className="text-xs text-stone-600">{t('Tailoring Fee', 'সেলাই চার্জ')}</span>
+          <span className="text-xl sm:text-2xl font-black text-stone-900 font-mono">
             ৳{pricing.basePrice + pricing.customizationTotal}
           </span>
           {fabricDetails.fabricSource === 'shop_fabric' && pricing.fabricCost > 0 && (
-            <span className="text-[11px] text-orange-700 font-semibold mt-0.5">
+            <span className="text-[11px] text-amber-800 font-semibold mt-0.5">
               + ৳{pricing.fabricCost} {t('Fabric Cost', 'কাপড়ের মূল্য')}
             </span>
           )}
@@ -130,13 +130,13 @@ export const CustomizerForm: React.FC = () => {
       </div>
 
       {/* Currently Selected Customization Quick Bar (Mobile & Desktop) */}
-      <div className="bg-white rounded-xl border border-purple-200 p-3 sm:p-4 shadow-xs">
+      <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-xs">
         <div className="flex items-center justify-between gap-2 mb-2">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-purple-900 uppercase tracking-wider">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-orange-600" />
+          <div className="flex items-center gap-1.5 text-xs font-bold text-stone-800 uppercase tracking-wider">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-amber-700" />
             <span>{t('Your Active Style Selections', 'আপনার নির্বাচিত স্টাইলসমূহ')}</span>
           </div>
-          <span className="text-[11px] text-purple-950/60">
+          <span className="text-[11px] text-stone-500">
             {activeGarment.customizationGroups.length} {t('components', 'টি অংশ')}
           </span>
         </div>
@@ -153,15 +153,15 @@ export const CustomizerForm: React.FC = () => {
                 key={group.id}
                 type="button"
                 onClick={() => scrollToGroup(group.id)}
-                className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-purple-50 hover:bg-orange-50 border border-purple-200 text-purple-950 transition-all text-xs cursor-pointer group active:scale-95"
+                className="shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-stone-50 hover:bg-amber-50 border border-stone-200 text-stone-900 transition-all text-xs cursor-pointer group active:scale-95"
               >
-                <span className="font-semibold text-[11px] text-purple-950/60">
+                <span className="font-semibold text-[11px] text-stone-500">
                   {t(group.titleEn, group.titleBn)}:
                 </span>
-                <span className="font-bold text-[11px] text-purple-950 group-hover:text-orange-800">
+                <span className="font-bold text-[11px] text-stone-900 group-hover:text-amber-900">
                   {t(currentOption.labelEn, currentOption.labelBn)}
                 </span>
-                <Check className="w-3 h-3 text-orange-600 shrink-0" />
+                <Check className="w-3 h-3 text-amber-700 shrink-0" />
               </button>
             );
           })}
@@ -170,22 +170,22 @@ export const CustomizerForm: React.FC = () => {
 
       {/* Selected Shop Fabric Bar (if shop fabric was selected) */}
       {fabricDetails.fabricSource === 'shop_fabric' && fabricDetails.selectedShopFabric && (
-        <div className="bg-orange-50/70 border border-orange-200 rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <img
               src={fabricDetails.selectedShopFabric.image}
               alt={fabricDetails.selectedShopFabric.nameEn}
-              className="w-12 h-12 rounded-lg object-cover border border-orange-200"
+              className="w-12 h-12 rounded-lg object-cover border border-amber-200"
               referrerPolicy="no-referrer"
             />
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-900 bg-white px-2 py-0.5 rounded border border-orange-200">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-white px-2 py-0.5 rounded border border-amber-200">
                   {t('Shop Sourced Fabric', 'শপের বাছাইকৃত কাপড়')}
                 </span>
-                <span className="text-xs font-bold text-purple-900">{fabricDetails.selectedShopFabric.nameEn}</span>
+                <span className="text-xs font-bold text-stone-900">{fabricDetails.selectedShopFabric.nameEn}</span>
               </div>
-              <p className="text-xs text-purple-800/80">
+              <p className="text-xs text-stone-600">
                 {fabricDetails.selectedShopFabric.materialComposition} • {activeGarment.recommendedFabricGaz} {t('Gaz allocated', 'গজ বরাদ্দ')} (৳{fabricDetails.selectedShopFabric.pricePerGaz}/Gaz)
               </p>
             </div>
@@ -193,7 +193,7 @@ export const CustomizerForm: React.FC = () => {
 
           <button
             onClick={() => setActiveStep('fabric_catalog')}
-            className="text-xs text-orange-800 hover:text-orange-950 font-bold bg-white px-3 py-1.5 rounded-lg border border-orange-200 cursor-pointer self-end sm:self-auto shadow-2xs"
+            className="text-xs text-amber-900 hover:text-amber-950 font-bold bg-white px-3 py-1.5 rounded-lg border border-amber-200 cursor-pointer self-end sm:self-auto shadow-2xs"
           >
             {t('Change Fabric', 'কাপড় পরিবর্তন')}
           </button>
@@ -201,15 +201,15 @@ export const CustomizerForm: React.FC = () => {
       )}
 
       {/* Mobile Toggle for Visualizer */}
-      <div className="sm:hidden flex items-center justify-between bg-purple-950 text-white p-2.5 rounded-xl border border-purple-200">
+      <div className="sm:hidden flex items-center justify-between bg-stone-900 text-white p-2.5 rounded-xl border border-stone-800">
         <span className="text-xs font-bold flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-orange-400" />
+          <Sparkles className="w-3.5 h-3.5 text-amber-300" />
           {t('Live 2D Garment Visualizer', 'লাইভ প্রিভিউ')}
         </span>
         <button
           type="button"
           onClick={() => setShowMobileVisualizer(!showMobileVisualizer)}
-          className="text-xs bg-purple-100 text-orange-300 font-semibold px-2.5 py-1 rounded-lg border border-purple-900 flex items-center gap-1 cursor-pointer active:scale-95"
+          className="text-xs bg-stone-800 text-amber-300 font-semibold px-2.5 py-1 rounded-lg border border-stone-700 flex items-center gap-1 cursor-pointer active:scale-95"
         >
           {showMobileVisualizer ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
           {showMobileVisualizer ? t('Hide Preview', 'লুকান') : t('Show Preview', 'দেখুন')}
@@ -252,21 +252,21 @@ export const CustomizerForm: React.FC = () => {
         };
 
         return (
-          <div className="bg-gradient-to-br from-purple-950 via-purple-950 to-purple-950 text-white rounded-2xl p-4 sm:p-6 border border-purple-200 shadow-lg space-y-4">
+          <div className="bg-stone-900 text-white rounded-2xl p-4 sm:p-6 border border-stone-800 shadow-lg space-y-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-orange-700 text-white flex items-center justify-center font-bold">
+                  <span className="w-6 h-6 rounded-lg bg-amber-700 text-white flex items-center justify-center font-bold">
                     <Star className="w-3.5 h-3.5 fill-current" />
                   </span>
                   <h3 className="text-base sm:text-lg font-bold text-white font-serif-title">
                     {t('1-Click Master Tailor Style Presets', 'স্মার্ট ১-ক্লিক মাস্টার স্টাইল প্যাকেজ')}
                   </h3>
-                  <span className="text-[10px] bg-orange-500/20 text-orange-300 font-bold px-2 py-0.5 rounded-full border border-orange-400/30">
+                  <span className="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-2 py-0.5 rounded-full border border-amber-400/30">
                     {t('Quick Setup', 'সহজ নির্বাচন')}
                   </span>
                 </div>
-                <p className="text-xs text-purple-300 mt-1">
+                <p className="text-xs text-stone-300 mt-1">
                   {t(
                     'Don’t want to choose every neckline & sleeve cut manually? Tap a complete artisan look below, then tweak any detail as you wish.',
                     'প্রতিটি গলার ডিজাইন বা হাতা আলাদাভাবে বেছে নিতে সময় নেই? এক ক্লিকে সম্পূর্ণ স্টাইল প্যাকেজ সেট করুন এবং প্রয়োজনমত পরিবর্তন করুন।'
@@ -275,7 +275,7 @@ export const CustomizerForm: React.FC = () => {
               </div>
 
               {appliedPresetToast && (
-                <div className="px-3 py-1.5 rounded-xl bg-orange-700 text-white font-bold text-xs flex items-center gap-1.5 animate-bounce shadow-md shrink-0">
+                <div className="px-3 py-1.5 rounded-xl bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 animate-bounce shadow-md shrink-0">
                   <CheckCheck className="w-4 h-4" />
                   <span>{appliedPresetToast}</span>
                 </div>
@@ -293,40 +293,40 @@ export const CustomizerForm: React.FC = () => {
                     onClick={() => applyPreset(preset)}
                     className={`p-3.5 sm:p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer group ${
                       active
-                        ? 'border-orange-500 bg-orange-500/20 ring-2 ring-orange-500/40 shadow-md'
-                        : 'border-white/15 bg-white/5 hover:bg-white/10 hover:border-orange-400/50'
+                        ? 'border-amber-500 bg-amber-500/20 ring-2 ring-amber-500/40 shadow-md'
+                        : 'border-white/15 bg-white/5 hover:bg-white/10 hover:border-amber-400/50'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-orange-300 bg-purple-950 px-2 py-0.5 rounded border border-orange-500/30">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-stone-950 px-2 py-0.5 rounded border border-amber-500/30">
                           {t(preset.badgeEn, preset.badgeBn)}
                         </span>
                         <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                          active ? 'bg-orange-500 border-orange-500 text-white' : 'border-white/30'
+                          active ? 'bg-amber-500 border-amber-500 text-white' : 'border-white/30'
                         }`}>
                           {active && <Check className="w-3 h-3 stroke-[3]" />}
                         </div>
                       </div>
 
-                      <h4 className="text-sm font-bold text-white group-hover:text-orange-300 transition-colors">
+                      <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">
                         {t(preset.titleEn, preset.titleBn)}
                       </h4>
-                      <p className="text-[11px] text-purple-300 mt-1 leading-snug">
+                      <p className="text-[11px] text-stone-300 mt-1 leading-snug">
                         {t(preset.subtitleEn, preset.subtitleBn)}
                       </p>
                     </div>
 
                     <div className="pt-3 mt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                      <span className="text-[10px] text-purple-300">
+                      <span className="text-[10px] text-stone-300">
                         {active ? t('Currently Active', 'বর্তমান স্টাইল') : t('Includes all cuts', 'সম্পূর্ণ স্টাইল')}
                       </span>
                       <button
                         type="button"
                         className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer ${
                           active
-                            ? 'bg-orange-700 text-white shadow-xs'
-                            : 'bg-white/10 text-white hover:bg-orange-700 hover:text-white'
+                            ? 'bg-amber-700 text-white shadow-xs'
+                            : 'bg-white/10 text-white hover:bg-amber-700 hover:text-white'
                         }`}
                       >
                         {active ? t('Active ✓', 'এক্টিভ ✓') : t('1-Tap Apply', 'প্রয়োগ করুন')}
@@ -341,30 +341,30 @@ export const CustomizerForm: React.FC = () => {
       })()}
 
       {/* Category Navigation Tabs (Filter & Jump to Component) */}
-      <div className="bg-white rounded-xl border border-purple-200 p-3 sm:p-4 shadow-xs space-y-2">
+      <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-xs space-y-2">
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-bold text-purple-950 uppercase tracking-wider">
+            <span className="text-xs font-bold text-stone-900 uppercase tracking-wider">
               {t('Browse Components', 'অংশ নির্বাচন')}
             </span>
-            <span className="text-[11px] text-purple-950/60 hidden sm:inline">
+            <span className="text-[11px] text-stone-500 hidden sm:inline">
               • {t('Tap any part to customize directly', 'যেকোনো অংশে ক্লিক করে সরাসরি পরিবর্তন করুন')}
             </span>
           </div>
 
           {/* View mode toggle */}
-          <div className="flex items-center bg-purple-100 p-0.5 rounded-lg border border-purple-200">
+          <div className="flex items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
             <button
               type="button"
               onClick={() => setViewMode('grid')}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'grid'
-                  ? 'bg-white text-purple-950 shadow-2xs font-bold'
-                  : 'text-purple-950/60 hover:text-purple-950'
+                  ? 'bg-amber-900 text-white shadow-2xs font-bold'
+                  : 'text-stone-700 hover:text-stone-900'
               }`}
               title={t('Compact 2-Column Grid', 'কম্প্যাক্ট গ্রিড ভিউ')}
             >
-              <LayoutGrid className="w-3.5 h-3.5 text-orange-600" />
+              <LayoutGrid className="w-3.5 h-3.5 text-amber-300" />
               <span className="text-[11px]">{t('Compact', 'কমপ্যাক্ট')}</span>
             </button>
             <button
@@ -372,12 +372,12 @@ export const CustomizerForm: React.FC = () => {
               onClick={() => setViewMode('detailed')}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
                 viewMode === 'detailed'
-                  ? 'bg-white text-purple-950 shadow-2xs font-bold'
-                  : 'text-purple-950/60 hover:text-purple-950'
+                  ? 'bg-amber-900 text-white shadow-2xs font-bold'
+                  : 'text-stone-700 hover:text-stone-900'
               }`}
               title={t('Detailed Specification Cards', 'বিস্তারিত বিবরণী')}
             >
-              <ListFilter className="w-3.5 h-3.5 text-orange-600" />
+              <ListFilter className="w-3.5 h-3.5 text-amber-300" />
               <span className="text-[11px]">{t('Details', 'বিস্তারিত')}</span>
             </button>
           </div>
@@ -390,8 +390,8 @@ export const CustomizerForm: React.FC = () => {
             onClick={() => setSelectedGroupTab('all')}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold shrink-0 transition-all cursor-pointer ${
               selectedGroupTab === 'all'
-                ? 'bg-orange-700 text-white shadow-xs'
-                : 'bg-purple-100 text-purple-900 hover:bg-purple-200 border border-purple-200'
+                ? 'bg-amber-900 text-white shadow-xs'
+                : 'bg-stone-100 text-stone-900 hover:bg-stone-200 border border-stone-200'
             }`}
           >
             {t('All Components', 'সব অংশ')} ({activeGarment.customizationGroups.length})
@@ -412,14 +412,14 @@ export const CustomizerForm: React.FC = () => {
                 }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
                   isTabActive
-                    ? 'bg-orange-700 text-white shadow-xs'
-                    : 'bg-purple-100 text-purple-900 hover:bg-orange-50 border border-purple-200'
+                    ? 'bg-amber-900 text-white shadow-xs'
+                    : 'bg-stone-100 text-stone-900 hover:bg-amber-50 border border-stone-200'
                 }`}
               >
                 <span>{t(group.titleEn, group.titleBn)}</span>
                 {currentOpt && (
                   <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono ${
-                    isTabActive ? 'bg-orange-950 text-white' : 'bg-white text-purple-800/80 border border-purple-200'
+                    isTabActive ? 'bg-stone-950 text-white' : 'bg-white text-stone-700 border border-stone-200'
                   }`}>
                     ✓
                   </span>
@@ -442,33 +442,33 @@ export const CustomizerForm: React.FC = () => {
             <div 
               key={group.id} 
               id={`customization-group-${group.id}`}
-              className="bg-white rounded-xl border border-purple-200 p-4 sm:p-6 shadow-xs scroll-mt-24 transition-all"
+              className="bg-white rounded-xl border border-stone-200 p-4 sm:p-6 shadow-xs scroll-mt-24 transition-all"
             >
               {/* Group Header with "Compare Specs" button */}
-              <div className="flex items-start sm:items-center justify-between gap-3 mb-3 sm:mb-4 pb-2.5 border-b border-purple-200">
+              <div className="flex items-start sm:items-center justify-between gap-3 mb-3 sm:mb-4 pb-2.5 border-b border-stone-200">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-purple-950 flex items-center gap-2 font-serif-title">
-                    <span className="w-2.5 h-2.5 rounded-full bg-orange-700"></span>
+                  <h3 className="text-sm sm:text-base font-bold text-stone-950 flex items-center gap-2 font-serif-title">
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-900"></span>
                     {t(group.titleEn, group.titleBn)}
                   </h3>
-                  <p className="text-[11px] sm:text-xs text-purple-950/60 mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-stone-500 mt-0.5">
                     {t('Choose how the master tailor should cut and assemble this component', 'টেইলার কীভাবে এই অংশটি নিখুঁতভাবে তৈরি করবে নির্বাচন করুন')}
                   </p>
                 </div>
 
-                {/* Compare Button (with deep purple royal accent) */}
+                {/* Compare Button */}
                 <button
                   type="button"
                   onClick={() => setActiveCompareGroup(group)}
-                  className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-purple-900 bg-purple-50 hover:bg-purple-100 border border-purple-200 transition-all cursor-pointer"
+                  className="shrink-0 flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all cursor-pointer"
                   title={t('Compare all options in this category side-by-side', 'এক নজরে সব অপশন তুলনা করুন')}
                 >
-                  <Sparkles className="w-3 h-3 text-purple-700" />
+                  <Sparkles className="w-3 h-3 text-amber-800" />
                   <span className="text-[11px]">{t('Compare All', 'তুলনা')}</span>
                 </button>
               </div>
 
-              {/* Options Grid: Responsive 2-col on mobile in 'grid' view mode */}
+              {/* Options Grid */}
               <div className={
                 viewMode === 'grid'
                   ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4"
@@ -484,33 +484,33 @@ export const CustomizerForm: React.FC = () => {
                       onClick={() => updateCustomization(group.id, option.id)}
                       className={`p-2.5 sm:p-3.5 rounded-xl text-left border transition-all flex flex-col justify-between gap-2.5 sm:gap-3 relative cursor-pointer group ${
                         isSelected
-                          ? 'border-orange-500 bg-orange-50/50 ring-2 ring-orange-500/25 shadow-xs'
-                          : 'border-purple-200 bg-white hover:bg-purple-50 hover:border-purple-300 shadow-2xs'
+                          ? 'border-amber-900 bg-amber-50/50 ring-2 ring-amber-900/20 shadow-xs'
+                          : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300 shadow-2xs'
                       }`}
                     >
                       {/* Realistic Technical Art / Visual Illustration of Option */}
-                      <div className="w-full relative rounded-lg overflow-hidden border border-purple-200 bg-purple-50/50 group-hover:border-purple-300 transition-colors">
+                      <div className="w-full relative rounded-lg overflow-hidden border border-stone-200 bg-stone-50 group-hover:border-stone-300 transition-colors">
                         <div className={`w-full ${viewMode === 'grid' ? 'h-24 sm:h-32' : 'h-32 sm:h-36'} flex items-center justify-center p-1 transition-transform duration-200 group-hover:scale-[1.02]`}>
                           <CustomizationOptionArt optionId={option.id} isSelected={isSelected} />
                         </div>
 
                         {/* Top-left Style Badge */}
                         {guide && (
-                          <div className="absolute top-1.5 left-1.5 px-1.5 sm:px-2 py-0.5 rounded bg-white backdrop-blur-xs text-orange-300 text-[9px] sm:text-[10px] font-semibold tracking-wide flex items-center gap-1 shadow-xs border border-purple-900 max-w-[48%] z-10">
-                            <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-orange-400 shrink-0" />
+                          <div className="absolute top-1.5 left-1.5 px-1.5 sm:px-2 py-0.5 rounded bg-white backdrop-blur-xs text-amber-900 text-[9px] sm:text-[10px] font-semibold tracking-wide flex items-center gap-1 shadow-xs border border-amber-900/30 max-w-[48%] z-10">
+                            <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-800 shrink-0" />
                             <span className="truncate">{guide.badge}</span>
                           </div>
                         )}
 
                         {/* Selection check indicator */}
                         {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 p-1 sm:px-2 sm:py-0.5 rounded-full sm:rounded bg-orange-700 text-white text-[9px] sm:text-[10px] font-bold tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 shadow-xs z-10">
+                          <div className="absolute top-1.5 right-1.5 p-1 sm:px-2 sm:py-0.5 rounded-full sm:rounded bg-amber-900 text-white text-[9px] sm:text-[10px] font-bold tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 shadow-xs z-10">
                             <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                             <span className="hidden sm:inline">{t('Selected', 'নির্বাচিত')}</span>
                           </div>
                         )}
 
-                        {/* Quick Info Button for Easy Understanding */}
+                        {/* Quick Info Button */}
                         {guide && (
                           <button
                             type="button"
@@ -522,7 +522,7 @@ export const CustomizerForm: React.FC = () => {
                                 labelBn: option.labelBn
                               });
                             }}
-                            className="absolute bottom-1.5 right-1.5 p-1 sm:p-1.5 rounded-full bg-white/95 hover:bg-orange-700 hover:text-white text-purple-900 shadow-xs transition-colors border border-purple-200 cursor-pointer z-10"
+                            className="absolute bottom-1.5 right-1.5 p-1 sm:p-1.5 rounded-full bg-white/95 hover:bg-amber-900 hover:text-white text-stone-800 shadow-xs transition-colors border border-stone-200 cursor-pointer z-10"
                             title={t('Click to understand this styling option', 'এই স্টাইলের বিস্তারিত জানুন')}
                           >
                             <Info className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -534,35 +534,35 @@ export const CustomizerForm: React.FC = () => {
                       <div className="space-y-1">
                         <div className="flex items-start justify-between gap-1.5">
                           <div>
-                            <span className={`text-xs sm:text-sm font-bold block leading-tight ${isSelected ? 'text-purple-950 font-extrabold' : 'text-purple-950'}`}>
+                            <span className={`text-xs sm:text-sm font-bold block leading-tight ${isSelected ? 'text-amber-950 font-extrabold' : 'text-stone-900'}`}>
                               {t(option.labelEn, option.labelBn)}
                             </span>
                             {option.id === group.defaultOptionId && (
-                              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-orange-900 bg-orange-50 px-1.5 py-0.2 rounded mt-0.5 border border-orange-200">
+                              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-amber-900 bg-amber-50 px-1.5 py-0.2 rounded mt-0.5 border border-amber-200">
                                 ★ {t('Tailor Pick', 'টেইলার্স চয়েস')}
                               </span>
                             )}
                           </div>
                           <div className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shrink-0 border transition-colors ${
-                            isSelected ? 'bg-orange-700 border-orange-700 text-white' : 'border-purple-300 bg-white group-hover:border-purple-400'
+                            isSelected ? 'bg-amber-900 border-amber-900 text-white' : 'border-stone-300 bg-white group-hover:border-stone-400'
                           }`}>
                             {isSelected && <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />}
                           </div>
                         </div>
 
-                        {/* Non-Technical Clear Explanation (in detailed view or compact one-liner) */}
+                        {/* Non-Technical Clear Explanation */}
                         {guide && (
-                          <p className={`text-[10px] sm:text-[11px] text-purple-800/80 leading-relaxed ${viewMode === 'grid' ? 'line-clamp-1' : 'line-clamp-2'}`}>
+                          <p className={`text-[10px] sm:text-[11px] text-stone-600 leading-relaxed ${viewMode === 'grid' ? 'line-clamp-1' : 'line-clamp-2'}`}>
                             {t(guide.simpleExplanation, guide.simpleExplanationBn)}
                           </p>
                         )}
 
-                        {/* Visual Highlights (shown in detailed view) */}
+                        {/* Visual Highlights */}
                         {viewMode === 'detailed' && guide && guide.visualHighlights && (
                           <div className="pt-1 space-y-1">
                             {guide.visualHighlights.slice(0, 2).map((highlight, hIdx) => (
-                              <div key={hIdx} className="flex items-center gap-1 text-[10px] text-purple-950/60">
-                                <Check className="w-2.5 h-2.5 text-orange-600 shrink-0" />
+                              <div key={hIdx} className="flex items-center gap-1 text-[10px] text-stone-600">
+                                <Check className="w-2.5 h-2.5 text-amber-800 shrink-0" />
                                 <span className="truncate">{highlight}</span>
                               </div>
                             ))}
@@ -572,7 +572,7 @@ export const CustomizerForm: React.FC = () => {
                         {/* Best For Tag */}
                         {guide && (
                           <div className="pt-0.5 flex items-center gap-1 flex-wrap">
-                            <span className="text-[9px] sm:text-[10px] font-semibold text-purple-900 bg-purple-100 px-1.5 sm:px-2 py-0.5 rounded-md truncate max-w-full border border-purple-200">
+                            <span className="text-[9px] sm:text-[10px] font-semibold text-stone-700 bg-stone-100 px-1.5 sm:px-2 py-0.5 rounded-md truncate max-w-full border border-stone-200">
                               {t(`${guide.bestFor}`, `${guide.bestFor}`)}
                             </span>
                           </div>

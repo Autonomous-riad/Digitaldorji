@@ -1,6 +1,21 @@
 export type GenderCategory = 'men' | 'women';
 
-export type MeasurementMethod = 'custom_manual' | 'preset_size' | 'home_technician';
+export type MeasurementMethod = 'custom_manual' | 'preset_size' | 'reference_sample' | 'home_technician' | 'use_my_clothes';
+
+export interface ReferenceClothDetails {
+  itemType: string;
+  description: string;
+  pickupMode: 'runner_pickup' | 'customer_dropoff' | 'courier' | 'photo_only';
+  pickupAddressNote?: string;
+  adjustmentNotes?: string;
+  fitPreference?: 'exact_sample' | 'slightly_slimmer' | 'slightly_looser' | 'custom_adjustments';
+  samplePhotoUrl?: string;
+  samplePhotos?: string[];
+  tagNumber?: string;
+  brandOrSizeTag?: string;
+  approxDimensions?: Record<string, number>;
+  usePhotoAndDimensionsOnly?: boolean;
+}
 
 export interface MeasurementSchemaField {
   key: string;
@@ -208,6 +223,7 @@ export interface TailorOrder {
   measurementMethod: MeasurementMethod;
   measurements: { [fieldId: string]: number };
   selectedSizePreset?: string;
+  referenceClothDetails?: ReferenceClothDetails;
   selectedCustomizations: { [groupId: string]: string };
   fabricDetails: FabricDetails;
   pickupAddress: PickupAddress;

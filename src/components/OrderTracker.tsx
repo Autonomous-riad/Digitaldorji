@@ -246,21 +246,21 @@ export const OrderTracker: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12">
       {/* Universal Guest Order Lookup Card */}
-      <div className="bg-white p-6 rounded-2xl border border-orange-200 shadow-sm">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-purple-100">
+      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-stone-200">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+              <span className="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
                 {t('Guest & Customer Order Tracking', 'গেস্ট ও কাস্টমার অর্ডার ট্র্যাকিং')}
               </span>
-              <span className="text-[11px] text-purple-950/60 hidden sm:inline">
+              <span className="text-[11px] text-stone-500 hidden sm:inline">
                 {t('• No login required', '• লগইন আবশ্যক নয়')}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-purple-950 mt-1 font-serif-title">
+            <h2 className="text-xl sm:text-2xl font-bold text-stone-950 mt-1 font-serif-title">
               {t('Track Your Tailoring Order', 'আপনার টেইলারিং অর্ডার ট্র্যাক করুন')}
             </h2>
-            <p className="text-xs text-purple-950/60">
+            <p className="text-xs text-stone-600">
               {t('Enter your Order ID (from receipt/SMS) and registered phone number to view live workshop milestones.', 'আপনার অর্ডার আইডি এবং ফোন নম্বর দিয়ে লাইভ অগ্রগতি ও ডেলিভারি স্ট্যাটাস দেখুন।')}
             </p>
           </div>
@@ -268,7 +268,7 @@ export const OrderTracker: React.FC = () => {
           <button
             type="button"
             onClick={handleQuickFillDemo}
-            className="text-[11px] text-orange-700 hover:text-orange-800 bg-orange-50 hover:bg-orange-100 px-3 py-1.5 rounded-lg border border-orange-200 font-medium transition-colors cursor-pointer shrink-0"
+            className="text-[11px] text-amber-900 hover:text-stone-900 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg border border-amber-200 font-medium transition-colors cursor-pointer shrink-0"
           >
             {t('Quick Demo: DB-2026-9812', 'ডেমো অর্ডার: DB-2026-9812')}
           </button>
@@ -277,33 +277,33 @@ export const OrderTracker: React.FC = () => {
         {/* Tracking Search Form */}
         <form onSubmit={handleTrackSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-4">
           <div className="sm:col-span-5 relative">
-            <label className="block text-[11px] font-bold text-purple-900 mb-1">
+            <label className="block text-[11px] font-bold text-stone-900 mb-1">
               {t('Order ID / Number', 'অর্ডার আইডি / নম্বর')}
             </label>
             <div className="relative">
-              <Hash className="w-4 h-4 text-purple-950/60 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Hash className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchOrderId}
                 onChange={(e) => setSearchOrderId(e.target.value)}
                 placeholder="e.g. DB-2026-9812"
-                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-purple-300 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
               />
             </div>
           </div>
 
           <div className="sm:col-span-4 relative">
-            <label className="block text-[11px] font-bold text-purple-900 mb-1">
+            <label className="block text-[11px] font-bold text-stone-900 mb-1">
               {t('Customer Phone Number', 'গ্রাহকের ফোন নম্বর')}
             </label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-purple-950/60 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Phone className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchPhone}
                 onChange={(e) => setSearchPhone(e.target.value)}
                 placeholder="e.g. 01711223344"
-                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-purple-300 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
               />
             </div>
           </div>
@@ -312,7 +312,7 @@ export const OrderTracker: React.FC = () => {
             <button
               type="submit"
               disabled={isSearching}
-              className="w-full py-2 px-4 rounded-xl bg-orange-700 hover:bg-orange-800 active:bg-orange-900 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm shadow-orange-700/20 cursor-pointer disabled:opacity-60"
+              className="w-full py-2 px-4 rounded-xl bg-amber-900 hover:bg-stone-900 active:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-60"
             >
               <Search className="w-3.5 h-3.5" />
               <span>{isSearching ? t('Verifying...', 'যাচাই হচ্ছে...') : t('Track Order', 'ট্র্যাক করুন')}</span>

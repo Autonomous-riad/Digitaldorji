@@ -96,24 +96,24 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
       aria-modal="true"
       aria-labelledby="auth-modal-title"
     >
-      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-purple-200 space-y-4 relative">
+      <div className="bg-cream-50 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-cream-300 space-y-4 relative">
         <button
           onClick={onClose}
           aria-label={t('Close modal', 'মডাল বন্ধ করুন')}
-          className="absolute right-4 top-4 p-1.5 text-purple-950/60 hover:text-purple-900 rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none"
+          className="absolute right-4 top-4 p-1.5 text-purple-950/60 hover:text-purple-950 rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:outline-none"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-orange-700 text-white flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center">
             <Scissors className="w-5 h-5" />
           </div>
           <div>
             <h3 id="auth-modal-title" className="text-base font-bold text-purple-950 font-serif-title">
               {mode === 'login' ? t('Customer Account Sign In', 'গ্রাহক একাউন্ট লগইন') : t('Create Customer Account', 'নতুন একাউন্ট খুলুন')}
             </h3>
-            <p className="text-xs text-purple-950/60">
+            <p className="text-xs text-purple-950/70">
               {t('Manage tailoring orders, saved measurements & pickups', 'সেলাই অর্ডার ও মাপের প্রোফাইল সংরক্ষণ করুন')}
             </p>
           </div>
@@ -232,7 +232,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-orange-700 hover:bg-orange-800 text-white font-semibold rounded-xl transition-colors cursor-pointer shadow-sm mt-2 focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none disabled:opacity-50"
+            className="w-full py-2.5 px-4 bg-purple-950 hover:bg-purple-900 text-cream-50 font-bold rounded-xl transition-colors cursor-pointer shadow-sm mt-2 focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:outline-none disabled:opacity-50"
           >
             {isLoading 
               ? t('Processing...', 'প্রক্রিয়াধীন...') 
@@ -244,21 +244,21 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
 
         {/* Demo Fast Fill */}
         {mode === 'login' && (
-          <div className="pt-3 border-t border-purple-100 flex items-center justify-between text-xs">
-            <span className="text-purple-950/60">{t('Demo account:', 'ডেমো অ্যাকাউন্ট:')}</span>
+          <div className="pt-3 border-t border-cream-300 flex items-center justify-between text-xs">
+            <span className="text-purple-950/70">{t('Demo account:', 'ডেমো অ্যাকাউন্ট:')}</span>
             <button
               onClick={fillDemoCustomer}
               type="button"
-              className="text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 rounded p-1"
+              className="text-purple-900 hover:text-purple-950 font-bold flex items-center gap-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-950 rounded p-1"
             >
-              <Sparkles className="w-3 h-3" />
+              <Sparkles className="w-3 h-3 text-purple-900" />
               <span>{t('Fill Demo Customer', 'ডেমো গ্রাহক অটো ফিল')}</span>
             </button>
           </div>
         )}
 
         {/* Toggle Mode */}
-        <div className="text-center text-xs text-purple-950/60 pt-2 border-t border-purple-100">
+        <div className="text-center text-xs text-purple-950/70 pt-2 border-t border-cream-300">
           {mode === 'login' ? (
             <p>
               {t("Don't have an account yet?", 'এখনও অ্যাকাউন্ট নেই?')}{' '}
@@ -271,7 +271,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                   setFieldErrors({});
                   setGeneralError('');
                 }}
-                className="text-orange-600 font-semibold hover:underline cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 rounded px-1"
+                className="text-purple-900 font-bold hover:underline cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-950 rounded px-1"
               >
                 {t('Register here', 'রেজিস্ট্রেশন করুন')}
               </button>
@@ -288,7 +288,7 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
                   setFieldErrors({});
                   setGeneralError('');
                 }}
-                className="text-orange-600 font-semibold hover:underline cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500 rounded px-1"
+                className="text-purple-900 font-bold hover:underline cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-950 rounded px-1"
               >
                 {t('Sign in', 'লগইন করুন')}
               </button>

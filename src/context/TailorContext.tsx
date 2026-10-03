@@ -4,6 +4,7 @@ import {
   TailorOrder, 
   SavedMeasurementProfile, 
   MeasurementMethod, 
+  ReferenceClothDetails,
   FabricDetails, 
   PickupAddress, 
   DeliveryUrgency, 
@@ -55,6 +56,7 @@ interface TailorContextType {
   measurementMethod: MeasurementMethod;
   measurements: Record<string, number>;
   selectedSizePreset: string;
+  referenceClothDetails: ReferenceClothDetails;
   selectedCustomizations: Record<string, string>;
   fabricDetails: FabricDetails;
   stitchingSpecs: StitchingSpecifications;
@@ -69,6 +71,7 @@ interface TailorContextType {
   setMeasurementMethod: (method: MeasurementMethod) => void;
   updateMeasurement: (fieldId: string, val: number) => void;
   applySizePreset: (presetKey: string) => void;
+  updateReferenceClothDetails: (details: Partial<ReferenceClothDetails>) => void;
   updateCustomization: (groupId: string, optionId: string) => void;
   updateFabricDetails: (details: Partial<FabricDetails>) => void;
   updateStitchingSpecs: (specs: Partial<StitchingSpecifications>) => void;
@@ -221,6 +224,20 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [measurementMethod, setMeasurementMethod] = useState<MeasurementMethod>('custom_manual');
   const [measurements, setMeasurements] = useState<Record<string, number>>({});
   const [selectedSizePreset, setSelectedSizePreset] = useState<string>('M (38")');
+  const [referenceClothDetails, setReferenceClothDetails] = useState<ReferenceClothDetails>({
+    itemType: 'Sample Reference Clothing',
+    description: '',
+    pickupMode: 'runner_pickup',
+    pickupAddressNote: '',
+    adjustmentNotes: '',
+    fitPreference: 'exact_sample',
+    samplePhotoUrl: '',
+    tagNumber: `REF-${Math.floor(1000 + Math.random() * 9000)}`
+  });
+
+  const updateReferenceClothDetails = (details: Partial<ReferenceClothDetails>) => {
+    setReferenceClothDetails(prev => ({ ...prev, ...details }));
+  };
   const [selectedCustomizations, setSelectedCustomizations] = useState<Record<string, string>>({});
   const [stitchingSpecs, setStitchingSpecs] = useState<StitchingSpecifications>(DEFAULT_STITCHING_SPECS);
   
@@ -592,6 +609,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         specialNotes: fabricDetails.specialInstructions
       }),
       selectedSizePreset,
+      referenceClothDetails: { ...referenceClothDetails },
       selectedCustomizations: { ...selectedCustomizations },
       fabricDetails: orderFabricDetails,
       pickupAddress: { ...pickupAddress, ...(overrides?.pickupAddress || {}) },
@@ -805,6 +823,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         measurementMethod,
         measurements,
         selectedSizePreset,
+        referenceClothDetails,
         selectedCustomizations,
         stitchingSpecs,
         fabricDetails,
@@ -818,6 +837,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         setMeasurementMethod,
         updateMeasurement,
         applySizePreset,
+        updateReferenceClothDetails,
         updateCustomization,
         updateStitchingSpecs,
         updateFabricDetails,

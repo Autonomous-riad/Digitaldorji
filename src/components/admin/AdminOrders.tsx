@@ -20,7 +20,8 @@ import {
   DollarSign,
   Upload,
   UserCheck,
-  Truck
+  Truck,
+  Shirt
 } from 'lucide-react';
 
 export const AdminOrders: React.FC = () => {
@@ -416,6 +417,37 @@ export const AdminOrders: React.FC = () => {
                 </p>
               </div>
             </div>
+
+            {/* Reference Sample Cloth Card if present */}
+            {(selectedOrder.measurementMethod === 'reference_sample' || selectedOrder.referenceClothDetails) && (
+              <div className="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 text-xs space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-emerald-950 flex items-center gap-1">
+                    <Shirt className="w-4 h-4 text-emerald-700" />
+                    <span>Reference Sample Garment Attached</span>
+                  </span>
+                  {selectedOrder.referenceClothDetails?.tagNumber && (
+                    <span className="font-mono text-[10px] font-bold bg-white px-2 py-0.5 rounded border border-emerald-300 text-purple-900">
+                      {selectedOrder.referenceClothDetails.tagNumber}
+                    </span>
+                  )}
+                </div>
+                <p className="text-slate-800">
+                  <strong>Description:</strong> {selectedOrder.referenceClothDetails?.description || 'Sample Garment provided by customer'}
+                </p>
+                <p className="text-slate-800">
+                  <strong>Collection:</strong> {selectedOrder.referenceClothDetails?.pickupMode === 'runner_pickup' ? 'Runner Pickup from Customer Home' : 'Customer Dropoff / Courier'}
+                </p>
+                <p className="text-slate-800">
+                  <strong>Fit Requirement:</strong> {selectedOrder.referenceClothDetails?.fitPreference === 'slightly_slimmer' ? 'Slightly Slimmer Fit (-0.5")' : selectedOrder.referenceClothDetails?.fitPreference === 'slightly_looser' ? 'Slightly Relaxed Comfort Fit (+0.5")' : 'Exact 1:1 Duplicate Fit'}
+                </p>
+                {selectedOrder.referenceClothDetails?.adjustmentNotes && (
+                  <p className="p-2 bg-white rounded border border-emerald-200 text-[11px] text-slate-900">
+                    <strong>Tailor Notes:</strong> {selectedOrder.referenceClothDetails.adjustmentNotes}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Measurements Snapshot Breakdown Grid */}
             <div className="space-y-2">

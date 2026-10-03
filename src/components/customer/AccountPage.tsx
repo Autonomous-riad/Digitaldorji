@@ -123,21 +123,21 @@ export const AccountPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12 space-y-8">
       {/* Top Banner with Account Overview */}
-      <div className="bg-purple-950 rounded-3xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+      <div className="bg-purple-950 rounded-3xl p-6 sm:p-8 text-cream-50 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-xl relative overflow-hidden border border-purple-900">
         <div className="flex items-center gap-4 z-10">
-          <div className="w-16 h-16 rounded-2xl bg-orange-700 text-white flex items-center justify-center font-bold text-2xl shadow-md border-2 border-white/20">
+          <div className="w-16 h-16 rounded-2xl bg-cream-200 text-purple-950 flex items-center justify-center font-bold text-2xl shadow-md border-2 border-cream-300">
             {user?.name ? user.name[0].toUpperCase() : 'C'}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold font-serif-title">{user?.name || 'Customer'}</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-white/20 text-orange-300">
+              <h1 className="text-xl sm:text-2xl font-bold font-serif-title text-cream-50">{user?.name || 'Customer'}</h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-cream-50/20 text-cream-200">
                 {user?.role || 'Customer'}
               </span>
             </div>
-            <p className="text-xs text-purple-200 mt-1 flex items-center gap-3">
-              <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-orange-400" /> {user?.phone || 'No Phone'}</span>
-              {user?.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-orange-400" /> {user.email}</span>}
+            <p className="text-xs text-cream-200/80 mt-1 flex items-center gap-3">
+              <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-purple-300" /> {user?.phone || 'No Phone'}</span>
+              {user?.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-purple-300" /> {user.email}</span>}
             </p>
           </div>
         </div>
@@ -148,29 +148,29 @@ export const AccountPage: React.FC = () => {
               setActiveStep('catalog');
               navigate('/catalog');
             }}
-            className="px-4 py-2.5 bg-orange-700 hover:bg-orange-800 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
+            className="px-4 py-2.5 bg-cream-50 hover:bg-cream-200 text-purple-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md transition-colors cursor-pointer"
           >
-            <ShoppingBag className="w-4 h-4" />
+            <ShoppingBag className="w-4 h-4 text-purple-950" />
             <span>{t('New Tailoring Order', 'নতুন সেলাই অর্ডার')}</span>
           </button>
           <button
             onClick={logout}
-            className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-xs flex items-center gap-1.5 border border-white/20 transition-colors cursor-pointer"
+            className="px-4 py-2.5 bg-purple-900 hover:bg-purple-800 text-cream-50 font-semibold rounded-xl text-xs flex items-center gap-1.5 border border-purple-700 transition-colors cursor-pointer"
           >
-            <LogOut className="w-4 h-4 text-rose-400" />
+            <LogOut className="w-4 h-4 text-rose-300" />
             <span>{t('Sign Out', 'লগআউট')}</span>
           </button>
         </div>
       </div>
 
       {/* Account Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-purple-200 pb-1 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-cream-300 pb-1 overflow-x-auto">
         <button
           onClick={() => setActiveTab('profile')}
           className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
             activeTab === 'profile'
-              ? 'bg-purple-950 text-white shadow-sm'
-              : 'text-purple-800/80 hover:bg-purple-100 hover:text-purple-950'
+              ? 'bg-purple-950 text-cream-50 shadow-xs'
+              : 'text-purple-950/80 hover:bg-cream-200 hover:text-purple-950'
           }`}
         >
           <User className="w-4 h-4" />
@@ -181,8 +181,8 @@ export const AccountPage: React.FC = () => {
           onClick={() => setActiveTab('orders')}
           className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
             activeTab === 'orders'
-              ? 'bg-purple-950 text-white shadow-sm'
-              : 'text-purple-800/80 hover:bg-purple-100 hover:text-purple-950'
+              ? 'bg-purple-950 text-cream-50 shadow-xs'
+              : 'text-purple-950/80 hover:bg-cream-200 hover:text-purple-950'
           }`}
         >
           <ShoppingBag className="w-4 h-4" />
@@ -193,8 +193,8 @@ export const AccountPage: React.FC = () => {
           onClick={() => setActiveTab('measurements')}
           className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
             activeTab === 'measurements'
-              ? 'bg-purple-950 text-white shadow-sm'
-              : 'text-purple-800/80 hover:bg-purple-100 hover:text-purple-950'
+              ? 'bg-purple-950 text-cream-50 shadow-xs'
+              : 'text-purple-950/80 hover:bg-cream-200 hover:text-purple-950'
           }`}
         >
           <Ruler className="w-4 h-4" />
@@ -205,8 +205,8 @@ export const AccountPage: React.FC = () => {
           onClick={() => setActiveTab('addresses')}
           className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
             activeTab === 'addresses'
-              ? 'bg-purple-950 text-white shadow-sm'
-              : 'text-purple-800/80 hover:bg-purple-100 hover:text-purple-950'
+              ? 'bg-purple-950 text-cream-50 shadow-xs'
+              : 'text-purple-950/80 hover:bg-cream-200 hover:text-purple-950'
           }`}
         >
           <MapPin className="w-4 h-4" />
@@ -217,12 +217,12 @@ export const AccountPage: React.FC = () => {
       {/* Tab 1: Profile */}
       {activeTab === 'profile' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 bg-white rounded-3xl border border-purple-100 p-6 sm:p-8 shadow-sm">
+          <div className="md:col-span-2 bg-cream-50 rounded-3xl border border-cream-300 p-6 sm:p-8 shadow-sm">
             <h2 className="text-base font-bold text-purple-950 font-serif-title mb-1 flex items-center gap-2">
-              <User className="w-5 h-5 text-orange-600" />
+              <User className="w-5 h-5 text-purple-900" />
               <span>{t('Personal & Contact Information', 'ব্যক্তিগত ও যোগাযোগ তথ্য')}</span>
             </h2>
-            <p className="text-xs text-purple-950/60 mb-6">
+            <p className="text-xs text-purple-950/70 mb-6">
               {t('Keep your phone number updated for doorstep fabric pickup calls and delivery OTP alerts.', 'ফ্যাব্রিক সংগ্রহ ও ডেলিভারি ওটিপি সতর্কবার্তা পেতে মোবাইল নম্বর হালনাগাদ রাখুন।')}
             </p>
 
@@ -243,7 +243,7 @@ export const AccountPage: React.FC = () => {
                   required
                   value={name}
                   onChange={e => setName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-purple-200 text-xs text-purple-950 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+                  className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-cream-100 text-xs text-purple-950 focus:outline-none focus:ring-2 focus:ring-purple-950"
                 />
               </div>
 
@@ -257,7 +257,7 @@ export const AccountPage: React.FC = () => {
                     required
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-purple-200 text-xs text-purple-950 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-cream-100 text-xs text-purple-950 focus:outline-none focus:ring-2 focus:ring-purple-950"
                   />
                 </div>
 
@@ -269,7 +269,7 @@ export const AccountPage: React.FC = () => {
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-purple-200 text-xs text-purple-950 focus:outline-none focus:ring-2 focus:ring-orange-500/40"
+                    className="w-full px-4 py-2.5 rounded-xl border border-cream-300 bg-cream-100 text-xs text-purple-950 focus:outline-none focus:ring-2 focus:ring-purple-950"
                   />
                 </div>
               </div>
@@ -278,7 +278,7 @@ export const AccountPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={savingProfile}
-                  className="px-6 py-2.5 rounded-xl bg-purple-950 hover:bg-purple-900 text-white font-bold text-xs shadow-sm transition-colors cursor-pointer"
+                  className="px-6 py-2.5 rounded-xl bg-purple-950 hover:bg-purple-900 text-cream-50 font-bold text-xs shadow-sm transition-colors cursor-pointer"
                 >
                   {savingProfile ? t('Saving...', 'সংরক্ষণ হচ্ছে...') : t('Save Changes', 'পরিবর্তন সংরক্ষণ করুন')}
                 </button>
@@ -287,17 +287,17 @@ export const AccountPage: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-purple-50 rounded-3xl border border-purple-200/80 p-6 space-y-4">
+            <div className="bg-cream-100 rounded-3xl border border-cream-300 p-6 space-y-4">
               <h3 className="text-xs font-bold text-purple-950 uppercase tracking-wider flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <ShieldCheck className="w-4 h-4 text-emerald-700" />
                 <span>{t('Verified Account Protection', 'ভেরিফাইড অ্যাকাউন্ট নিরাপত্তা')}</span>
               </h3>
               <p className="text-xs text-purple-950/70">
                 {t('Your measurements and orders are protected with PostgreSQL Row Level Security (RLS) and encrypted database storage.', 'আপনার সমস্ত মাপ ও অর্ডার ডাটাবেজে রো লেভেল সিকিউরিটি ও এনক্রিপশনের মাধ্যমে সম্পূর্ণ সুরক্ষিত।')}
               </p>
-              <div className="p-3 bg-white rounded-xl border border-purple-200 text-xs space-y-1">
+              <div className="p-3 bg-cream-50 rounded-xl border border-cream-300 text-xs space-y-1">
                 <p className="font-bold text-purple-950">{t('Support Helpline:', 'হেল্পলাইন:')}</p>
-                <p className="text-orange-600 font-bold">09612-445566</p>
+                <p className="text-purple-950 font-bold">09612-445566</p>
                 <p className="text-purple-950/70">+880 1711-002233 (WhatsApp)</p>
               </div>
             </div>
@@ -310,7 +310,7 @@ export const AccountPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-purple-950 font-serif-title flex items-center gap-2">
-              <Package className="w-5 h-5 text-orange-600" />
+              <Package className="w-5 h-5 text-purple-900" />
               <span>{t('All Bespoke Tailoring Orders', 'আপনার সকল সেলাই অর্ডার')}</span>
             </h2>
             <button
@@ -318,7 +318,7 @@ export const AccountPage: React.FC = () => {
                 setActiveStep('catalog');
                 navigate('/catalog');
               }}
-              className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-purple-950 hover:text-purple-900 flex items-center gap-1 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{t('Place New Order', 'নতুন অর্ডার দিন')}</span>
@@ -326,10 +326,10 @@ export const AccountPage: React.FC = () => {
           </div>
 
           {recentOrders.length === 0 ? (
-            <div className="bg-white rounded-3xl border border-dashed border-purple-200 p-12 text-center space-y-3">
-              <ShoppingBag className="w-10 h-10 text-purple-300 mx-auto" />
+            <div className="bg-cream-50 rounded-3xl border border-dashed border-cream-300 p-12 text-center space-y-3">
+              <ShoppingBag className="w-10 h-10 text-purple-900/40 mx-auto" />
               <h3 className="text-sm font-bold text-purple-950">{t('No tailoring orders yet', 'আপনার কোনো অর্ডার পাওয়া যায়নি')}</h3>
-              <p className="text-xs text-purple-950/60 max-w-sm mx-auto">
+              <p className="text-xs text-purple-950/70 max-w-sm mx-auto">
                 {t('Choose a garment style and schedule fabric collection to get started with master tailor crafting.', 'আপনার পছন্দের পোশাক সিলেক্ট করে কাপড় পিকআপের সময় ঠিক করুন।')}
               </p>
               <button
@@ -337,7 +337,7 @@ export const AccountPage: React.FC = () => {
                   setActiveStep('catalog');
                   navigate('/catalog');
                 }}
-                className="mt-2 px-5 py-2.5 bg-orange-700 hover:bg-orange-800 text-white rounded-xl text-xs font-bold shadow-sm"
+                className="mt-2 px-5 py-2.5 bg-purple-950 hover:bg-purple-900 text-cream-50 rounded-xl text-xs font-bold shadow-sm"
               >
                 {t('Explore Catalog', 'পোশাক ক্যাটালগ দেখুন')}
               </button>
@@ -345,20 +345,20 @@ export const AccountPage: React.FC = () => {
           ) : (
             <div className="space-y-4">
               {recentOrders.map((ord: any) => (
-                <div key={ord.id} className="bg-white rounded-2xl border border-purple-100 p-5 shadow-xs hover:shadow-md transition-shadow space-y-4">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-purple-100 pb-3">
+                <div key={ord.id} className="bg-cream-50 rounded-2xl border border-cream-300 p-5 shadow-xs hover:shadow-md transition-shadow space-y-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-cream-300 pb-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="font-mono text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-lg">
+                      <span className="font-mono text-xs font-bold text-purple-950 bg-cream-200 px-2.5 py-1 rounded-lg">
                         {ord.orderNumber}
                       </span>
-                      <span className="text-xs text-purple-950/60">
+                      <span className="text-xs text-purple-950/70">
                         {new Date(ord.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold font-mono text-purple-950">{formatBDT(ord.grandTotal)}</span>
                       <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                        ord.paymentStatus === 'paid' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                        ord.paymentStatus === 'paid' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-950'
                       }`}>
                         {ord.paymentStatus}
                       </span>
@@ -408,42 +408,42 @@ export const AccountPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-purple-950 font-serif-title flex items-center gap-2">
-              <Ruler className="w-5 h-5 text-orange-600" />
+              <Ruler className="w-5 h-5 text-purple-900" />
               <span>{t('Saved Body Profiles', 'সংরক্ষিত মাপের প্রোফাইল')}</span>
             </h2>
             <button
               onClick={() => navigate('/customer/measurements')}
-              className="px-4 py-2 bg-purple-950 hover:bg-purple-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-purple-950 hover:bg-purple-900 text-cream-50 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4 text-orange-400" />
+              <Plus className="w-4 h-4 text-cream-50" />
               <span>{t('Add Measurement', 'নতুন মাপ যোগ করুন')}</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {measurementProfiles.map((prof: any) => (
-              <div key={prof.id} className="bg-white rounded-2xl border border-purple-100 p-5 shadow-xs space-y-3">
+              <div key={prof.id} className="bg-cream-50 rounded-2xl border border-cream-300 p-5 shadow-xs space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-bold text-purple-950">{prof.profileName}</h3>
-                    <p className="text-[11px] text-purple-950/60">{prof.garmentName} • {prof.personName}</p>
+                    <p className="text-[11px] text-purple-950/70">{prof.garmentName} • {prof.personName}</p>
                   </div>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-purple-100 text-purple-900">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-purple-100 text-purple-950">
                     {prof.gender}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 py-2 border-y border-purple-100 text-xs">
+                <div className="grid grid-cols-3 gap-2 py-2 border-y border-cream-300 text-xs">
                   <div>
-                    <span className="block text-[10px] text-purple-950/50">Chest / Bust</span>
+                    <span className="block text-[10px] text-purple-950/60">Chest / Bust</span>
                     <span className="font-bold text-purple-950 font-mono">{prof.measurements?.chest || prof.measurements?.bust || 40}"</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] text-purple-950/50">Length</span>
+                    <span className="block text-[10px] text-purple-950/60">Length</span>
                     <span className="font-bold text-purple-950 font-mono">{prof.measurements?.length || 42}"</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] text-purple-950/50">Sleeve</span>
+                    <span className="block text-[10px] text-purple-950/60">Sleeve</span>
                     <span className="font-bold text-purple-950 font-mono">{prof.measurements?.sleeve || 25}"</span>
                   </div>
                 </div>
@@ -451,7 +451,7 @@ export const AccountPage: React.FC = () => {
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <button
                     onClick={() => navigate('/customer/measurements')}
-                    className="text-xs font-semibold text-purple-950 hover:underline cursor-pointer"
+                    className="text-xs font-bold text-purple-950 hover:underline cursor-pointer"
                   >
                     {t('Edit Measurements', 'মাপ এডিট করুন')}
                   </button>
@@ -467,24 +467,24 @@ export const AccountPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold text-purple-950 font-serif-title flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-orange-600" />
+              <MapPin className="w-5 h-5 text-purple-900" />
               <span>{t('Saved Pickup & Delivery Addresses', 'সংরক্ষিত পিকআপ ও ডেলিভারি ঠিকানা')}</span>
             </h2>
             <button
               onClick={() => setShowAddressModal(true)}
-              className="px-4 py-2 bg-purple-950 hover:bg-purple-900 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-purple-950 hover:bg-purple-900 text-cream-50 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4 text-orange-400" />
+              <Plus className="w-4 h-4 text-cream-50" />
               <span>{t('Add New Address', 'নতুন ঠিকানা যোগ করুন')}</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {addresses.map(addr => (
-              <div key={addr.id} className="bg-white rounded-2xl border border-purple-100 p-5 shadow-xs space-y-2">
+              <div key={addr.id} className="bg-cream-50 rounded-2xl border border-cream-300 p-5 shadow-xs space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Home className="w-4 h-4 text-orange-600" />
+                    <Home className="w-4 h-4 text-purple-900" />
                     <h3 className="text-sm font-bold text-purple-950">{addr.label}</h3>
                   </div>
                   {addr.is_default && (
@@ -495,7 +495,7 @@ export const AccountPage: React.FC = () => {
                 </div>
                 <p className="text-xs text-purple-950/80">{addr.street}, {addr.area}, {addr.thana}, {addr.district}</p>
                 {addr.landmark && (
-                  <p className="text-[11px] text-purple-950/60">Landmark: {addr.landmark}</p>
+                  <p className="text-[11px] text-purple-950/70">Landmark: {addr.landmark}</p>
                 )}
               </div>
             ))}
@@ -503,8 +503,8 @@ export const AccountPage: React.FC = () => {
 
           {/* New Address Modal */}
           {showAddressModal && (
-            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-              <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-4 shadow-xl">
+            <div className="fixed inset-0 z-50 bg-purple-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+              <div className="bg-cream-50 rounded-3xl p-6 sm:p-8 max-w-md w-full space-y-4 shadow-xl border border-cream-300">
                 <h3 className="text-base font-bold text-purple-950 font-serif-title">
                   {t('Add New Address', 'নতুন ঠিকানা যোগ করুন')}
                 </h3>
@@ -516,7 +516,7 @@ export const AccountPage: React.FC = () => {
                       required
                       value={newAddress.label}
                       onChange={e => setNewAddress({ ...newAddress, label: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-purple-200"
+                      className="w-full px-3 py-2 rounded-xl border border-cream-300 bg-cream-100 text-purple-950"
                     />
                   </div>
 

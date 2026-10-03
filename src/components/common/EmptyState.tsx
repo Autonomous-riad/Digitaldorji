@@ -26,18 +26,18 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   return (
     <div
-      className={`text-center py-12 px-4 rounded-2xl bg-white border border-slate-200 shadow-sm max-w-md mx-auto my-6 ${className}`}
+      className={`text-center py-12 px-4 rounded-2xl bg-cream-50 border border-cream-300 shadow-sm max-w-md mx-auto my-6 ${className}`}
     >
-      <div className="w-16 h-16 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center mx-auto mb-4 shadow-inner">
+      <div className="w-16 h-16 rounded-2xl bg-cream-200 text-purple-950 flex items-center justify-center mx-auto mb-4 shadow-inner">
         <Icon className="w-8 h-8 stroke-[1.5]" />
       </div>
-      <h3 className="font-bold text-lg text-slate-950">
-        {titleBn} <span className="text-slate-500 font-normal text-sm">/ {titleEn}</span>
+      <h3 className="font-bold text-lg text-purple-950">
+        {titleBn} <span className="text-purple-950/70 font-normal text-sm">/ {titleEn}</span>
       </h3>
-      <p className="text-slate-600 text-sm mt-1.5 leading-relaxed">
+      <p className="text-purple-950/80 text-sm mt-1.5 leading-relaxed">
         {descriptionBn}
       </p>
-      <p className="text-slate-500 text-xs mt-0.5 font-light">
+      <p className="text-purple-950/60 text-xs mt-0.5 font-light">
         {descriptionEn}
       </p>
 
@@ -46,14 +46,14 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           {actionHref ? (
             <a
               href={actionHref}
-              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-orange-700 hover:bg-orange-800 text-white font-medium text-sm transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-purple-950 hover:bg-purple-900 text-cream-50 font-medium text-sm transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:ring-offset-2"
             >
               {actionText}
             </a>
           ) : (
             <button
               onClick={onAction}
-              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-orange-700 hover:bg-orange-800 text-white font-medium text-sm transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 cursor-pointer"
+              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-purple-950 hover:bg-purple-900 text-cream-50 font-medium text-sm transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:ring-offset-2 cursor-pointer"
             >
               {actionText}
             </button>

@@ -1,52 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  /* Atelier warm light cream palette */
-  --color-cream: #faf6f0;
+  /* Atelier warm luxury neutral & royal palette */
+  --color-cream: #faf8f5;
   --color-cream-50: #fdfbf7;
-  --color-cream-100: #faf6f0;
+  --color-cream-100: #faf8f5;
   --color-cream-200: #f5eedf;
   --color-cream-300: #ece0cc;
   --color-cream-400: #decbb2;
   --color-cream-500: #cca785;
 
-  /* Rich warm orange palette — slightly deepened for visibility & comfort while remaining undeniably vibrant orange */
-  --color-orange-50: #fff8f3;
-  --color-orange-100: #ffeedf;
-  --color-orange-200: #fedbc0;
-  --color-orange-300: #fdbf94;
-  --color-orange-400: #fb8d43;
-  --color-orange-500: #f06414;
-  --color-orange-600: #dc4d05;
-  --color-orange-700: #b83d03;
-  --color-orange-800: #8c2d02;
-  --color-orange-900: #5c1c01;
-  --color-orange-950: #330f00;
-
-  /* Lighter, softer royal purple palette — avoids dark near-black shades for improved clarity and charm */
-  --color-purple-50: #faf6f0;
-  --color-purple-100: #f3ecfc;
-  --color-purple-200: #e8dbf9;
-  --color-purple-300: #d6bdf5;
-  --color-purple-400: #be94ed;
-  --color-purple-500: #a46be2;
-  --color-purple-600: #8c4ad0;
-  --color-purple-700: #7635b7;
-  --color-purple-800: #622b98;
-  --color-purple-900: #50237c;
-  --color-purple-950: #381559;
+  --color-purple-950: #2c1236;
+  --color-purple-900: #3e1a4d;
+  --color-purple-800: #532368;
+  --color-purple-700: #6c2f88;
+  --color-purple-300: #d4b8e8;
+  --color-purple-200: #e8dae8;
+  --color-purple-100: #f3ebf5;
+  --color-purple-50: #faf5fc;
 }
 
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-    background-color: #faf6f0;
+    background-color: var(--color-cream);
+    color: var(--color-purple-950);
   }
   body {
     font-family: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, -apple-system, sans-serif;
     touch-action: manipulation;
-    background-color: #faf6f0;
+    background-color: var(--color-cream);
+    color: var(--color-purple-950);
   }
   button, input, select, textarea {
     touch-action: manipulation;

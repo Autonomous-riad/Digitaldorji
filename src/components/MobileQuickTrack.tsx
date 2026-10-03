@@ -21,9 +21,9 @@ export const MobileQuickTrack: React.FC = () => {
           navigate('/track-orders');
         }}
         aria-label="অর্ডার ট্র্যাক করুন (Track Order)"
-        className="flex items-center gap-2 px-4 py-2.5 bg-indigo-700 text-white hover:bg-indigo-800 active:scale-95 transition-all rounded-full shadow-lg border border-indigo-600/50 cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
+        className="flex items-center gap-2 px-4 py-2.5 bg-purple-950 text-cream-50 hover:bg-purple-900 active:scale-95 transition-all rounded-full shadow-lg border border-purple-900/80 cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-950"
       >
-        <Truck className="w-4 h-4 text-orange-400" />
+        <Truck className="w-4 h-4 text-purple-200" />
         <span className="text-xs font-semibold tracking-wide">
           {t('Track Order', 'অর্ডার ট্র্যাক')}
         </span>

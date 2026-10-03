@@ -38,6 +38,7 @@ import {
   ChevronDown,
   ChevronUp,
   ShoppingBag,
+  Shirt,
   Plus
 } from 'lucide-react';
 import { useReadyMadeCart } from '../context/ReadyMadeCartContext';
@@ -51,6 +52,7 @@ export const CheckoutReview: React.FC = () => {
     measurementMethod,
     measurements,
     selectedSizePreset,
+    referenceClothDetails,
     selectedCustomizations,
     stitchingSpecs,
     fabricDetails, 
@@ -203,17 +205,17 @@ export const CheckoutReview: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-32 sm:pb-12">
       {/* Header */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-orange-900 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-200">
+            <span className="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
               {t('Step 4 of 4: Review & Payment', 'ধাপ ৪/৪: অর্ডার পর্যালোচনা ও পেমেন্ট')}
             </span>
           </div>
-          <h2 className="text-2xl font-bold text-slate-950 mt-1 font-serif-title">
+          <h2 className="text-2xl font-bold text-stone-950 mt-1 font-serif-title">
             {t('Review Your Bespoke Tailoring Order', 'আপনার টেইলারিং অর্ডারের পূর্ণ বিবরণ')}
           </h2>
-          <p className="text-xs text-slate-600">
+          <p className="text-xs text-stone-600">
             {t('Confirm garment specs, custom cuts, finishes, measurements, and payment method.', 'পোশাকের কাস্টমাইজেশন, মাপ, কাপড়ের উৎস ও পেমেন্ট মাধ্যম নিশ্চিত করুন।')}
           </p>
         </div>
@@ -225,13 +227,13 @@ export const CheckoutReview: React.FC = () => {
               setActiveStep('pickup_details');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            className="px-4 py-2 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl border border-stone-300 hover:bg-stone-50 text-stone-700 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>{t('Back to Pickup', 'পিকআপে ফিরুন')}</span>
           </button>
-          <div className="bg-orange-50/70 border border-orange-200 p-3 rounded-xl hidden sm:flex items-center gap-2 text-xs text-slate-900">
-            <ShieldCheck className="w-5 h-5 text-orange-700 shrink-0" />
+          <div className="bg-amber-50/70 border border-amber-200 p-3 rounded-xl hidden sm:flex items-center gap-2 text-xs text-stone-900">
+            <ShieldCheck className="w-5 h-5 text-amber-800 shrink-0" />
             <span>{t('7-Day Free Alteration Guarantee Included', '৭ দিনের ফ্রি অলটারেশন গ্যারান্টি')}</span>
           </div>
         </div>
@@ -239,34 +241,34 @@ export const CheckoutReview: React.FC = () => {
 
       {/* Guest Checkout Status vs Logged-in Customer Status */}
       {isLoggedInCustomer ? (
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-green-800 shadow-xs">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-emerald-800 shadow-xs">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-green-700 text-white flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center shrink-0">
               <UserCheck className="w-4 h-4" />
             </div>
             <div>
-              <span className="font-bold block text-slate-950">
+              <span className="font-bold block text-stone-950">
                 {t('Ordering as Authenticated Customer: ', 'গ্রাহক হিসেবে অর্ডার করা হচ্ছে: ')}{user?.name}
               </span>
-              <span className="text-[11px] text-green-700 font-semibold">
+              <span className="text-[11px] text-emerald-700 font-semibold">
                 {user?.phone || user?.email} • {t('This order will be automatically synced to your dashboard and measurement profile.', 'এই অর্ডারটি সরাসরি আপনার কাস্টমার ড্যাশবোর্ডে যুক্ত হবে।')}
               </span>
             </div>
           </div>
         </div>
       ) : (
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs shadow-xs">
+        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs shadow-xs">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-amber-900 text-sm flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-orange-700" />
+              <span className="font-bold text-amber-950 text-sm flex items-center gap-1.5 font-serif-title">
+                <Sparkles className="w-4 h-4 text-amber-800" />
                 {t('Guest Checkout Active — No Account Required', 'গেস্ট চেকআউট সক্রিয় — একাউন্ট বা লগইন আবশ্যক নয়')}
               </span>
-              <span className="text-[10px] uppercase font-bold bg-amber-200/70 text-amber-900 px-2 py-0.5 rounded-full border border-amber-300">
+              <span className="text-[10px] uppercase font-bold bg-amber-200/70 text-amber-950 px-2 py-0.5 rounded-full border border-amber-300">
                 {t('Optional Login', 'ঐচ্ছিক লগইন')}
               </span>
             </div>
-            <p className="text-slate-700 text-xs max-w-2xl leading-relaxed">
+            <p className="text-stone-700 text-xs max-w-2xl leading-relaxed">
               {t(
                 'You can place this tailoring order right now as a guest without creating an account or logging in. You will receive a unique Order ID to track your order anytime using your phone number.',
                 'একাউন্ট তৈরি বা লগইন ছাড়াই তাৎক্ষণিকভাবে অতিথি হিসেবে এই অর্ডারটি নিশ্চিত করতে পারেন। অর্ডার কনফার্মেশনের পর আপনার অর্ডার নম্বর ও ফোন নম্বর দিয়ে যেকোনো সময় লাইভ ট্র্যাকিং করতে পারবেন।'
@@ -418,7 +420,57 @@ export const CheckoutReview: React.FC = () => {
               </button>
             </div>
 
-            {measurementMethod === 'custom_manual' || measurementMethod === 'preset_size' ? (
+            {(measurementMethod === 'reference_sample' || measurementMethod === 'use_my_clothes') ? (
+              <div className="p-4 bg-cream-100 rounded-xl border border-cream-300 text-xs space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-purple-950 flex items-center gap-1.5">
+                    <Shirt className="w-4 h-4 text-purple-800" />
+                    {t('Use My Clothes / Reference Mode', 'পছন্দের জামার ফটো ও স্যাম্পল মাপ')}
+                  </span>
+                  <span className="font-mono font-bold text-purple-950 bg-cream-200 px-2 py-0.5 rounded border border-cream-300">
+                    {referenceClothDetails.tagNumber}
+                  </span>
+                </div>
+                <div className="text-purple-950 space-y-1.5 pt-1 border-t border-cream-300">
+                  <p><strong>{t('Garment Description / Name:', 'জামার বিবরণ:')}</strong> {referenceClothDetails.description || t('Sample garment for fitting clone', 'মাপের পছন্দসই স্যাম্পল কাপড়')}</p>
+                  {referenceClothDetails.brandOrSizeTag && (
+                    <p><strong>{t('Brand / Size Tag:', 'ব্র্যান্ড বা সাইজ ট্যাগ:')}</strong> {referenceClothDetails.brandOrSizeTag}</p>
+                  )}
+                  <p><strong>{t('Collection Mode:', 'সংগ্রহের উপায়:')}</strong> {
+                    referenceClothDetails.usePhotoAndDimensionsOnly || referenceClothDetails.pickupMode === 'photo_only'
+                      ? t('Photo & Dimensions Only (No physical pickup required)', 'ছবি ও ফ্লাট মাপ দেখেই সেলাই হবে')
+                      : referenceClothDetails.pickupMode === 'runner_pickup' 
+                      ? t('Doorstep Runner Pickup from Home', 'হোম পিকআপ রাইডার সংগ্রহ করবে') 
+                      : t('Customer Drop-off at Tailoring Hub', 'ওয়ার্কশপে প্রদান / কুরিয়ার')
+                  }</p>
+
+                  {/* Approximate Flat Dimensions Summary */}
+                  {referenceClothDetails.approxDimensions && Object.keys(referenceClothDetails.approxDimensions).length > 0 && (
+                    <div className="p-2.5 bg-cream-50 rounded-lg border border-cream-300 text-[11px] text-purple-950 my-1">
+                      <span className="font-bold block mb-1 text-purple-950">{t('Flat Table Dimensions:', 'টেবিলে মাপা ফ্লাট পরিমাপ:')}</span>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 font-mono">
+                        {Object.entries(referenceClothDetails.approxDimensions).map(([k, v]) => (
+                          <span key={k} className="bg-cream-200 px-2 py-0.5 rounded border border-cream-300 capitalize text-center">
+                            {k}: {v}"
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <p><strong>{t('Fit Cut relative to Reference:', 'ফিটিং কাটিং নিয়ম:')}</strong> {
+                    referenceClothDetails.fitPreference === 'slightly_slimmer' ? t('Slightly Slimmer Fit (-0.5")', 'স্যাম্পল থেকে একটু স্লিম') :
+                    referenceClothDetails.fitPreference === 'slightly_looser' ? t('Slightly Relaxed Comfort Fit (+0.5")', 'স্যাম্পল থেকে একটু ঢিলেঢালা') :
+                    t('Exact 1:1 Duplicate Fit', 'হুবহু স্যাম্পলের মতো সাইজ')
+                  }</p>
+                  {referenceClothDetails.adjustmentNotes && (
+                    <p className="p-2 bg-cream-50 rounded-lg border border-cream-300 text-purple-950 text-[11px] mt-1">
+                      <strong>{t('Custom Alteration Notes:', 'অতিরিক্ত নির্দেশাবলী:')}</strong> {referenceClothDetails.adjustmentNotes}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : measurementMethod === 'custom_manual' || measurementMethod === 'preset_size' ? (
               <div>
                 <div className="flex items-center justify-between mb-3 text-xs text-slate-600">
                   <span className="font-bold text-orange-900 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">

@@ -53,16 +53,16 @@ export const CustomerDashboard: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 rounded-3xl p-6 sm:p-8 text-purple-950 shadow-xl shadow-orange-900/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden">
+      <div className="bg-purple-950 rounded-3xl p-6 sm:p-8 text-cream-50 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden border border-purple-900">
         <div className="space-y-2 z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-xs text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream-50/15 backdrop-blur-xs text-xs font-semibold text-cream-200">
+            <Sparkles className="w-3.5 h-3.5 text-purple-300" />
             <span>{t('Welcome to Digital Dorji Atelier Client Portal', 'ডিজিটাল দর্জি ক্লায়েন্ট পোর্টালে স্বাগতম')}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif-title">
+          <h1 className="text-2xl sm:text-3xl font-bold font-serif-title text-cream-50">
             {t('Hello,', 'আসসালামু আলাইকুম,')} {user?.name || 'Valued Client'}
           </h1>
-          <p className="text-sm text-amber-100 max-w-xl">
+          <p className="text-sm text-cream-200 max-w-xl">
             {t(
               'Track your bespoke tailoring orders, schedule doorstep fabric collection, and manage your precision measurement profiles.',
               'আপনার সেলাই অর্ডারের লাইভ অগ্রগতি দেখুন, ডোরস্টেপ কাপড় সংগ্রহের রিকোয়েস্ট করুন এবং মাপের প্রোফাইল সংরক্ষণ করুন।'
@@ -77,9 +77,9 @@ export const CustomerDashboard: React.FC = () => {
               navigate('/catalog');
             }}
             aria-label={t('Order new tailoring', 'নতুন পোশাক সেলাই দিন')}
-            className="px-5 py-3 bg-white text-orange-700 hover:bg-amber-50 font-bold rounded-2xl text-xs sm:text-sm shadow-md flex items-center gap-2 cursor-pointer transition-all transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:outline-none"
+            className="px-5 py-3 bg-cream-50 text-purple-950 hover:bg-cream-200 font-bold rounded-2xl text-xs sm:text-sm shadow-md flex items-center gap-2 cursor-pointer transition-all transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:outline-none"
           >
-            <Scissors className="w-4 h-4 text-orange-600" />
+            <Scissors className="w-4 h-4 text-purple-950" />
             <span>{t('Order New Tailoring', 'নতুন পোশাক সেলাই দিন')}</span>
           </button>
           <button
@@ -88,7 +88,7 @@ export const CustomerDashboard: React.FC = () => {
               navigate('/pickup');
             }}
             aria-label={t('Book fabric pickup', 'কাপড় সংগ্রহের বুকিং')}
-            className="px-4 py-3 bg-black/20 hover:bg-black/30 backdrop-blur-xs text-purple-950 font-semibold rounded-2xl text-xs sm:text-sm border border-white/20 flex items-center gap-2 cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+            className="px-4 py-3 bg-purple-900 hover:bg-purple-800 backdrop-blur-xs text-cream-50 font-semibold rounded-2xl text-xs sm:text-sm border border-purple-700 flex items-center gap-2 cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-cream-100 focus-visible:outline-none"
           >
             <Truck className="w-4 h-4" />
             <span>{t('Book Fabric Pickup', 'কাপড় সংগ্রহের বুকিং')}</span>
