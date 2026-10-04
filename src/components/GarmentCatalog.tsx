@@ -85,21 +85,21 @@ export const GarmentCatalog: React.FC = () => {
 
       {/* Filter and Search Bar */}
       <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-stone-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-cream-50 p-3 sm:p-4 rounded-2xl border border-cream-300 shadow-xs">
           {/* Gender Tabs: Balanced Men, Women & All */}
-          <div className="grid grid-cols-3 sm:flex bg-stone-100 p-1 rounded-xl border border-stone-200 w-full sm:w-auto gap-1" role="tablist" aria-label="লিঙ্গ অনুসারে পোশাক ফিল্টার">
+          <div className="grid grid-cols-3 sm:flex bg-cream-200 p-1 rounded-xl border border-cream-300 w-full sm:w-auto gap-1" role="tablist" aria-label="লিঙ্গ অনুসারে পোশাক ফিল্টার">
             <button
               onClick={() => { setSelectedGender('all'); setSelectedSubCategory('all'); }}
               aria-label="সব পোশাক (All garments)"
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-amber-500 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedGender === 'all'
-                  ? 'bg-amber-900 text-white shadow-xs font-bold'
-                  : 'text-stone-700 hover:text-stone-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
+                  : 'text-purple-950 hover:text-purple-900'
               }`}
             >
               <span className="truncate">{t('All', 'সব')}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
-                selectedGender === 'all' ? 'bg-amber-950 text-white' : 'bg-stone-200 text-stone-900'
+                selectedGender === 'all' ? 'bg-purple-900 text-cream-50' : 'bg-cream-300 text-purple-950'
               }`}>
                 {GARMENTS_DATA.length}
               </span>
@@ -108,16 +108,16 @@ export const GarmentCatalog: React.FC = () => {
             <button
               onClick={() => { setSelectedGender('men'); setSelectedSubCategory('all'); }}
               aria-label="পুরুষদের পোশাক (Men garments)"
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-amber-500 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedGender === 'men'
-                  ? 'bg-amber-900 text-white shadow-xs font-bold'
-                  : 'text-stone-700 hover:text-stone-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
+                  : 'text-purple-950 hover:text-purple-900'
               }`}
             >
-              <User className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'men' ? 'text-white' : 'text-stone-700'}`} />
+              <User className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'men' ? 'text-cream-50' : 'text-purple-950'}`} />
               <span className="truncate">{t("Men's", 'পুরুষ')}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
-                selectedGender === 'men' ? 'bg-amber-950 text-white' : 'bg-stone-200 text-stone-900'
+                selectedGender === 'men' ? 'bg-purple-900 text-cream-50' : 'bg-cream-300 text-purple-950'
               }`}>
                 {menGarmentsCount}
               </span>
@@ -126,16 +126,16 @@ export const GarmentCatalog: React.FC = () => {
             <button
               onClick={() => { setSelectedGender('women'); setSelectedSubCategory('all'); }}
               aria-label="মহিলাদের পোশাক (Women garments)"
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-amber-500 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedGender === 'women'
-                  ? 'bg-amber-900 text-white shadow-xs font-bold'
-                  : 'text-stone-700 hover:text-stone-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
+                  : 'text-purple-950 hover:text-purple-900'
               }`}
             >
-              <Heart className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'women' ? 'fill-white text-white' : 'text-stone-700'}`} />
+              <Heart className={`w-3.5 h-3.5 shrink-0 ${selectedGender === 'women' ? 'fill-cream-50 text-cream-50' : 'text-purple-950'}`} />
               <span className="truncate">{t("Women's", 'মহিলা')}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
-                selectedGender === 'women' ? 'bg-amber-950 text-white' : 'bg-stone-200 text-stone-900'
+                selectedGender === 'women' ? 'bg-purple-900 text-cream-50' : 'bg-cream-300 text-purple-950'
               }`}>
                 {womenGarmentsCount}
               </span>
@@ -145,23 +145,23 @@ export const GarmentCatalog: React.FC = () => {
           {/* Search input & Guide link */}
           <div className="flex items-center gap-2">
             <div className="relative flex-1 sm:w-64">
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-purple-950/50 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 aria-label="পোশাক অনুসন্ধান"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('Search Panjabi, Shirt, Three-piece...', 'পাঞ্জাবি, শার্ট, থ্রি-পিস খুঁজুন...')}
-                className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder:text-slate-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 placeholder:text-purple-950/50 focus:bg-cream-50 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800 transition-colors"
               />
             </div>
 
             <button
               onClick={() => setIsGuideOpen(true)}
               aria-label="পরিমাপ নির্দেশিকা খুলুন"
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-orange-50 hover:bg-orange-100 text-orange-950 text-xs sm:text-sm font-semibold rounded-xl border border-orange-200 transition-colors whitespace-nowrap cursor-pointer focus-visible:ring-2 focus-visible:ring-orange-500"
+              className="flex items-center gap-1.5 px-3.5 py-2 bg-cream-200 hover:bg-cream-300 text-purple-950 text-xs sm:text-sm font-semibold rounded-xl border border-cream-300 transition-colors whitespace-nowrap cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-950/20"
             >
-              <Ruler className="w-4 h-4 text-orange-700" />
+              <Ruler className="w-4 h-4 text-purple-800" />
               <span className="hidden sm:inline">{t('Measurement Guide', 'পরিমাপ নির্দেশিকা')}</span>
               <span className="sm:hidden">{t('Guide', 'গাইড')}</span>
             </button>
@@ -171,15 +171,15 @@ export const GarmentCatalog: React.FC = () => {
         {/* Quick Category Chips for ALL */}
         {selectedGender === 'all' && (
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
-            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wide shrink-0 mr-1">
+            <span className="text-[11px] font-bold text-purple-950/70 uppercase tracking-wide shrink-0 mr-1">
               {t('Category:', 'ক্যাটাগরি:')}
             </span>
             <button
               onClick={() => setSelectedSubCategory('all')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'all'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('All Styles', 'সব পোশাক')}
@@ -188,8 +188,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('panjabi')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'panjabi'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Panjabi & Kurta (পাঞ্জাবি)', 'পাঞ্জাবি ও কুর্তা')}
@@ -198,51 +198,41 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('three-piece')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'three-piece'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
-              {t('Three-Piece Salwar Kameez', 'থ্রি-পিস ও সালোয়ার কামিজ')}
+              {t('Three-Piece (থ্রি-পিস)', 'থ্রি-পিস ও কামিজ')}
             </button>
             <button
               onClick={() => setSelectedSubCategory('shirt')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'shirt'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
-              {t('Formal Shirts (শার্ট)', 'ফরমাল শার্ট')}
+              {t('Executive Shirt (শার্ট)', 'ফরমাল শার্ট')}
             </button>
             <button
               onClick={() => setSelectedSubCategory('blouse')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'blouse'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
-              {t('Saree Blouse (ব্লাউজ)', 'শাড়ির ব্লাউজ')}
+              {t('Saree Blouse (ব্লাউজ)', 'শাড়ি ব্লাউজ')}
             </button>
             <button
               onClick={() => setSelectedSubCategory('trouser')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'trouser'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
-              {t('Trousers & Pants (প্যান্ট)', 'প্যান্ট ও ট্রাউজার্স')}
-            </button>
-            <button
-              onClick={() => setSelectedSubCategory('kurti')}
-              className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
-                selectedSubCategory === 'kurti'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
-              }`}
-            >
-              {t('Kurti & Tunic (কুর্তি)', 'কুর্তি')}
+              {t('Trousers & Pant (প্যান্ট)', 'প্যান্ট ও পায়জামা')}
             </button>
           </div>
         )}
@@ -250,15 +240,15 @@ export const GarmentCatalog: React.FC = () => {
         {/* Quick Category Chips for MEN */}
         {selectedGender === 'men' && (
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
-            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wide shrink-0 mr-1">
+            <span className="text-[11px] font-bold text-purple-950/70 uppercase tracking-wide shrink-0 mr-1">
               {t("Men's:", 'পুরুষদের পোশাক:')}
             </span>
             <button
               onClick={() => setSelectedSubCategory('all')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'all'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('All Men (সব)', 'সব পুরুষ')}
@@ -267,8 +257,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('panjabi')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'panjabi'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Panjabi & Eid Wear (পাঞ্জাবি)', 'পাঞ্জাবি ও ঈদ কালেকশন')}
@@ -277,8 +267,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('shirt')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'shirt'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Executive Formal Shirt (শার্ট)', 'ফরমাল শার্ট')}
@@ -287,8 +277,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('trouser')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'trouser'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Formal Trousers & Pajama (প্যান্ট ও পায়জামা)', 'ফরমাল ট্রাউজার্স ও পায়জামা')}
@@ -299,15 +289,15 @@ export const GarmentCatalog: React.FC = () => {
         {/* Quick Category Chips for WOMEN */}
         {selectedGender === 'women' && (
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
-            <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wide shrink-0 mr-1">
+            <span className="text-[11px] font-bold text-purple-950/70 uppercase tracking-wide shrink-0 mr-1">
               {t("Women's:", 'মহিলাদের পোশাক:')}
             </span>
             <button
               onClick={() => setSelectedSubCategory('all')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'all'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('All Women (সব)', 'সব লেডিস')}
@@ -316,8 +306,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('three-piece')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'three-piece'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Three-Piece & Salwar Kameez', 'থ্রি-পিস ও সালোয়ার কামিজ')}
@@ -326,8 +316,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('blouse')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'blouse'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Saree Blouse (শাড়ির ব্লাউজ)', 'শাড়ির ব্লাউজ')}
@@ -336,8 +326,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('kurti')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'kurti'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Kurti & Tunic (কুর্তি)', 'কুর্তি ও টিউনিক')}
@@ -346,8 +336,8 @@ export const GarmentCatalog: React.FC = () => {
               onClick={() => setSelectedSubCategory('abaya')}
               className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
                 selectedSubCategory === 'abaya'
-                  ? 'bg-orange-700 text-white shadow-xs'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-orange-50 hover:text-slate-900'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               {t('Burkha & Abaya (বোরকা)', 'বোরকা ও আবায়া')}

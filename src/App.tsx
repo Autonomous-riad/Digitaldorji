@@ -368,7 +368,7 @@ const AppRouterContent: React.FC = () => {
   // ==========================================
   if (currentPath === '/ready-made' || currentPath === '/ready-made/') {
     return (
-      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-purple-950 selection:bg-purple-100 selection:text-purple-950">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 w-full">
@@ -385,7 +385,7 @@ const AppRouterContent: React.FC = () => {
 
   if (currentPath.startsWith('/ready-made/') && currentPath !== '/ready-made/') {
     return (
-      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-purple-950 selection:bg-purple-100 selection:text-purple-950">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 w-full">
@@ -404,7 +404,7 @@ const AppRouterContent: React.FC = () => {
   // 6. PUBLIC STOREFRONT & BESPOKE ORDERING FLOW
   // ==========================================
   return (
-    <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+    <div className="min-h-screen bg-cream flex flex-col font-sans text-purple-950 selection:bg-purple-100 selection:text-purple-950">
       <SEOHead {...seo} />
       <Header />
 

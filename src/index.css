@@ -18,6 +18,72 @@
   --color-purple-200: #e8dae8;
   --color-purple-100: #f3ebf5;
   --color-purple-50: #faf5fc;
+
+  /* Radii tokens */
+  --radius-dorji-sm: 0.5rem;
+  --radius-dorji-md: 0.75rem;
+  --radius-dorji-lg: 1rem;
+  --radius-dorji-xl: 1.25rem;
+}
+
+@layer components {
+  /* Standardized Dorji Component Tokens */
+  .card-dorji {
+    background-color: var(--color-cream-50);
+    border: 1px solid var(--color-cream-300);
+    border-radius: var(--radius-dorji-lg);
+    color: var(--color-purple-950);
+  }
+
+  .card-dorji-subtle {
+    background-color: var(--color-cream-100);
+    border: 1px solid var(--color-cream-200);
+    border-radius: var(--radius-dorji-md);
+    color: var(--color-purple-950);
+  }
+
+  .btn-dorji-primary {
+    background-color: var(--color-purple-950);
+    color: var(--color-cream-50);
+    border-radius: var(--radius-dorji-md);
+    font-weight: 700;
+    transition: all 0.15s ease-in-out;
+  }
+  .btn-dorji-primary:hover {
+    background-color: var(--color-purple-900);
+  }
+
+  .btn-dorji-secondary {
+    background-color: var(--color-cream-200);
+    color: var(--color-purple-950);
+    border: 1px solid var(--color-cream-300);
+    border-radius: var(--radius-dorji-md);
+    font-weight: 600;
+    transition: all 0.15s ease-in-out;
+  }
+  .btn-dorji-secondary:hover {
+    background-color: var(--color-cream-300);
+  }
+
+  .input-dorji {
+    background-color: var(--color-cream-50);
+    border: 1px solid var(--color-cream-300);
+    border-radius: var(--radius-dorji-md);
+    color: var(--color-purple-950);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .input-dorji:focus {
+    outline: none;
+    border-color: var(--color-purple-800);
+    box-shadow: 0 0 0 2px rgba(83, 35, 104, 0.15);
+  }
+
+  .modal-dorji {
+    background-color: var(--color-cream-50);
+    border: 1px solid var(--color-cream-300);
+    border-radius: var(--radius-dorji-xl);
+    color: var(--color-purple-950);
+  }
 }
 
 @layer base {

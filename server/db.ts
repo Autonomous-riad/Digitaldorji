@@ -530,6 +530,59 @@ const INITIAL_DB: DatabaseSchema = {
         neck: 16.0,
         waist: 37.5
       }
+    },
+    {
+      id: 'demo-order-001',
+      orderNumber: 'DEMO-2026-0001',
+      isDemo: true,
+      isFictionalDemo: true,
+      userId: 'usr-demo-guest',
+      customerName: 'Demo Customer (Anonymized)',
+      customerPhone: '01700-000000',
+      customerEmail: 'demo@example.com',
+      createdAt: '2026-10-01T10:00:00.000Z',
+      garment: {
+        id: 'mens-panjabi-classic',
+        nameEn: 'Classic Royal Semi-Fit Panjabi',
+        nameBn: 'ক্লাসিক রয়েল সেমি-ফিট পাঞ্জাবি',
+        gender: 'men',
+        basePrice: 850,
+        image: '/images/garments/panjabi-kurta.jpg'
+      },
+      fabricDetails: {
+        fabricSource: 'shop_fabric',
+        fabricType: 'Demo Studio Linen Cotton',
+        colorName: 'Royal Cream',
+        lengthGaz: 2.75,
+        needLiningAstra: false
+      },
+      pickupAddress: {
+        fullName: 'Demo Customer (Anonymized)',
+        phone: '01700-000000',
+        division: 'Dhaka',
+        area: 'Dhanmondi',
+        streetAddress: 'Fictional Demo Studio, Road 1',
+        apartmentFloor: 'Suite 1A',
+        pickupDate: '2026-10-02',
+        pickupSlot: 'morning'
+      },
+      deliveryUrgency: 'standard',
+      estimatedDeliveryDate: '2026-10-06',
+      grandTotal: 930,
+      paymentMethod: 'cod',
+      paymentStatus: 'paid',
+      currentStage: 'cutting_in_progress',
+      assignedTailor: 'Demo Workshop Master',
+      assignedRider: 'Demo Rider',
+      tailorNotes: 'Isolated demo order for interactive stage progression testing.',
+      measurements: {
+        chest: 40.0,
+        length: 42.0,
+        shoulder: 18.0,
+        sleeve: 25.0,
+        neck: 16.0,
+        waist: 38.0
+      }
     }
   ],
   savedMeasurements: [
@@ -983,6 +1036,11 @@ class Database {
           inventory_transactions: parsed.inventory_transactions || [],
           coupons: parsed.coupons?.length ? parsed.coupons : INITIAL_DB.coupons
         };
+        // Always ensure the isolated demo order is registered in orders table
+        if (!merged.orders.some((o: any) => o.orderNumber === 'DEMO-2026-0001')) {
+          const demoOrder = INITIAL_DB.orders.find(o => o.orderNumber === 'DEMO-2026-0001');
+          if (demoOrder) merged.orders.push(demoOrder);
+        }
         return merged;
       }
     } catch (err) {

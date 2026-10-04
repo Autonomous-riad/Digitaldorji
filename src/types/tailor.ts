@@ -217,6 +217,8 @@ export interface TailorOrder {
   customerPhone?: string;
   customerEmail?: string;
   isGuest?: boolean;
+  isDemo?: boolean;
+  isFictionalDemo?: boolean;
   createdAt: string;
   garment: GarmentItem;
   gender: GenderCategory;

@@ -37,44 +37,44 @@ export const MobileOrderStepBar: React.FC = () => {
   };
 
   return (
-    <div className="sticky top-14 sm:top-16 z-30 bg-white/95 backdrop-blur-md border border-stone-200 shadow-xs mb-3 sm:mb-4 rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 transition-all">
+    <div className="sticky top-14 sm:top-16 z-30 bg-cream-50/95 backdrop-blur-md border border-cream-300 shadow-xs mb-3 sm:mb-4 rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 transition-all">
       {/* Top row: Back button, garment thumbnail & title, and step fraction */}
       <div className="flex items-center justify-between gap-1.5 sm:gap-2 pb-1.5 sm:pb-2">
         <button
           type="button"
           onClick={() => setActiveStep(getPreviousStep())}
-          className="flex items-center gap-1 text-xs font-bold text-stone-700 hover:text-stone-900 active:scale-95 transition-all cursor-pointer py-1 px-2 sm:px-2.5 rounded-lg hover:bg-stone-100 shrink-0 border border-stone-200 sm:border-transparent"
+          className="flex items-center gap-1 text-xs font-bold text-purple-950 hover:text-purple-900 active:scale-95 transition-all cursor-pointer py-1 px-2 sm:px-2.5 rounded-lg hover:bg-cream-200 shrink-0 border border-cream-300 sm:border-transparent"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span className="hidden xs:inline">{t('Back', 'পেছনে')}</span>
         </button>
 
         {/* Selected Garment Miniature Badge */}
-        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 bg-amber-50/90 border border-amber-200 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex-1 max-w-[240px] justify-center mx-1">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 bg-cream-200 border border-cream-300 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex-1 max-w-[240px] justify-center mx-1">
           <img
             src={activeGarment.image}
             alt={activeGarment.nameEn}
-            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover border border-amber-300 shrink-0"
+            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover border border-cream-400 shrink-0"
             referrerPolicy="no-referrer"
           />
-          <span className="text-xs font-bold text-stone-950 truncate">
+          <span className="text-xs font-bold text-purple-950 truncate">
             {t(activeGarment.nameEn, activeGarment.nameBn)}
           </span>
-          <span className="text-[10px] text-amber-900 font-bold hidden sm:inline shrink-0">
+          <span className="text-[10px] text-purple-900 font-bold hidden sm:inline shrink-0">
             • ৳{activeGarment.basePrice}
           </span>
         </div>
 
         {/* Step indicator fraction */}
-        <span className="text-[10px] sm:text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-full shrink-0">
+        <span className="text-[10px] sm:text-[11px] font-bold text-purple-950 bg-cream-200 border border-cream-300 px-2 py-0.5 rounded-full shrink-0">
           {currentIdx + 1}/4
         </span>
       </div>
 
-      {/* Thin Animated Progress Bar in Atelier Amber */}
-      <div className="w-full h-1 sm:h-1.5 bg-amber-100 rounded-full overflow-hidden mb-1.5 sm:mb-2">
+      {/* Thin Animated Progress Bar */}
+      <div className="w-full h-1 sm:h-1.5 bg-cream-200 rounded-full overflow-hidden mb-1.5 sm:mb-2">
         <div 
-          className="h-full bg-amber-900 rounded-full transition-all duration-300 ease-out"
+          className="h-full bg-purple-950 rounded-full transition-all duration-300 ease-out"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
@@ -97,18 +97,18 @@ export const MobileOrderStepBar: React.FC = () => {
               disabled={idx > currentIdx}
               className={`flex items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all min-h-[30px] sm:min-h-[34px] ${
                 isActive
-                  ? 'bg-amber-900 text-white shadow-xs'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
                   : isCompleted
-                  ? 'bg-amber-50 text-stone-950 border border-amber-200 cursor-pointer hover:bg-amber-100'
-                  : 'text-stone-500 cursor-not-allowed bg-stone-100'
+                  ? 'bg-cream-200 text-purple-950 border border-cream-300 cursor-pointer hover:bg-cream-300'
+                  : 'text-purple-950/40 cursor-not-allowed bg-cream-100 border border-cream-200'
               }`}
             >
               <span className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center text-[9px] sm:text-[10px] font-bold shrink-0 ${
                 isActive 
-                  ? 'bg-white text-amber-900' 
+                  ? 'bg-cream-50 text-purple-950' 
                   : isCompleted 
-                  ? 'bg-stone-900 text-white' 
-                  : 'bg-stone-200 text-stone-700'
+                  ? 'bg-purple-950 text-cream-50' 
+                  : 'bg-cream-300 text-purple-950/70'
               }`}>
                 {isCompleted ? '✓' : step.num}
               </span>

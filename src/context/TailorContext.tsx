@@ -276,6 +276,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
   
   // Orders & Saved Profiles
+  // Privacy & Demo Isolation: Fresh guest sessions start with clean state (no prefilled profiles or orders)
   const [orders, setOrders] = useState<TailorOrder[]>(() => {
     try {
       const saved = localStorage.getItem(LOCAL_STORAGE_ORDERS_KEY);
@@ -285,11 +286,11 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     } catch (e) {
       console.error(e);
     }
-    return SAMPLE_ORDERS;
+    return [];
   });
 
   const [latestCreatedOrder, setLatestCreatedOrder] = useState<TailorOrder | null>(null);
-  const [activeTrackingId, setActiveTrackingId] = useState<string | null>(orders[0]?.id || null);
+  const [activeTrackingId, setActiveTrackingId] = useState<string | null>(null);
 
   const [savedProfiles, setSavedProfiles] = useState<SavedMeasurementProfile[]>(() => {
     try {
@@ -300,28 +301,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     } catch (e) {
       console.error(e);
     }
-    return [
-      {
-        id: 'prof-1',
-        profileName: 'My Office Formal Fit',
-        personName: 'Tanvir Ahmed',
-        gender: 'men',
-        garmentId: 'men-formal-shirt',
-        garmentName: 'Formal Shirt',
-        measurements: { length: 29.5, chest: 40, shoulder: 18, sleeve: 24.5, neck: 15.5, cuff: 9.5, waist: 36, armhole: 19.5 },
-        updatedAt: '2026-08-20'
-      },
-      {
-        id: 'prof-2',
-        profileName: 'Sister Silk Three-Piece',
-        personName: 'Sadia Jahan',
-        gender: 'women',
-        garmentId: 'women-three-piece',
-        garmentName: 'Three-Piece / Salwar Kameez',
-        measurements: { kameez_length: 42, bust: 38, waist: 34, hip: 40, shoulder: 14.5, sleeve_length: 18, sleeve_mohri: 10.5, armhole: 17, front_neck: 6, back_neck: 4.5, salwar_length: 38.5, salwar_mohri: 13 },
-        updatedAt: '2026-08-22'
-      }
-    ];
+    return [];
   });
 
   // Sync with local storage
@@ -732,10 +712,13 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       });
     }
 
-    // Sync to backend orders database
-    ordersApi.updateOrderStage(orderId, stage, noteEn).catch(err => {
-      console.warn('Backend updateOrderStage error:', err);
-    });
+    // Sync to backend orders database ONLY if authorized admin/staff and not an isolated demo order
+    const isDemoOrder = updatedOrderObj?.isDemo || updatedOrderObj?.isFictionalDemo || (updatedOrderObj?.orderNumber && updatedOrderObj.orderNumber.startsWith('DEMO-'));
+    if (!isDemoOrder && (role as string === 'admin' || role === 'tailor_master')) {
+      ordersApi.updateOrderStage(orderId, stage, noteEn).catch(err => {
+        console.warn('Backend updateOrderStage error:', err);
+      });
+    }
   };
 
   const stageProgression: OrderStage[] = [
@@ -753,6 +736,15 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const targetOrder = orders.find(o => o.id === orderId);
     if (!targetOrder) return;
     
+    // Strict isolation: "Simulate Next Stage" is restricted to isolated demo or authorized staff view.
+    // It must NEVER alter a real customer order.
+    const isDemo = targetOrder.isDemo || targetOrder.isFictionalDemo || (targetOrder.orderNumber && targetOrder.orderNumber.startsWith('DEMO-'));
+    const isStaff = (role as string === 'admin' || role === 'tailor_master');
+    if (!isDemo && !isStaff) {
+      console.warn('Simulate Next Stage is restricted to isolated demo orders or authorized staff view.');
+      return;
+    }
+
     const currentIndex = stageProgression.indexOf(targetOrder.currentStage);
     if (currentIndex < stageProgression.length - 1) {
       const nextStage = stageProgression[currentIndex + 1];

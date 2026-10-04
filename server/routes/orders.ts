@@ -391,7 +391,8 @@ ordersRouter.get('/track', handleTrackOrder);
 ordersRouter.post('/track', handleTrackOrder);
 
 // GET /api/orders/:orderNumber
-ordersRouter.get('/:orderNumber', (req: Request, res: Response, next) => {
+// Strictly protected: Requires authentication (admin/staff or order owner) or phone verification for guests.
+ordersRouter.get('/:orderNumber', optionalAuth, (req: AuthenticatedRequest, res: Response, next) => {
   const { orderNumber } = req.params;
   if (!orderNumber || orderNumber === 'track') return next();
 
@@ -401,18 +402,51 @@ ordersRouter.get('/:orderNumber', (req: Request, res: Response, next) => {
     (o.id && o.id.toLowerCase() === cleanNum)
   );
 
-  if (order) {
-    return res.json({ success: true, order });
-  }
-
-  const rmOrder = db.getReadyMadeOrders().find(ro =>
+  const rmOrder = !order ? db.getReadyMadeOrders().find(ro =>
     ro.order_number.toLowerCase() === cleanNum ||
     ro.id.toLowerCase() === cleanNum
-  );
+  ) : null;
 
-  if (rmOrder) {
-    return res.json({ success: true, order: rmOrder, isReadyMade: true });
+  const targetOrder = order || rmOrder;
+
+  if (!targetOrder) {
+    return res.status(404).json({ error: 'Order not found', code: 'ORDER_NOT_FOUND' });
   }
 
-  return res.status(404).json({ error: 'Order not found' });
+  // 1. Isolated fictional demo orders are accessible for interactive simulation
+  if (targetOrder.isDemo || targetOrder.isFictionalDemo || (targetOrder.orderNumber && targetOrder.orderNumber.startsWith('DEMO-'))) {
+    return res.json({ success: true, order: targetOrder, isDemo: true, isReadyMade: !!rmOrder });
+  }
+
+  // 2. Authorized Admin or Staff can view any order
+  if (req.user && (req.user.role === 'admin' || req.user.role === 'staff')) {
+    return res.json({ success: true, order: targetOrder, isReadyMade: !!rmOrder });
+  }
+
+  // 3. Authenticated customer who owns this order
+  const orderUserId = targetOrder.userId || targetOrder.customer_id;
+  if (req.user && orderUserId && req.user.id === orderUserId) {
+    return res.json({ success: true, order: targetOrder, isReadyMade: !!rmOrder });
+  }
+
+  // 4. Authenticated customer whose registered phone matches
+  const targetPhone = normalizePhone(targetOrder.customerPhone || targetOrder.pickupAddress?.phone || targetOrder.customer_phone || '');
+  if (req.user && req.user.phone) {
+    const userPhone = normalizePhone(req.user.phone);
+    if (userPhone && targetPhone && (userPhone === targetPhone || targetPhone.endsWith(userPhone) || userPhone.endsWith(targetPhone))) {
+      return res.json({ success: true, order: targetOrder, isReadyMade: !!rmOrder });
+    }
+  }
+
+  // 5. Unauthenticated guest or phone-based verification
+  const providedPhone = normalizePhone((req.query.phone || req.headers['x-order-phone'] || '') as string);
+  if (providedPhone && targetPhone && (providedPhone === targetPhone || targetPhone.endsWith(providedPhone) || providedPhone.endsWith(targetPhone))) {
+    return res.json({ success: true, order: targetOrder, isReadyMade: !!rmOrder });
+  }
+
+  // Privacy protection: Unauthenticated guest without valid matching phone is blocked!
+  return res.status(403).json({
+    error: 'Access Denied: Authentication or customer phone verification is required to view order details.',
+    code: 'UNAUTHORIZED_ACCESS'
+  });
 });

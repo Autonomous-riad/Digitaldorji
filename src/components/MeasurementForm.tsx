@@ -157,22 +157,22 @@ export const MeasurementForm: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-32 sm:pb-12">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-stone-200 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-cream-50 p-5 sm:p-6 rounded-2xl border border-cream-300 shadow-xs">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-cream-200 border border-cream-300 flex items-center justify-center text-purple-950 shrink-0">
             <Ruler className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
-                {t('Step 2 of 4: Precision Sizing & Measurements', 'ধাপ ২/৪: মাপ ও সাইজ নির্ধারণ')}
+              <span className="text-xs font-bold text-purple-950 bg-cream-200 px-2.5 py-0.5 rounded-full border border-cream-300">
+                {t('Step 1 of 4: Precision Sizing & Measurements', 'ধাপ ১/৪: মাপ ও সাইজ নির্ধারণ')}
               </span>
-              <span className="text-xs text-stone-600 font-medium">{t(activeGarment.nameEn, activeGarment.nameBn)}</span>
+              <span className="text-xs text-purple-950/70 font-medium">{t(activeGarment.nameEn, activeGarment.nameBn)}</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-stone-900 mt-1 font-serif-title">
+            <h2 className="text-xl sm:text-2xl font-bold text-purple-950 mt-1 font-serif-title">
               {t('Enter Body Measurements', 'পোশাকের নিখুঁত মাপ দিন')}
             </h2>
-            <p className="text-xs text-stone-600">
+            <p className="text-xs text-purple-950/70">
               {t('Choose between manual tape measurements, standard size presets, or providing a sample garment.', 'ম্যানুয়াল ফিতার মাপ, স্ট্যান্ডার্ড সাইজ প্রিসেট বা স্যাম্পল পোশাকের মাপ বেছে নিন।')}
             </p>
           </div>

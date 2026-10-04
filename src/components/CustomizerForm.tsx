@@ -3,6 +3,7 @@ import { useTailor } from '../context/TailorContext';
 import { CustomizationOptionArt } from './CustomizationArt';
 import { GarmentLiveVisualizer } from './GarmentLiveVisualizer';
 import { MobileBottomActionBar } from './MobileBottomActionBar';
+import { SizeGuideTooltip } from './common/SizeGuideTooltip';
 import { CUSTOMIZATION_GUIDES, CustomizationOptionGuide } from '../data/customizationGuides';
 import { getPresetsForGarment, StylePreset } from '../data/stylePresets';
 import { GarmentCustomizationGroup } from '../types/tailor';
@@ -130,15 +131,17 @@ export const CustomizerForm: React.FC = () => {
       </div>
 
       {/* Currently Selected Customization Quick Bar (Mobile & Desktop) */}
-      <div className="bg-white rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-xs">
-        <div className="flex items-center justify-between gap-2 mb-2">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-stone-800 uppercase tracking-wider">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-amber-700" />
+      <div className="bg-cream-50 rounded-2xl border border-cream-300 p-3 sm:p-4 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-purple-950 uppercase tracking-wider">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-purple-900" />
             <span>{t('Your Active Style Selections', 'আপনার নির্বাচিত স্টাইলসমূহ')}</span>
+            <span className="text-[11px] text-purple-950/70 font-normal">
+              ({activeGarment.customizationGroups.length} {t('components', 'টি অংশ')})
+            </span>
           </div>
-          <span className="text-[11px] text-stone-500">
-            {activeGarment.customizationGroups.length} {t('components', 'টি অংশ')}
-          </span>
+
+          <SizeGuideTooltip categoryKey={activeGarment?.id || 'panjabi'} label={t('Interactive Size Guide', 'সাইজ ও ফিটিং গাইড')} />
         </div>
 
         {/* Horizontal scroll strip */}

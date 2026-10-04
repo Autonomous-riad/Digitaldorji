@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTailor } from '../context/TailorContext';
+import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import { OrderStage, TailorOrder } from '../types/tailor';
 import { ordersApi } from '../services/api';
@@ -28,19 +29,24 @@ import {
   Hash,
   ArrowRight,
   Lock,
-  RotateCcw
+  RotateCcw,
+  FlaskConical
 } from 'lucide-react';
 
 export const OrderTracker: React.FC = () => {
   const { 
     t, 
     orders, 
+    role,
     activeTrackingId, 
     setActiveTrackingId, 
     simulateOrderProgress,
     updateOrderStage,
     setActiveStep 
   } = useTailor();
+
+  const { user, isAdmin } = useAuth();
+  const isStaffOrAdmin = isAdmin || user?.role === 'admin' || user?.role === 'staff' || (role as string === 'admin' || role === 'tailor_master');
 
   const [callRiderMsg, setCallRiderMsg] = useState(false);
   const [chatRiderMsg, setChatRiderMsg] = useState(false);
@@ -163,15 +169,53 @@ export const OrderTracker: React.FC = () => {
   };
 
   const handleQuickFillDemo = () => {
-    setSearchOrderId('DB-2026-9812');
-    setSearchPhone('01711223344');
+    setSearchOrderId('DEMO-2026-0001');
+    setSearchPhone('01700-000000');
     setSearchError(null);
-    toast.info(t('Demo order credentials filled', 'ডেমো অর্ডারের তথ্য পূরণ করা হয়েছে'));
+    toast.info(t('Demo order credentials filled (isolated test sandbox)', 'ডেমো অর্ডারের তথ্য পূরণ করা হয়েছে (আইসোলেটেড টেস্ট)'));
   };
 
   const currentOrder: TailorOrder | null = 
     searchedOrder || 
     (!hasSearched && activeTrackingId ? (orders.find(o => o.id === activeTrackingId || o.orderNumber === activeTrackingId) || null) : null);
+
+  const isDemoOrder = !!(
+    currentOrder?.isDemo || 
+    currentOrder?.isFictionalDemo || 
+    (currentOrder?.orderNumber && currentOrder.orderNumber.startsWith('DEMO-'))
+  );
+  const canSimulate = isDemoOrder || isStaffOrAdmin;
+
+  const handleSimulateStage = (targetStage?: OrderStage) => {
+    if (!currentOrder || !canSimulate) return;
+    
+    if (isDemoOrder) {
+      const nextStage = targetStage || (currentStageIndex < stageKeys.length - 1 ? stageKeys[currentStageIndex + 1] : currentOrder.currentStage);
+      setSearchedOrder(prev => prev ? {
+        ...prev,
+        currentStage: nextStage,
+        statusHistory: [
+          ...(prev.statusHistory || []),
+          {
+            stage: nextStage,
+            timestamp: new Date().toISOString(),
+            noteEn: `[DEMO SIMULATION] Advanced to ${nextStage.replace(/_/g, ' ')}`,
+            noteBn: `[ডেমো সিমুলেশন] ${nextStage} ধাপে অগ্রসর হয়েছে`
+          }
+        ]
+      } : null);
+      toast.success(`⚡ [Demo Sandbox] Stage simulated: ${nextStage.replace(/_/g, ' ')}`);
+      return;
+    }
+
+    if (isStaffOrAdmin) {
+      if (targetStage) {
+        updateOrderStage(currentOrder.id, targetStage);
+      } else {
+        simulateOrderProgress(currentOrder.id);
+      }
+    }
+  };
 
   const stagesMeta: { stage: OrderStage; labelEn: string; labelBn: string; descEn: string; descBn: string; icon: any }[] = [
     {
@@ -246,21 +290,21 @@ export const OrderTracker: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12">
       {/* Universal Guest Order Lookup Card */}
-      <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-stone-200">
+      <div className="bg-cream-50 p-6 rounded-2xl border border-cream-300 shadow-xs">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-cream-300">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-amber-900 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+              <span className="text-xs font-bold text-purple-950 bg-cream-200 px-2.5 py-0.5 rounded-full border border-cream-300">
                 {t('Guest & Customer Order Tracking', 'গেস্ট ও কাস্টমার অর্ডার ট্র্যাকিং')}
               </span>
-              <span className="text-[11px] text-stone-500 hidden sm:inline">
+              <span className="text-[11px] text-purple-950/70 hidden sm:inline">
                 {t('• No login required', '• লগইন আবশ্যক নয়')}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-stone-950 mt-1 font-serif-title">
+            <h2 className="text-xl sm:text-2xl font-bold text-purple-950 mt-1 font-serif-title">
               {t('Track Your Tailoring Order', 'আপনার টেইলারিং অর্ডার ট্র্যাক করুন')}
             </h2>
-            <p className="text-xs text-stone-600">
+            <p className="text-xs text-purple-950/70">
               {t('Enter your Order ID (from receipt/SMS) and registered phone number to view live workshop milestones.', 'আপনার অর্ডার আইডি এবং ফোন নম্বর দিয়ে লাইভ অগ্রগতি ও ডেলিভারি স্ট্যাটাস দেখুন।')}
             </p>
           </div>
@@ -268,42 +312,42 @@ export const OrderTracker: React.FC = () => {
           <button
             type="button"
             onClick={handleQuickFillDemo}
-            className="text-[11px] text-amber-900 hover:text-stone-900 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded-lg border border-amber-200 font-medium transition-colors cursor-pointer shrink-0"
+            className="text-[11px] text-purple-950 hover:text-purple-900 bg-cream-200 hover:bg-cream-300 px-3 py-1.5 rounded-lg border border-cream-300 font-semibold transition-colors cursor-pointer shrink-0"
           >
-            {t('Quick Demo: DB-2026-9812', 'ডেমো অর্ডার: DB-2026-9812')}
+            {t('Quick Demo: DEMO-2026-0001', 'ডেমো অর্ডার: DEMO-2026-0001')}
           </button>
         </div>
 
         {/* Tracking Search Form */}
         <form onSubmit={handleTrackSubmit} className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-4">
           <div className="sm:col-span-5 relative">
-            <label className="block text-[11px] font-bold text-stone-900 mb-1">
+            <label className="block text-[11px] font-bold text-purple-950 mb-1">
               {t('Order ID / Number', 'অর্ডার আইডি / নম্বর')}
             </label>
             <div className="relative">
-              <Hash className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Hash className="w-4 h-4 text-purple-950/40 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchOrderId}
                 onChange={(e) => setSearchOrderId(e.target.value)}
-                placeholder="e.g. DB-2026-9812"
-                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                placeholder="e.g. DEMO-2026-0001"
+                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800"
               />
             </div>
           </div>
 
           <div className="sm:col-span-4 relative">
-            <label className="block text-[11px] font-bold text-stone-900 mb-1">
+            <label className="block text-[11px] font-bold text-purple-950 mb-1">
               {t('Customer Phone Number', 'গ্রাহকের ফোন নম্বর')}
             </label>
             <div className="relative">
-              <Phone className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Phone className="w-4 h-4 text-purple-950/40 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchPhone}
                 onChange={(e) => setSearchPhone(e.target.value)}
-                placeholder="e.g. 01711223344"
-                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                placeholder="e.g. 01700000000"
+                className="w-full pl-9 pr-3 py-2 text-xs font-mono font-medium rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800"
               />
             </div>
           </div>
@@ -312,7 +356,7 @@ export const OrderTracker: React.FC = () => {
             <button
               type="submit"
               disabled={isSearching}
-              className="w-full py-2 px-4 rounded-xl bg-amber-900 hover:bg-stone-900 active:bg-black text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-60"
+              className="w-full py-2 px-4 rounded-xl bg-purple-950 hover:bg-purple-900 active:bg-purple-800 text-cream-50 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-60"
             >
               <Search className="w-3.5 h-3.5" />
               <span>{isSearching ? t('Verifying...', 'যাচাই হচ্ছে...') : t('Track Order', 'ট্র্যাক করুন')}</span>
@@ -369,17 +413,43 @@ export const OrderTracker: React.FC = () => {
         </div>
       ) : (
         <>
+          {/* Demo Sandbox Alert Notice if viewing isolated demo */}
+          {isDemoOrder && (
+            <div className="bg-amber-100 border border-amber-300 text-amber-950 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-lg font-bold bg-amber-900 text-white text-[10px] uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                  <FlaskConical className="w-3.5 h-3.5" />
+                  <span>{t('Demo Simulation Sandbox', 'ডেমো সিমুলেশন স্যান্ডবক্স')}</span>
+                </span>
+                <span className="font-medium">
+                  {t(
+                    'This is an isolated demo order with anonymized fictional data. Stage simulations here never alter real customer orders.',
+                    'এটি একটি আইসোলেটেড ডেমো অর্ডার যাতে কাল্পনিক তথ্য রয়েছে। এখানে স্টেজ টেস্ট করা হলে কোনো মূল গ্রাহক অর্ডার পরিবর্তিত হয় না।'
+                  )}
+                </span>
+              </div>
+              <span className="text-[11px] font-bold text-amber-900 bg-amber-200/80 px-2.5 py-1 rounded-lg border border-amber-300 shrink-0">
+                {t('Isolated Demo Mode', 'আইসোলেটেড ডেমো মোড')}
+              </span>
+            </div>
+          )}
+
           {/* Top Header & Order Selector Pill */}
-          <div className="bg-white p-6 rounded-xl border border-purple-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-cream-50 p-6 rounded-2xl border border-cream-300 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-ping"></span>
                 <span className="text-xs font-bold text-orange-700 uppercase tracking-wide">
                   {t('Live Workshop & Doorstep Tracker', 'লাইভ ওয়ার্কশপ ও ডেলিভারি ট্র্যাকিং')}
                 </span>
-                {currentOrder.isGuest && (
+                {currentOrder.isGuest && !isDemoOrder && (
                   <span className="text-[10px] bg-purple-100 text-purple-900 font-bold px-2 py-0.5 rounded-full border border-purple-200">
                     {t('Guest Order', 'গেস্ট অর্ডার')}
+                  </span>
+                )}
+                {isDemoOrder && (
+                  <span className="text-[10px] bg-amber-200 text-amber-950 font-bold px-2 py-0.5 rounded-full border border-amber-300">
+                    {t('Fictional Demo Order', 'কাল্পনিক ডেমো অর্ডার')}
                   </span>
                 )}
               </div>
@@ -387,7 +457,7 @@ export const OrderTracker: React.FC = () => {
                 {t('Order Status: ', 'অর্ডার স্ট্যাটাস: ')}
                 <span className="text-orange-700">{currentOrder.orderNumber}</span>
               </h2>
-              <p className="text-xs text-purple-950/60">
+              <p className="text-xs text-purple-950/70">
                 {t(currentOrder.garment.nameEn, currentOrder.garment.nameBn)} • {t('Customer: ', 'গ্রাহক: ')}<strong>{currentOrder.customerName || currentOrder.pickupAddress?.fullName}</strong> ({currentOrder.customerPhone || currentOrder.pickupAddress?.phone})
               </p>
             </div>
@@ -395,7 +465,7 @@ export const OrderTracker: React.FC = () => {
             {/* Multi-order switcher if customer has multiple orders in context */}
             {orders.length > 1 && (
               <div className="flex items-center gap-2 overflow-x-auto max-w-full pb-1">
-                <span className="text-xs text-purple-950/60 font-bold whitespace-nowrap">{t('Switch Order:', 'অর্ডার পরিবর্তন:')}</span>
+                <span className="text-xs text-purple-950/70 font-bold whitespace-nowrap">{t('Switch Order:', 'অর্ডার পরিবর্তন:')}</span>
                 {orders.map(o => (
                   <button
                     key={o.id}
@@ -405,8 +475,8 @@ export const OrderTracker: React.FC = () => {
                     }}
                     className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-all cursor-pointer ${
                       o.id === currentOrder.id
-                        ? 'bg-purple-950 text-white border-purple-950 shadow-xs'
-                        : 'bg-purple-50 text-purple-900 border-purple-300 hover:bg-purple-100'
+                        ? 'bg-purple-950 text-cream-50 border-purple-950 shadow-xs'
+                        : 'bg-cream-100 text-purple-900 border-cream-300 hover:bg-cream-200'
                     }`}
                   >
                     {o.orderNumber} ({t(o.garment.nameEn, o.garment.nameBn)})
@@ -419,17 +489,19 @@ export const OrderTracker: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left 2 Cols: Timeline Milestones */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl border border-purple-200 p-6 sm:p-8 shadow-xs space-y-6">
-            <div className="flex items-center justify-between pb-4 border-b border-purple-100">
+          <div className="bg-cream-50 rounded-2xl border border-cream-300 p-6 sm:p-8 shadow-xs space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-cream-300">
               <h3 className="text-base font-bold text-purple-950 flex items-center gap-2">
                 <Truck className="w-5 h-5 text-orange-600" />
                 <span>{t('Doorstep Tailoring Milestone Timeline', 'টেইলারিং প্রক্রিয়ার প্রতিটি ধাপ')}</span>
               </h3>
 
-              {/* Interactive Stage Simulation Button for Demo Testing */}
-              {currentStageIndex < stageKeys.length - 1 && (
+              {/* Interactive Stage Simulation Button: Restrict strictly to isolated demo or authorized staff view */}
+              {canSimulate && currentStageIndex < stageKeys.length - 1 && (
                 <button
-                  onClick={() => simulateOrderProgress(currentOrder.id)}
+                  type="button"
+                  id="simulate-next-stage-button"
+                  onClick={() => handleSimulateStage()}
                   className="px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-950 text-xs font-bold flex items-center gap-1.5 transition-colors border border-orange-200 shadow-xs cursor-pointer"
                   title={t('Advance to next workshop stage for testing', 'টেস্ট করার জন্য পরবর্তী ধাপে যান')}
                 >
@@ -439,55 +511,64 @@ export const OrderTracker: React.FC = () => {
               )}
             </div>
 
-            {/* Supabase Realtime Status Simulation Bar */}
-            <div className="bg-indigo-50/70 rounded-xl p-3.5 border border-indigo-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
-                </span>
-                <div>
-                  <p className="text-xs font-bold text-indigo-950">
-                    {t('Supabase Realtime Live Alerts', 'সুপাবেস রিয়েল-টাইম লাইভ ট্র্যাকিং')}
-                  </p>
-                  <p className="text-[11px] text-slate-600">
-                    {t('Instant customer push alerts for fabric collection, sewing, & delivery', 'কাপড় সংগ্রহ, সেলাই ও ডেলিভারির রিয়েল-টাইম নোটিফিকেশন')}
-                  </p>
+            {/* Interactive Status Simulation Bar: Only shown for isolated demo or authorized staff */}
+            {canSimulate && (
+              <div className="bg-amber-50/70 rounded-xl p-3.5 border border-amber-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold text-purple-950 flex items-center gap-1.5">
+                      <span>{t('Realtime Simulation Controls', 'রিয়েল-টাইম সিমুলেশন কন্ট্রোল')}</span>
+                      {isDemoOrder && (
+                        <span className="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.2 rounded">
+                          {t('Demo Sandbox', 'ডেমো')}
+                        </span>
+                      )}
+                    </p>
+                    <p className="text-[11px] text-purple-950/70">
+                      {isDemoOrder 
+                        ? t('Simulate stages safely in isolated demo mode without altering real customer data', 'আলাদা ডেমো মোডে নিরাপদে অগ্রগতি টেস্ট করুন')
+                        : t('Authorized staff atelier milestone progression', 'অনুমোদিত স্টাফদের দ্বারা স্টেজ আপডেট')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    id="simulate-fabric-picked-button"
+                    onClick={() => handleSimulateStage('fabric_received_at_shop')}
+                    className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-cream-50 hover:bg-emerald-50 text-emerald-800 border border-emerald-300 transition-colors cursor-pointer shadow-2xs flex items-center gap-1"
+                  >
+                    <Package className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>{t('Fabric Picked Up', 'কাপড় সংগ্রহ')}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    id="simulate-sewing-button"
+                    onClick={() => handleSimulateStage('stitching_in_progress')}
+                    className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-cream-50 hover:bg-purple-100 text-purple-900 border border-purple-300 transition-colors cursor-pointer shadow-2xs flex items-center gap-1"
+                  >
+                    <Scissors className="w-3.5 h-3.5 text-purple-700" />
+                    <span>{t('Sewing in Progress', 'সেলাই চলছে')}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    id="simulate-ready-button"
+                    onClick={() => handleSimulateStage('quality_and_ironing')}
+                    className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-cream-50 hover:bg-emerald-50 text-emerald-800 border border-emerald-300 transition-colors cursor-pointer shadow-2xs flex items-center gap-1"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>{t('Ready for Delivery', 'ডেলিভারি প্রস্তুত')}</span>
+                  </button>
                 </div>
               </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  id="simulate-fabric-picked-button"
-                  onClick={() => updateOrderStage(currentOrder.id, 'fabric_received_at_shop', 'Fabric picked up from doorstep and checked into Atelier', 'বাসা থেকে কাপড় সংগ্রহ সম্পন্ন ও কারখানায় জমা')}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 transition-colors cursor-pointer shadow-2xs flex items-center gap-1"
-                >
-                  <Package className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>{t('Fabric Picked Up', 'কাপড় সংগ্রহ')}</span>
-                </button>
-
-                <button
-                  type="button"
-                  id="simulate-sewing-button"
-                  onClick={() => updateOrderStage(currentOrder.id, 'stitching_in_progress', 'Senior artisan sewing in progress with precision needlework', 'সেলাই ও কারিগরির কাজ চলমান')}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-indigo-50 text-indigo-800 border border-indigo-300 transition-colors cursor-pointer shadow-2xs flex items-center gap-1"
-                >
-                  <Scissors className="w-3.5 h-3.5 text-indigo-700" />
-                  <span>{t('Sewing in Progress', 'সেলাই চলছে')}</span>
-                </button>
-
-                <button
-                  type="button"
-                  id="simulate-ready-button"
-                  onClick={() => updateOrderStage(currentOrder.id, 'quality_and_ironing', 'Passed 12-point quality check, steam pressed and ready for delivery', 'কোয়ালিটি চেক সম্পন্ন ও ডেলিভারির জন্য প্রস্তুত')}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 transition-colors cursor-pointer shadow-2xs flex items-center gap-1"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                  <span>{t('Ready for Delivery', 'ডেলিভারি প্রস্তুত')}</span>
-                </button>
-              </div>
-            </div>
+            )}
 
             {/* Vertical Timeline Steps */}
             <div className="relative pl-6 sm:pl-8 space-y-6 sm:space-y-8 before:absolute before:left-3 sm:before:left-4 before:top-3 before:bottom-3 before:w-0.5 before:bg-purple-200">
