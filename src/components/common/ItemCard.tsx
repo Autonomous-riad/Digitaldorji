@@ -97,16 +97,16 @@ export const ItemCard: React.FC<ItemCardProps> = (props) => {
           )}
 
           {!isGarment && fabric && (
-            <div className="p-1 sm:p-2 rounded-lg bg-cream-200/80 border border-cream-300 text-[9px] sm:text-xs space-y-0.5 sm:space-y-1">
-              <div className="flex justify-between items-center">
-                <span className="text-purple-950/70">{t('Comp:', 'উপাদান:')}</span>
-                <span className="font-bold text-purple-950 truncate max-w-[80px] sm:max-w-[150px] ml-1">
+            <div className="grid grid-cols-1 gap-1 xs:grid-cols-2 sm:grid-cols-2 sm:gap-2 text-[9px] sm:text-xs">
+              <div className="flex items-center justify-between p-1 sm:p-2 rounded-lg bg-cream-200/80 border border-cream-300">
+                <span className="text-purple-950/70 truncate">{t('Comp:', 'উপাদান:')}</span>
+                <span className="font-bold text-purple-950 truncate max-w-[80px] sm:max-w-[120px] ml-1">
                   {fabric.materialComposition}
                 </span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-purple-950/70">{t('Weight:', 'ওজন:')}</span>
-                <span className="font-semibold text-purple-950 ml-1">{fabric.weightGsm} GSM</span>
+              <div className="flex items-center justify-between p-1 sm:p-2 rounded-lg bg-cream-200/80 border border-cream-300">
+                <span className="text-purple-950/70 truncate">{t('Weight:', 'ওজন:')}</span>
+                <span className="font-bold text-purple-950 shrink-0 ml-1">{fabric.weightGsm} GSM</span>
               </div>
             </div>
           )}

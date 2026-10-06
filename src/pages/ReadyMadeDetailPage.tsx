@@ -249,43 +249,42 @@ export const ReadyMadeDetailPage: React.FC = () => {
           <div className="lg:col-span-6 space-y-6">
             
             {/* Title & Metadata */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+            <div className="bg-cream-50 p-6 rounded-2xl border border-cream-300 shadow-2xs space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-bold uppercase tracking-wider text-purple-950 bg-cream-200 border border-cream-300 px-2.5 py-0.5 rounded-full">
                   {product.category}
                 </span>
 
-                <div className="flex items-center gap-1.5 text-xs text-slate-700">
+                <div className="flex items-center gap-1.5 text-xs text-purple-950">
                   <div className="flex items-center text-amber-500">
                     <Star className="w-4 h-4 fill-amber-500" />
-                    <span className="font-bold ml-1 text-slate-900">{product.rating.toFixed(1)}</span>
+                    <span className="font-bold ml-1 text-purple-950">{product.rating.toFixed(1)}</span>
                   </div>
-                  <span className="text-slate-400">•</span>
-                  <span className="text-slate-500 font-medium">
+                  <span className="text-purple-950/40">•</span>
+                  <span className="text-purple-950/70 font-medium">
                     {product.review_count} {t('verified reviews', 'টি রিভিউ')}
                   </span>
                 </div>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-950 font-serif-title leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-purple-950 font-serif-title leading-tight">
                 {lang === 'bn' ? product.name_bn : product.name_en}
               </h1>
 
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-purple-950/70 leading-relaxed">
                 {lang === 'bn' ? product.description_bn : product.description_en}
               </p>
 
               {/* Price Display */}
-              <div className="pt-2 border-t border-slate-100 flex items-baseline gap-3">
-                <div className="text-3xl font-extrabold text-slate-950 font-serif-title">
+              <div className="pt-2 border-t border-cream-200 flex items-baseline gap-3">
+                <div className="text-3xl font-extrabold text-purple-950 font-mono">
                   ৳{liveUnitPrice.toLocaleString()}
                 </div>
                 {product.sale_price && product.sale_price < product.base_price && (
-                  <div className="text-sm text-slate-400 line-through">
+                  <div className="text-sm text-purple-950/40 line-through font-mono">
                     ৳{product.base_price.toLocaleString()}
                   </div>
                 )}
-
               </div>
 
               {/* Stock status announcement */}
@@ -310,17 +309,17 @@ export const ReadyMadeDetailPage: React.FC = () => {
             </div>
 
             {/* Selectors: Size & Color */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-5">
+            <div className="bg-cream-50 p-6 rounded-2xl border border-cream-300 shadow-2xs space-y-5">
               
               {/* Size Selector */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    {t('Select Size', 'সাইজ নির্বাচন করুন')}: <strong className="text-indigo-700">{selectedSize}</strong>
+                  <span className="text-xs font-bold text-purple-950 uppercase tracking-wider">
+                    {t('Select Size', 'সাইজ নির্বাচন করুন')}: <strong className="text-purple-950">{selectedSize}</strong>
                   </span>
                   <button
                     onClick={() => setSizeChartOpen(true)}
-                    className="text-xs text-indigo-700 hover:text-indigo-800 font-bold flex items-center gap-1 hover:underline cursor-pointer"
+                    className="text-xs text-purple-900 hover:text-purple-950 font-bold flex items-center gap-1 hover:underline cursor-pointer"
                   >
                     <Ruler className="w-3.5 h-3.5" />
                     <span>{t('Size Chart & Guide', 'সাইজ চার্ট')}</span>
@@ -336,12 +335,12 @@ export const ReadyMadeDetailPage: React.FC = () => {
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`min-w-[48px] py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                        className={`min-w-[48px] py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer min-h-[38px] ${
                           isSelected
-                            ? 'bg-indigo-700 text-white border-indigo-700 shadow-sm'
+                            ? 'bg-purple-950 text-cream-50 border-purple-950 shadow-sm'
                             : inStockForSize
-                            ? 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
-                            : 'bg-slate-50 text-slate-300 border-slate-200 cursor-not-allowed line-through'
+                            ? 'bg-cream-100 text-purple-950 border-cream-300 hover:border-purple-800 hover:bg-cream-200'
+                            : 'bg-cream-200/50 text-purple-950/30 border-cream-200 cursor-not-allowed line-through'
                         }`}
                       >
                         {size}
@@ -354,8 +353,8 @@ export const ReadyMadeDetailPage: React.FC = () => {
               {/* Color Swatches */}
               {product.available_colors && product.available_colors.length > 0 && (
                 <div>
-                  <span className="text-xs font-bold text-slate-900 uppercase tracking-wider block mb-2">
-                    {t('Select Color', 'রং নির্বাচন করুন')}: <strong className="text-indigo-700">{selectedColor}</strong>
+                  <span className="text-xs font-bold text-purple-950 uppercase tracking-wider block mb-2">
+                    {t('Select Color', 'রং নির্বাচন করুন')}: <strong className="text-purple-950">{selectedColor}</strong>
                   </span>
 
                   <div className="flex items-center gap-3">
@@ -367,7 +366,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
                           onClick={() => setSelectedColor(color.name)}
                           title={color.name}
                           className={`relative p-1 rounded-full border-2 transition-all cursor-pointer ${
-                            isSelected ? 'border-indigo-700 ring-2 ring-indigo-200 scale-110' : 'border-transparent hover:scale-105'
+                            isSelected ? 'border-purple-950 ring-2 ring-purple-200 scale-110' : 'border-transparent hover:scale-105'
                           }`}
                         >
                           <span
@@ -382,10 +381,8 @@ export const ReadyMadeDetailPage: React.FC = () => {
               )}
             </div>
 
-
-
             {/* Quantity and Actions Bar */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div className="bg-cream-50 p-6 rounded-2xl border border-cream-300 shadow-sm space-y-4">
               
               {/* Notice Banner */}
               {addNotice && (
@@ -397,21 +394,21 @@ export const ReadyMadeDetailPage: React.FC = () => {
 
               <div className="flex items-center gap-4">
                 {/* Quantity Stepper */}
-                <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50 shrink-0">
+                <div className="flex items-center border border-cream-300 rounded-xl overflow-hidden bg-cream-100 shrink-0">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
-                    className="p-2.5 text-slate-600 hover:bg-slate-200 disabled:opacity-40 transition-colors"
+                    className="p-2.5 text-purple-950 hover:bg-cream-200 disabled:opacity-40 transition-colors cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="px-4 text-xs font-bold text-slate-900 min-w-[32px] text-center">
+                  <span className="px-4 text-xs font-bold text-purple-950 min-w-[32px] text-center">
                     {quantity}
                   </span>
                   <button
                     onClick={() => setQuantity(Math.min(currentStock || 10, quantity + 1))}
                     disabled={quantity >= currentStock}
-                    className="p-2.5 text-slate-600 hover:bg-slate-200 disabled:opacity-40 transition-colors"
+                    className="p-2.5 text-purple-950 hover:bg-cream-200 disabled:opacity-40 transition-colors cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -419,10 +416,10 @@ export const ReadyMadeDetailPage: React.FC = () => {
 
                 {/* Live total display */}
                 <div className="text-right flex-1">
-                  <span className="text-[11px] text-slate-500 block">
+                  <span className="text-[11px] text-purple-950/70 block">
                     {t('Total for', 'মোট')} {quantity} {t('piece(s)', 'টি')}
                   </span>
-                  <span className="text-xl sm:text-2xl font-extrabold text-slate-950 font-serif-title">
+                  <span className="text-xl sm:text-2xl font-extrabold text-purple-950 font-mono">
                     ৳{liveTotalPrice.toLocaleString()}
                   </span>
                 </div>
@@ -433,7 +430,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
                 <button
                   onClick={() => handleAddToCart(false)}
                   disabled={isOutOfStock}
-                  className="py-3.5 px-4 bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="py-3.5 px-4 bg-cream-200 hover:bg-cream-300 border border-cream-300 disabled:opacity-40 text-purple-950 rounded-xl text-xs sm:text-sm font-bold shadow-2xs hover:shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>{t('Add to Cart', 'কার্টে যোগ করুন')}</span>
@@ -442,7 +439,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
                 <button
                   onClick={() => handleAddToCart(true)}
                   disabled={isOutOfStock}
-                  className="py-3.5 px-4 bg-indigo-700 hover:bg-indigo-800 disabled:opacity-40 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="py-3.5 px-4 bg-purple-950 hover:bg-purple-900 disabled:opacity-40 text-cream-50 rounded-xl text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer min-h-[44px]"
                 >
                   <Sparkles className="w-4 h-4" />
                   <span>{t('Buy Now', 'এখনই অর্ডার করুন')}</span>
@@ -450,48 +447,48 @@ export const ReadyMadeDetailPage: React.FC = () => {
               </div>
 
               {/* Assurances */}
-              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 text-[11px] text-slate-600">
+              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-cream-200 text-[11px] text-purple-950/70">
                 <div className="flex items-center gap-1.5">
-                  <Truck className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                  <Truck className="w-3.5 h-3.5 text-purple-800 shrink-0" />
                   <span>{t('Standard delivery from ৳60', 'ডেলিভারি চার্জ মাত্র ৳৬০ থেকে')}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <RotateCcw className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <RotateCcw className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                   <span>{lang === 'bn' ? product.return_policy_bn : product.return_policy_en}</span>
                 </div>
               </div>
             </div>
 
             {/* Product Details Tabs (Fabric, Care, Delivery) */}
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
-              <div className="flex border-b border-slate-200 bg-slate-50 text-xs font-bold">
+            <div className="bg-cream-50 rounded-2xl border border-cream-300 overflow-hidden shadow-2xs">
+              <div className="flex border-b border-cream-300 bg-cream-100/70 text-xs font-bold">
                 <button
                   onClick={() => setActiveTab('fabric')}
-                  className={`flex-1 py-3 px-4 text-center transition-colors ${
-                    activeTab === 'fabric' ? 'bg-white text-indigo-700 border-b-2 border-indigo-700' : 'text-slate-600 hover:text-slate-900'
+                  className={`flex-1 py-3 px-4 text-center transition-colors cursor-pointer min-h-[40px] ${
+                    activeTab === 'fabric' ? 'bg-cream-50 text-purple-950 border-b-2 border-purple-950' : 'text-purple-950/70 hover:text-purple-950'
                   }`}
                 >
                   {t('Fabric Specs', 'কাপড়ের বিবরণ')}
                 </button>
                 <button
                   onClick={() => setActiveTab('care')}
-                  className={`flex-1 py-3 px-4 text-center transition-colors ${
-                    activeTab === 'care' ? 'bg-white text-indigo-700 border-b-2 border-indigo-700' : 'text-slate-600 hover:text-slate-900'
+                  className={`flex-1 py-3 px-4 text-center transition-colors cursor-pointer min-h-[40px] ${
+                    activeTab === 'care' ? 'bg-cream-50 text-purple-950 border-b-2 border-purple-950' : 'text-purple-950/70 hover:text-purple-950'
                   }`}
                 >
                   {t('Wash & Care', 'যত্ন নির্দেশিকা')}
                 </button>
                 <button
                   onClick={() => setActiveTab('delivery')}
-                  className={`flex-1 py-3 px-4 text-center transition-colors ${
-                    activeTab === 'delivery' ? 'bg-white text-indigo-700 border-b-2 border-indigo-700' : 'text-slate-600 hover:text-slate-900'
+                  className={`flex-1 py-3 px-4 text-center transition-colors cursor-pointer min-h-[40px] ${
+                    activeTab === 'delivery' ? 'bg-cream-50 text-purple-950 border-b-2 border-purple-950' : 'text-purple-950/70 hover:text-purple-950'
                   }`}
                 >
                   {t('Shipping & Returns', 'শিপিং ও রিটার্ন')}
                 </button>
               </div>
 
-              <div className="p-5 text-xs text-slate-600 leading-relaxed">
+              <div className="p-5 text-xs text-purple-950/80 leading-relaxed">
                 {activeTab === 'fabric' && (
                   <p>{product.fabric_description}</p>
                 )}

@@ -38,46 +38,46 @@ export const GarmentCatalog: React.FC = () => {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-12">
-      {/* Hero Banner with Doorstep Process Workflow - Warm Atelier Amber Theme */}
-      <div className="relative overflow-hidden rounded-2xl bg-stone-900 text-white p-4 sm:p-8 lg:p-10 border border-stone-800 shadow-md">
-        {/* Subtle decorative glow circles */}
-        <div className="absolute -top-24 -right-24 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-amber-900/20 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Hero Banner with Doorstep Process Workflow - Atelier Deep Plum & Gold */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-950 via-[#3b1549] to-[#220a2a] text-cream-50 p-4 sm:p-7 lg:p-8 border border-purple-900/50 shadow-md">
+        {/* Subtle warm antique-gold glow */}
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-800/20 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-amber-950/80 text-amber-200 text-[11px] sm:text-xs font-semibold border border-amber-800/80 mb-2.5 sm:mb-4 backdrop-blur-xs min-w-0 overflow-hidden shadow-xs">
+          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-900/80 text-amber-200 text-[11px] sm:text-xs font-semibold border border-purple-800 mb-2 sm:mb-3 backdrop-blur-xs min-w-0 overflow-hidden shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
             <span className="truncate min-w-0">{t('Doorstep Tailoring in Bangladesh', 'সারা বাংলাদেশে ডোরস্টেপ টেইলারিং')}</span>
           </div>
 
-          <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold font-serif-title tracking-tight leading-snug mb-2 sm:mb-3 text-white">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif-title tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">
             {t("Bespoke Tailoring from Your Own Fabric — At Your Doorstep", 'আপনার কেনা কাপড় দিয়েই নিখুঁত মাপে ঘরে বসেই মাস্টার সেলাই')}
           </h1>
 
-          <p className="text-xs sm:text-sm text-stone-300 mb-4 sm:mb-6 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
+          <p className="text-xs sm:text-sm text-cream-200/90 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
             {t(
               'Have unstitched Panjabi cloth, suit length, shirt piece, unstitched Three-Piece or saree blouse at home? Choose custom cuts & measurements. Courier collects your cloth in a sealed bag and delivers master-tailored garments in 4 days.',
               'আপনার কেনা পাঞ্জাবির থান, শার্ট-প্যান্ট, স্যুট, থ্রি-পিস বা ব্লাউজের কাপড় ঘরে আছে? পছন্দের স্টাইল ও মাপ দিন—রাইডার বাসা থেকে কাপড় সিলগালা ব্যাগে সংগ্রহ করে মাত্র ৪ দিনে নিখুঁত সেলাই করে পৌঁছে দিবে।'
             )}
           </p>
 
-          {/* 4-Step Visual Process - Responsive for mobile */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 pt-3 sm:pt-4 border-t border-stone-800">
-            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">01. {t('Style & Size', 'ডিজাইন ও মাপ')}</span>
-              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Panjabi, Suit, 3-Piece & inches', 'পোশাক, কলার ও মাপ দিন')}</p>
+          {/* 4-Step Visual Process - Compact & Responsive for mobile */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-purple-900/60">
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Style & Size', 'ডিজাইন ও মাপ')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Panjabi, Suit, 3-Piece & inches', 'পোশাক, কলার ও মাপ দিন')}</p>
             </div>
-            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">02. {t('Home Pickup', 'ফ্রি পিকআপ')}</span>
-              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Courier collects fabric safely', 'বাসা থেকে কাপড় সংগ্রহ')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Home Pickup', 'ফ্রি পিকআপ')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Courier collects fabric safely', 'বাসা থেকে কাপড় সংগ্রহ')}</p>
             </div>
-            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">03. {t('Stitching', 'মাস্টার কাটিং')}</span>
-              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Hand & machine tailored in 4 days', '৪ দিনে প্রিমিয়াম সেলাই')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Stitching', 'মাস্টার কাটিং')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Hand & machine tailored in 4 days', '৪ দিনে প্রিমিয়াম সেলাই')}</p>
             </div>
-            <div className="p-2 sm:p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5 sm:mb-1">04. {t('Door Delivery', 'হোম ডেলিভারি')}</span>
-              <p className="text-[11px] sm:text-xs text-stone-300 font-medium leading-tight">{t('Delivered + 7-Day free alteration', 'হোম ডেলিভারি + ৭ দিনে ফ্রি অলটার')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Door Delivery', 'হোম ডেলিভারি')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Delivered + 7-Day free alteration', 'হোম ডেলিভারি + ৭ দিনে ফ্রি অলটার')}</p>
             </div>
           </div>
         </div>

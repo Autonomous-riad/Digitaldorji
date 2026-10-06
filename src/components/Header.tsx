@@ -6,6 +6,8 @@ import { useReadyMadeCart } from '../context/ReadyMadeCartContext';
 import { CustomerAuthModal } from './customer/CustomerAuthModal';
 import { 
   Scissors, 
+  Layers,
+  Shirt,
   ShoppingBag,
   User, 
   LogOut, 
@@ -16,7 +18,7 @@ import {
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { lang, setLang, t, setActiveStep } = useTailor();
+  const { lang, setLang, t, activeStep, setActiveStep } = useTailor();
   const { user, logout } = useAuth();
   const { currentPath, navigate } = useRouter();
   const { cartCount, setIsCartOpen } = useReadyMadeCart();
@@ -24,21 +26,32 @@ export const Header: React.FC = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Authoritative single active nav item resolution (guarantees mutual exclusion)
+  const getActiveNav = (): 'tailoring' | 'fabrics' | 'clothes' | null => {
+    if (currentPath.startsWith('/ready-made')) return 'clothes';
+    if (currentPath === '/fabric-catalog' || (currentPath === '/' && activeStep === 'fabric_catalog')) return 'fabrics';
+    if ((currentPath === '/' || currentPath === '/catalog') && activeStep !== 'fabric_catalog') return 'tailoring';
+    return null;
+  };
+
+  const activeNav = getActiveNav();
+
   const NavLinks = () => (
-    <>
+    <div className="flex items-center gap-1 bg-cream-200/70 p-1 rounded-full border border-cream-300/80 shadow-2xs">
       <button
         onClick={() => {
           setActiveStep('catalog');
           navigate('/');
           setMobileMenuOpen(false);
         }}
-        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer ${
-          currentPath === '/' || currentPath === '/catalog'
+        className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer min-h-[34px] ${
+          activeNav === 'tailoring'
             ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
-            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-200/60'
+            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80'
         }`}
       >
-        {t('Tailoring', 'সেলাই')}
+        <Scissors className="w-3.5 h-3.5 shrink-0" />
+        <span>{t('Tailoring', 'সেলাই')}</span>
       </button>
 
       <button
@@ -47,12 +60,13 @@ export const Header: React.FC = () => {
           navigate('/fabric-catalog');
           setMobileMenuOpen(false);
         }}
-        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-          currentPath === '/fabric-catalog'
+        className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer min-h-[34px] ${
+          activeNav === 'fabrics'
             ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
-            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-200/60'
+            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80'
         }`}
       >
+        <Layers className="w-3.5 h-3.5 shrink-0" />
         <span>{t('Fabrics', 'কাপড়')}</span>
       </button>
 
@@ -61,12 +75,13 @@ export const Header: React.FC = () => {
           navigate('/ready-made');
           setMobileMenuOpen(false);
         }}
-        className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-          currentPath.startsWith('/ready-made')
+        className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer min-h-[34px] ${
+          activeNav === 'clothes'
             ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
-            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-200/60'
+            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80'
         }`}
       >
+        <Shirt className="w-3.5 h-3.5 shrink-0" />
         <span>{t('Clothes', 'পোশাক')}</span>
       </button>
 
@@ -75,18 +90,18 @@ export const Header: React.FC = () => {
           setIsCartOpen(true);
           setMobileMenuOpen(false);
         }}
-        className="px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-1.5 text-purple-950/80 hover:text-purple-950 hover:bg-cream-200/60 cursor-pointer"
+        className="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80 cursor-pointer min-h-[34px]"
         title={t('View Shopping Cart', 'শপিং কার্ট দেখুন')}
       >
-        <ShoppingBag className="w-4 h-4 text-purple-950" />
+        <ShoppingBag className="w-3.5 h-3.5 text-purple-950 shrink-0" />
         <span>{t('Cart', 'কার্ট')}</span>
         {cartCount > 0 && (
-          <span className="ml-0.5 px-1.5 py-0.5 text-[10px] font-bold bg-purple-950 text-cream-50 rounded-full flex items-center justify-center min-w-[18px] h-[18px]">
+          <span className="ml-0.5 px-1.5 py-0.2 text-[10px] font-bold bg-purple-950 text-cream-50 rounded-full flex items-center justify-center min-w-[18px] h-[18px]">
             {cartCount}
           </span>
         )}
       </button>
-    </>
+    </div>
   );
 
   return (

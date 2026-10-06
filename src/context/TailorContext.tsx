@@ -199,13 +199,13 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           const gData = await gRes.json();
           if (gData.garments && gData.garments.length > 0) {
             setGarments(gData.garments);
-            // Ensure there is always a valid default active garment style
+            // Only refresh activeGarment if user already initiated a draft in their session
             setActiveGarment(prev => {
               if (prev) {
                 const refreshed = gData.garments.find((x: any) => x.id === prev.id);
-                return refreshed || gData.garments[0];
+                return refreshed || prev;
               }
-              return gData.garments[0];
+              return null;
             });
           }
         }

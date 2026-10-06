@@ -12,6 +12,7 @@ import {
 import { ReadyMadeProduct } from '../../types/readyMade';
 import { useTailor } from '../../context/TailorContext';
 import { useRouter } from '../../context/RouterContext';
+import { formatBDT } from '../../utils/currency';
 
 interface ProductCardProps {
   product: ReadyMadeProduct;
@@ -33,12 +34,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <div 
-      className="group bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-xl hover:border-slate-300 transition-all duration-300 flex flex-col overflow-hidden text-left"
+      className="group bg-cream-50 rounded-xl sm:rounded-2xl border border-cream-300 overflow-hidden hover:shadow-lg hover:border-purple-950 transition-all duration-300 flex flex-col h-full active:scale-[0.99] text-left shadow-2xs"
     >
-      {/* Product Image Stage */}
+      {/* Product Image Stage - Aspect 4/3 identical to tailoring ItemCard */}
       <div 
         onClick={() => navigate(`/ready-made/${product.slug}`)}
-        className="relative w-full aspect-3/4 overflow-hidden bg-slate-100 cursor-pointer"
+        className="relative w-full aspect-[4/3] bg-cream-100 overflow-hidden shrink-0 cursor-pointer"
       >
         <img
           src={primaryImage}
@@ -50,160 +51,136 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         />
 
         {/* Top Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+        <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 flex flex-col gap-1 z-10">
           {isSale && (
-            <span className="px-2.5 py-1 bg-rose-600 text-white text-[11px] font-extrabold rounded-lg shadow-sm tracking-wide">
+            <span className="px-2 py-0.5 bg-rose-600 text-white text-[10px] font-extrabold rounded-md shadow-sm tracking-wide">
               {discountPercent}% {t('OFF', 'ছাড়')}
             </span>
           )}
 
           {product.featured && (
-            <span className="px-2.5 py-1 bg-amber-500 text-slate-950 text-[11px] font-bold rounded-lg shadow-sm flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-slate-950" />
+            <span className="px-2 py-0.5 bg-amber-500 text-purple-950 text-[10px] font-bold rounded-md shadow-sm flex items-center gap-1">
+              <Sparkles className="w-2.5 h-2.5 text-purple-950" />
               <span>{t('Featured', 'বিশেষ')}</span>
             </span>
           )}
         </div>
 
         {/* Stock Status Badge (Top-right) */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-10">
           {isOutOfStock ? (
-            <span className="px-2 py-1 bg-slate-900/90 backdrop-blur-xs text-white text-[10px] font-bold rounded-lg">
+            <span className="px-2 py-0.5 bg-purple-950/90 backdrop-blur-xs text-cream-50 text-[9px] font-bold rounded-md">
               {t('Sold Out', 'স্টক শেষ')}
             </span>
           ) : isLowStock ? (
-            <span className="px-2 py-1 bg-amber-500/95 backdrop-blur-xs text-slate-950 text-[10px] font-bold rounded-lg flex items-center gap-1 shadow-xs">
-              <AlertTriangle className="w-3 h-3" />
+            <span className="px-2 py-0.5 bg-amber-500/95 backdrop-blur-xs text-purple-950 text-[9px] font-bold rounded-md flex items-center gap-1 shadow-xs">
+              <AlertTriangle className="w-2.5 h-2.5" />
               <span>{t(`Only ${product.total_stock} left`, `মাত্র ${product.total_stock}টি বাকি`)}</span>
             </span>
           ) : (
-            <span className="px-2 py-0.5 bg-emerald-600/90 backdrop-blur-xs text-white text-[10px] font-semibold rounded-lg flex items-center gap-1">
-              <Check className="w-3 h-3" />
+            <span className="px-1.5 py-0.5 bg-emerald-700/90 backdrop-blur-xs text-white text-[9px] font-semibold rounded-md flex items-center gap-1">
+              <Check className="w-2.5 h-2.5" />
               <span>{t('In Stock', 'স্টকে আছে')}</span>
             </span>
           )}
         </div>
-
-        {/* Ready to ship badge (Bottom-left) */}
-        {product.ready_to_ship && (
-          <div className="absolute bottom-2.5 left-2.5 bg-white/95 backdrop-blur-xs px-2 py-1 rounded-md text-[10px] font-medium text-stone-700 border border-stone-200/60 flex items-center gap-1 shadow-2xs">
-            <Clock className="w-3 h-3 text-amber-800" />
-            <span>{t('Ships in 24-48 hrs', '২৪-৪৮ ঘণ্টায় শিপিং')}</span>
-          </div>
-        )}
       </div>
 
-      {/* Product Information */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
-        <div>
-          {/* Category & Rating */}
-          <div className="flex items-center justify-between text-xs text-purple-950/70 mb-1">
-            <span className="font-semibold uppercase tracking-wider text-[10px] text-purple-950">
-              {product.category}
-            </span>
-            <div className="flex items-center gap-1 text-purple-950">
-              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-              <span className="font-bold text-xs">{product.rating.toFixed(1)}</span>
-              <span className="text-[10px] text-purple-950/50">({product.review_count})</span>
+      {/* Product Body: flex-1 column with padding matching tailoring ItemCard */}
+      <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between space-y-2">
+        <div className="space-y-1.5">
+          {/* Category & Rating Subheader */}
+          <div className="flex items-center justify-between text-[9px] sm:text-xs font-mono font-medium text-purple-950/70 uppercase tracking-wider line-clamp-1">
+            <span className="truncate">{product.category}</span>
+            <div className="flex items-center gap-1 text-purple-950 font-sans font-bold shrink-0 ml-1">
+              <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+              <span>{product.rating.toFixed(1)}</span>
+              <span className="text-[9px] text-purple-950/50">({product.review_count})</span>
             </div>
           </div>
 
-          {/* Bilingual Title */}
-          <h3 
-            onClick={() => navigate(`/ready-made/${product.slug}`)}
-            className="text-sm sm:text-base font-bold text-purple-950 group-hover:text-purple-800 transition-colors cursor-pointer line-clamp-1 leading-snug"
-          >
-            {lang === 'bn' ? product.name_bn : product.name_en}
-          </h3>
+          {/* Bilingual Title Area: min-height identical to ItemCard */}
+          <div className="min-h-[2.4rem] sm:min-h-[3.25rem] flex flex-col justify-start">
+            <h3 
+              onClick={() => navigate(`/ready-made/${product.slug}`)}
+              className="font-bold text-xs sm:text-base font-serif-title text-purple-950 leading-tight sm:leading-relaxed line-clamp-2 cursor-pointer group-hover:text-purple-800 transition-colors"
+            >
+              {lang === 'bn' ? product.name_bn : product.name_en}
+            </h3>
+            {lang === 'en' && product.name_bn && (
+              <span className="text-[10px] sm:text-[11px] text-purple-950/70 font-normal line-clamp-1 leading-normal sm:leading-relaxed">
+                {product.name_bn}
+              </span>
+            )}
+            {lang === 'bn' && product.name_en && (
+              <span className="text-[10px] sm:text-[11px] text-purple-950/70 font-normal line-clamp-1 leading-normal sm:leading-relaxed">
+                {product.name_en}
+              </span>
+            )}
+          </div>
 
-          <p className="text-xs text-purple-950/70 line-clamp-2 mt-1 leading-relaxed">
+          {/* Description */}
+          <p className="text-xs text-purple-950/80 line-clamp-2 leading-relaxed hidden sm:block">
             {lang === 'bn' ? product.description_bn : product.description_en}
           </p>
 
-          {/* Available Sizes preview */}
-          {product.available_sizes && product.available_sizes.length > 0 && (
-            <div className="flex items-center gap-1.5 mt-2.5">
-              <span className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">
-                {t('Sizes:', 'সাইজ:')}
+          {/* Specs / Meta Pill Container: 2-column grid identical to ItemCard */}
+          <div className="grid grid-cols-1 gap-1 xs:grid-cols-2 sm:grid-cols-2 sm:gap-2 text-[9px] sm:text-xs">
+            <div className="flex items-center justify-between p-1 sm:p-2 rounded-lg bg-cream-200/80 border border-cream-300">
+              <span className="text-purple-950/70 truncate">{t('Sizes:', 'সাইজ:')}</span>
+              <span className="font-bold text-purple-950 truncate ml-1">
+                {product.available_sizes?.slice(0, 3).join(', ') || 'S-XL'}
               </span>
-              <div className="flex flex-wrap gap-1">
-                {product.available_sizes.slice(0, 4).map((size) => (
-                  <span 
-                    key={size}
-                    className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-stone-100 text-stone-700 border border-stone-200/60"
-                  >
-                    {size}
-                  </span>
-                ))}
-                {product.available_sizes.length > 4 && (
-                  <span className="text-[10px] text-stone-400 font-medium">
-                    +{product.available_sizes.length - 4}
-                  </span>
-                )}
-              </div>
             </div>
-          )}
-
-          {/* Color Dots */}
-          {product.available_colors && product.available_colors.length > 0 && (
-            <div className="flex items-center gap-1.5 mt-2">
-              <span className="text-[10px] font-medium text-stone-400 uppercase tracking-wider">
-                {t('Colors:', 'রং:')}
+            <div className="flex items-center justify-between p-1 sm:p-2 rounded-lg bg-cream-200/80 border border-cream-300">
+              <span className="text-purple-950/70 truncate">{t('Dispatch:', 'ডেলিভারি:')}</span>
+              <span className="font-bold text-purple-950 shrink-0 ml-1">
+                {lang === 'bn' ? '২৪-৪৮ঘ' : '24-48h'}
               </span>
-              <div className="flex items-center gap-1">
-                {product.available_colors.slice(0, 5).map((color, idx) => (
-                  <span 
-                    key={idx}
-                    title={color.name}
-                    className="w-3 h-3 rounded-full border border-stone-300 shadow-2xs"
-                    style={{ backgroundColor: color.hex }}
-                  />
-                ))}
-              </div>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Delivery Estimate */}
-        <div className="pt-2 flex items-center gap-1.5 text-[11px] text-stone-500">
-          <Clock className="w-3.5 h-3.5 text-amber-800 shrink-0" />
-          <span>{lang === 'bn' ? '২৪-৪৮ ঘণ্টার মধ্যে দ্রুত ডেলিভারি' : 'Delivery in 24-48 hrs'}</span>
-        </div>
-
-        {/* Pricing and Actions */}
-        <div className="pt-3 border-t border-stone-100 flex flex-col gap-2.5">
-          <div className="flex items-baseline justify-between">
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-base sm:text-lg font-extrabold text-stone-950 font-serif-title">
-                ৳{(product.sale_price ?? product.base_price).toLocaleString()}
+        {/* Pricing and Actions: bottom aligned with mt-auto */}
+        <div className="mt-auto pt-2 border-t border-cream-300 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-1.5 sm:gap-2">
+          <div className="flex items-baseline justify-between sm:block">
+            <span className="text-[9px] sm:text-[10px] text-purple-950/70 block leading-none">
+              {isSale ? t('Special Price', 'অফার মূল্য') : t('Price', 'মূল্য')}
+            </span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm sm:text-lg font-extrabold text-purple-950 font-mono leading-tight">
+                {formatBDT(product.sale_price ?? product.base_price, { useBanglaNumerals: lang === 'bn' })}
               </span>
               {isSale && (
-                <span className="text-xs text-stone-400 line-through">
-                  ৳{product.base_price.toLocaleString()}
+                <span className="text-[10px] sm:text-xs text-purple-950/40 line-through font-mono">
+                  {formatBDT(product.base_price, { useBanglaNumerals: lang === 'bn' })}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center gap-1 sm:gap-1.5 w-full sm:w-auto">
             <button
+              type="button"
               onClick={() => navigate(`/ready-made/${product.slug}`)}
-              className="w-full flex items-center justify-center gap-1 py-2 px-2 rounded-xl text-xs font-semibold text-purple-950 bg-cream-200 hover:bg-cream-300 active:scale-98 transition-all cursor-pointer"
+              className="flex-1 sm:flex-none px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-cream-200 hover:bg-cream-300 text-purple-950 text-[10px] sm:text-xs font-semibold transition-colors cursor-pointer min-h-[34px] sm:min-h-[40px] flex items-center justify-center whitespace-nowrap"
+              title={t('View Details', 'বিস্তারিত')}
             >
-              <span>{t('View Details', 'বিস্তারিত')}</span>
+              <span>{t('Details', 'বিস্তারিত')}</span>
             </button>
 
             <button
+              type="button"
               onClick={() => navigate(`/ready-made/${product.slug}`)}
               disabled={isOutOfStock}
-              className={`w-full flex items-center justify-center gap-1 py-2 px-2 rounded-xl text-xs font-bold transition-all shadow-2xs active:scale-98 cursor-pointer ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer active:scale-98 min-h-[34px] sm:min-h-[40px] whitespace-nowrap ${
                 isOutOfStock
                   ? 'bg-cream-300 text-purple-950/40 cursor-not-allowed'
-                  : 'bg-purple-950 hover:bg-purple-900 text-cream-50'
+                  : 'bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50'
               }`}
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>{isOutOfStock ? t('Out of Stock', 'স্টক শেষ') : t('Add to Cart', 'কার্টে নিন')}</span>
+              <ShoppingBag className="w-3.5 h-3.5 text-cream-50" />
+              <span>{isOutOfStock ? t('Sold Out', 'স্টক শেষ') : t('Buy / Cart', 'কিনুন')}</span>
             </button>
           </div>
         </div>

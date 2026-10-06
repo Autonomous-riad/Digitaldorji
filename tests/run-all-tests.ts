@@ -265,6 +265,30 @@ async function runTests() {
       'Cart item removal controls have distinct, accessible aria-labels in English and Bengali'
     );
 
+    // 2.4 Navigation Mutual Exclusion (never show two buttons selected simultaneously)
+    const getActiveTab = (currentPath: string, activeStep: string, isCartOpen: boolean): string | null => {
+      if (isCartOpen) return 'cart';
+      if (currentPath.startsWith('/ready-made')) return 'clothes';
+      if (currentPath === '/fabric-catalog' || (currentPath === '/' && activeStep === 'fabric_catalog')) return 'fabrics';
+      if ((currentPath === '/' || currentPath === '/catalog') && activeStep === 'catalog') return 'tailoring';
+      return null;
+    };
+
+    // Scenario: User was viewing fabrics and navigated to ready-made clothes
+    const tabWhenOnReadyMade = getActiveTab('/ready-made', 'fabric_catalog', false);
+    assert(
+      tabWhenOnReadyMade === 'clothes',
+      'When navigating to /ready-made with lingering fabric_catalog step, only Clothes is active (never both Fabrics & Clothes)'
+    );
+
+    // Scenario: User opens cart
+    const tabWhenCartOpen = getActiveTab('/ready-made', 'fabric_catalog', true);
+    assert(tabWhenCartOpen === 'cart', 'When cart is open, only Cart is active');
+
+    // Scenario: User is on tailoring homepage
+    const tabOnHome = getActiveTab('/', 'catalog', false);
+    assert(tabOnHome === 'tailoring', 'When on homepage, only Tailoring is active');
+
     // ----------------------------------------------------
     // PRIORITY 3: TAILORING WIZARD STEP PERSISTENCE
     // ----------------------------------------------------

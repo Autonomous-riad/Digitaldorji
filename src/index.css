@@ -19,6 +19,17 @@
   --color-purple-100: #f3ebf5;
   --color-purple-50: #faf5fc;
 
+  /* Restrained Antique Gold Accents */
+  --color-gold: #b45309;
+  --color-gold-light: #fef3c7;
+  --color-gold-border: #fde68a;
+  --color-gold-hover: #92400e;
+
+  /* Charcoal Typography Tokens */
+  --color-charcoal: #1e293b;
+  --color-charcoal-muted: #475569;
+  --color-charcoal-light: #64748b;
+
   /* Radii tokens */
   --radius-dorji-sm: 0.5rem;
   --radius-dorji-md: 0.75rem;
@@ -83,6 +94,19 @@
     border: 1px solid var(--color-cream-300);
     border-radius: var(--radius-dorji-xl);
     color: var(--color-purple-950);
+  }
+
+  .badge-gold {
+    background-color: var(--color-gold-light);
+    border: 1px solid var(--color-gold-border);
+    color: var(--color-gold);
+    font-weight: 700;
+  }
+
+  .hero-atelier {
+    background: linear-gradient(135deg, #2c1236 0%, #3e1a4d 50%, #200c28 100%);
+    border: 1px solid rgba(212, 184, 232, 0.15);
+    color: #fdfbf7;
   }
 }
 

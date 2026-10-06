@@ -7,7 +7,7 @@ export const FloatingWhatsAppButton: React.FC = () => {
   const [showTooltip, setShowTooltip] = useState(true);
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex items-center gap-3">
+    <div className="fixed bottom-6 right-6 z-30 hidden sm:flex items-center gap-3">
       {/* Interactive Floating Tooltip */}
       {showTooltip && (
         <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-white text-purple-950 text-xs font-semibold rounded-2xl shadow-lg border border-purple-100 animate-bounce">

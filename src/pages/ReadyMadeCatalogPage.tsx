@@ -10,7 +10,8 @@ import {
   Filter,
   AlertTriangle,
   RefreshCw,
-  Scissors
+  Scissors,
+  Shirt
 } from 'lucide-react';
 import { ReadyMadeProduct, ReadyMadeCategory } from '../types/readyMade';
 import { ProductCard } from '../components/readymade/ProductCard';
@@ -233,142 +234,167 @@ export const ReadyMadeCatalogPage: React.FC = () => {
   const hasActiveFilters = selectedCategory !== 'all' || searchQuery || selectedSize || onlyInStock || sortBy !== 'featured';
 
   return (
-    <div className="min-h-screen bg-cream-100/70 pb-28 sm:pb-24">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 pb-28 sm:pb-24">
       
-      {/* Hero Banner Section */}
-      <div className="bg-gradient-to-b from-indigo-950 via-slate-900 to-indigo-950 text-white relative overflow-hidden py-10 sm:py-14 border-b border-indigo-900/50">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
+      {/* Hero Banner Section - Atelier Deep Plum & Gold */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-950 via-[#3b1549] to-[#220a2a] text-cream-50 p-4 sm:p-7 lg:p-8 border border-purple-900/50 shadow-md">
+        {/* Subtle decorative warm antique-gold glow */}
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-800/20 rounded-full blur-3xl pointer-events-none" />
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="max-w-2xl space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
-                <span>{t('Handcrafted & Pre-Tailored Collection', 'হস্তনির্মিত ও রেডিমেইড কালেকশন')}</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight font-serif-title text-white">
-                {t('Ready-Made Atelier', 'রেডিমেড প্রিমিয়াম পোশাক')}
-              </h1>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-xl">
-                {t(
-                  'Explore our ready-to-ship sartorial collection. Designed with bespoke tailoring craftsmanship, available in standardized sizes with instant custom modification options.',
-                  'রেডি টু শিপ পোশাকের চমৎকার সমাহার। ডিজিটাল দরজির সুনিপুণ ফিটিংস, প্রিমিয়াম ফেব্রিক ও তাৎক্ষণিক কাস্টমাইজেশন সুবিধা সহ।'
-                )}
-              </p>
-            </div>
+        <div className="relative z-10 max-w-3xl">
+          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-900/80 border border-purple-800 text-amber-200 text-[11px] sm:text-xs font-semibold backdrop-blur-xs mb-2 sm:mb-3 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+            <span className="truncate">{t('Handcrafted & Ready-To-Wear Atelier Collection', 'হস্তনির্মিত ও রেডিমেড কালেকশন')}</span>
+          </div>
 
-            {/* Quick Guarantees */}
-            <div className="flex flex-wrap gap-4 text-xs text-slate-300 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-6">
-              <div className="flex items-center gap-2">
-                <Truck className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>{t('24-48h Dispatch in BD', '২৪-৪৮ ঘণ্টায় ডেলিভারি')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>{t('7-Day Size Exchange', '৭ দিনের সাইজ এক্সচেঞ্জ')}</span>
-              </div>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif-title tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">
+            {t('Ready-Made Atelier Collection — Express Delivery', 'রেডিমেড প্রিমিয়াম পোশাক — ২৪-৪৮ ঘণ্টায় ঘরে ডেলিভারি')}
+          </h1>
+
+          <p className="text-xs sm:text-sm text-cream-200/90 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
+            {t(
+              'Explore our ready-to-ship sartorial collection. Designed with bespoke tailoring craftsmanship, available in standardized sizes with instant custom modification options.',
+              'রেডি টু শিপ পোশাকের চমৎকার সমাহার। ডিজিটাল দরজির সুনিপুণ ফিটিংস, প্রিমিয়াম ফেব্রিক ও তাৎক্ষণিক কাস্টমাইজেশন সুবিধা সহ ঘরে বসেই অর্ডার করুন।'
+            )}
+          </p>
+
+          {/* 4-Step Visual Process - Atelier Workflow */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-purple-900/60">
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fit & Size', 'ডিজাইন ও সাইজ')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Panjabi, Shirt, Pajama & Kurti', 'পাঞ্জাবি, শার্ট ও কুর্তি')}</p>
+            </div>
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Custom Fitting', 'কাস্টম অলটার')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Sleeve, length & fit options', 'প্রয়োজনে সাইজ কাস্টমাইজ')}</p>
+            </div>
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Express Dispatch', 'দ্রুত ডিসপ্যাচ')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Packed & dispatched in 24-48h', '২৪-৪৮ ঘণ্টায় ডেলিভারি')}</p>
+            </div>
+            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
+              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Exchange Guarantee', 'সহজ রিটার্ন')}</span>
+              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('7-day free size exchange', '৭ দিনে ফ্রি সাইজ এক্সচেঞ্জ')}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-6">
-        
-        {/* Search & Mobile Filter Bar */}
-        <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      {/* Filter and Search Controls */}
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-cream-50 p-3 sm:p-4 rounded-2xl border border-cream-300 shadow-xs">
           
-          {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t('Search by name, fabric, style, or SKU (e.g. Panjabi, Cotton, Linen)...', 'পাঞ্জাবি, কটন, শার্ট বা SKU দিয়ে খুঁজুন...')}
-              className="w-full pl-10 pr-9 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600 transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
-                aria-label="Clear search query"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Sort Dropdown & Toggles */}
-          <div className="flex items-center gap-2 justify-between sm:justify-end">
-            
-            {/* Stock Toggle */}
+          {/* Primary Gender Switcher Tabs */}
+          <div className="grid grid-cols-3 sm:flex bg-cream-200 p-1 rounded-xl border border-cream-300 w-full sm:w-auto gap-1" role="tablist" aria-label="পোশাক ক্যাটাগরি ফিল্টার">
             <button
-              onClick={() => setOnlyInStock(!onlyInStock)}
-              className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer ${
-                onlyInStock
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs font-bold'
-                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+              onClick={() => setSelectedCategory('all')}
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+                selectedCategory === 'all'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
+                  : 'text-purple-950 hover:text-purple-900'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${onlyInStock ? 'bg-emerald-600' : 'bg-slate-300'}`} />
-              <span>{t('In Stock Only', 'কেবল স্টকে আছে')}</span>
+              <span className="truncate">{t('All Clothes', 'সকল পোশাক')}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
+                selectedCategory === 'all' ? 'bg-purple-900 text-cream-50' : 'bg-cream-300 text-purple-950'
+              }`}>
+                {products.length}
+              </span>
             </button>
 
-            {/* Sort Select */}
-            <div className="relative flex items-center">
-              <ArrowUpDown className="w-3.5 h-3.5 text-slate-400 absolute left-3 pointer-events-none" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="pl-8 pr-8 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 cursor-pointer appearance-none"
-              >
-                <option value="featured">{t('Featured', 'বিশেষ পণ্য')}</option>
-                <option value="price_asc">{t('Price: Low to High', 'দাম: কম থেকে বেশি')}</option>
-                <option value="price_desc">{t('Price: High to Low', 'দাম: বেশি থেকে কম')}</option>
-                <option value="rating">{t('Top Rated', 'সেরা রেটিং')}</option>
-                <option value="newest">{t('New Arrivals', 'নতুন কালেকশন')}</option>
-              </select>
+            <button
+              onClick={() => setSelectedCategory('panjabi')}
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+                selectedCategory === 'panjabi'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
+                  : 'text-purple-950 hover:text-purple-900'
+              }`}
+            >
+              <Shirt className={`w-3.5 h-3.5 shrink-0 ${selectedCategory === 'panjabi' ? 'text-cream-50' : 'text-purple-950'}`} />
+              <span className="truncate">{t("Men's", 'পুরুষ')}</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedCategory('women-kurti')}
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+                selectedCategory === 'women-kurti'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
+                  : 'text-purple-950 hover:text-purple-900'
+              }`}
+            >
+              <Sparkles className={`w-3.5 h-3.5 shrink-0 ${selectedCategory === 'women-kurti' ? 'text-cream-50' : 'text-purple-950'}`} />
+              <span className="truncate">{t("Women's", 'নারী')}</span>
+            </button>
+          </div>
+
+          {/* Search Input and Sort/Stock */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="w-4 h-4 text-purple-950/50 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t('Search Panjabi, Shirt, Pajama...', 'পাঞ্জাবি, শার্ট বা পায়জামা খুঁজুন...')}
+                className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 placeholder:text-purple-950/50 focus:bg-cream-50 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-purple-950/40 hover:text-purple-950 p-1"
+                  aria-label="Clear search query"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
-            {/* Mobile Filter Toggle */}
+            {/* In Stock toggle button */}
             <button
-              onClick={() => setShowFiltersMobile(!showFiltersMobile)}
-              className="md:hidden p-2 rounded-xl border border-slate-200 text-slate-700 bg-white hover:bg-slate-50"
-              aria-label="Filter"
+              onClick={() => setOnlyInStock(!onlyInStock)}
+              className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap min-h-[38px] ${
+                onlyInStock
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs font-bold'
+                  : 'bg-cream-200 text-purple-950 border-cream-300 hover:bg-cream-300'
+              }`}
             >
-              <Filter className="w-4 h-4" />
+              <span className={`w-2 h-2 rounded-full ${onlyInStock ? 'bg-emerald-600' : 'bg-cream-400'}`} />
+              <span>{t('In Stock', 'স্টক')}</span>
             </button>
           </div>
         </div>
 
-        {/* Category Filter Chips Carousel */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {/* Category Filter Chips Carousel with Smooth Scroll */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs" role="tablist" aria-label="রেডিমেড ক্যাটাগরি ফিল্টার">
+          <span className="text-[11px] font-bold text-purple-950/70 uppercase tracking-wide shrink-0 mr-1">
+            {t('Category:', 'ক্যাটাগরি:')}
+          </span>
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all ${
               selectedCategory === 'all'
-                ? 'bg-indigo-700 text-white shadow-md'
-                : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                ? 'bg-purple-950 text-cream-50 shadow-xs'
+                : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
             }`}
           >
-            {t('All Ready-Made', 'সকল রেডিমেড')} {!loading && !error ? `(${products.length})` : ''}
+            {t('All Ready-Made', 'সব পোশাক')}
           </button>
 
           {categories.map((cat) => (
             <button
               key={cat.id || cat.slug}
               onClick={() => setSelectedCategory(cat.slug)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-full font-semibold shrink-0 cursor-pointer transition-all flex items-center gap-1 ${
                 selectedCategory === cat.slug
-                  ? 'bg-indigo-700 text-white shadow-md'
-                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  : 'bg-cream-50 text-purple-950 border border-cream-300 hover:bg-cream-200'
               }`}
             >
               <span>{lang === 'bn' ? cat.name_bn : cat.name_en}</span>
               {(cat.count !== undefined || cat.product_count !== undefined) && (
-                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                  selectedCategory === cat.slug ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
+                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  selectedCategory === cat.slug ? 'bg-purple-900 text-cream-50' : 'bg-cream-200 text-purple-950'
                 }`}>
                   {cat.count ?? cat.product_count}
                 </span>
@@ -378,21 +404,21 @@ export const ReadyMadeCatalogPage: React.FC = () => {
         </div>
 
         {/* Secondary Filter Bar: Size Chips & Active Filter Tags */}
-        <div className="bg-white p-3 rounded-xl border border-slate-200/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div className="bg-cream-50 p-3 sm:p-3.5 rounded-xl border border-cream-300 flex flex-wrap items-center justify-between gap-3 text-xs shadow-2xs">
           
           {/* Sizes */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-semibold text-slate-500 mr-1 text-[11px] uppercase tracking-wider">
+            <span className="font-semibold text-purple-950/70 mr-1 text-[11px] uppercase tracking-wider">
               {t('Filter by Size:', 'সাইজ অনুযায়ী:')}
             </span>
             {allSizes.map((s) => (
               <button
                 key={s}
                 onClick={() => setSelectedSize(selectedSize === s ? '' : s)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer min-h-[30px] ${
                   selectedSize === s
-                    ? 'bg-slate-900 text-white shadow-2xs'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-purple-950 text-cream-50 shadow-2xs'
+                    : 'bg-cream-100 text-purple-950 border border-cream-300 hover:bg-cream-200'
                 }`}
               >
                 {s}
@@ -404,7 +430,7 @@ export const ReadyMadeCatalogPage: React.FC = () => {
           {hasActiveFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-xs text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1 hover:underline cursor-pointer ml-auto sm:ml-0"
+              className="text-xs text-rose-700 hover:text-rose-900 font-bold flex items-center gap-1 hover:underline cursor-pointer ml-auto sm:ml-0"
             >
               <X className="w-3.5 h-3.5" />
               <span>{t('Reset Filters', 'ফিল্টার রিসেট')}</span>
@@ -539,7 +565,7 @@ export const ReadyMadeCatalogPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
