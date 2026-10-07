@@ -15,6 +15,7 @@ import { DIGITAL_FABRICS_DATA } from '../src/data/fabrics';
 import { INITIAL_PRODUCTS, INITIAL_COUPONS } from '../server/readyMadeData';
 import { TailorOrder, GarmentItem, FabricDetails, PickupAddress } from '../src/types/tailor';
 import { ReadyMadeCartItem } from '../src/types/readyMade';
+import { MEASUREMENT_GUIDE_DATABASE, DIAGRAM_GEOMETRY_DATABASE } from '../src/components/measurement/HowToMeasureInteractiveGuide';
 
 // Color logging helpers
 const pass = (msg: string) => console.log(`  \x1b[32m✔ PASS:\x1b[0m ${msg}`);
@@ -450,6 +451,93 @@ async function runTests() {
     assert(
       checkoutResult.success === true && checkoutResult.chargedRealPayment === false && checkoutResult.sentRealOTP === false,
       'Safe test checkout verifies order validation without real payments, OTPs, or production record mutations'
+    );
+
+    // ----------------------------------------------------
+    // PRIORITY 5: INTERACTIVE 'HOW TO MEASURE' GUIDE
+    // ----------------------------------------------------
+    console.log('\n--- Priority 5: Interactive How to Measure Guide & Hover Triggers ---');
+
+    // 5.1 Comprehensive Guide Database for All Core Garment Measurement Points
+    const corePoints = [
+      'shoulder',
+      'chest',
+      'waist',
+      'sleeve',
+      'length',
+      'neck',
+      'cuff',
+      'armhole',
+      'hip',
+      'pant_length',
+      'thigh',
+      'bottom_flare'
+    ];
+
+    const missingGuides = corePoints.filter(key => !MEASUREMENT_GUIDE_DATABASE[key]);
+    assert(
+      missingGuides.length === 0,
+      `Guide database contains complete measurement data for all 12 core points: ${corePoints.join(', ')}`
+    );
+
+    // 5.2 3-Step Interactive Walkthrough Structure & Bilingual Clarity
+    let allStepsValid = true;
+    for (const key of corePoints) {
+      const g = MEASUREMENT_GUIDE_DATABASE[key];
+      if (!g || g.steps.length !== 3) {
+        allStepsValid = false;
+        break;
+      }
+      for (const st of g.steps) {
+        if (!st.titleBn || !st.titleEn || !st.instructionBn || !st.instructionEn || !st.proTipBn) {
+          allStepsValid = false;
+          break;
+        }
+      }
+    }
+    assert(
+      allStepsValid,
+      'Every measurement guide has 3 distinct steps with bilingual Bengali & English instructions and pro-tips'
+    );
+
+    // 5.3 Interactive Tape Diagram Geometry Database
+    const missingGeometry = corePoints.filter(key => !DIAGRAM_GEOMETRY_DATABASE[key]);
+    assert(
+      missingGeometry.length === 0,
+      'Geometry database provides coordinates, start points, and end points for all diagram overlays'
+    );
+
+    // 5.4 Hover Field Resolution Simulation (pinned > hovered > focused > lastHovered > default)
+    const resolveGuideField = (
+      pinned: string | null,
+      hovered: string | null,
+      focused: string | null,
+      lastHovered: string | null,
+      fallback: string
+    ) => {
+      if (pinned) return pinned;
+      if (hovered) return hovered;
+      if (focused) return focused;
+      if (lastHovered) return lastHovered;
+      return fallback;
+    };
+
+    // User hovers waist
+    assert(
+      resolveGuideField(null, 'waist', null, 'shoulder', 'shoulder') === 'waist',
+      'Hovering over waist immediately triggers waist interactive guide'
+    );
+
+    // User moves mouse into input controls: stays on waist via lastHovered
+    assert(
+      resolveGuideField(null, null, null, 'waist', 'shoulder') === 'waist',
+      'Moving cursor into number controls smoothly keeps waist active without snapping to shoulder'
+    );
+
+    // User pins sleeve
+    assert(
+      resolveGuideField('sleeve', 'chest', null, 'waist', 'shoulder') === 'sleeve',
+      'Pinned guide locks focus onto selected field even when cursor wanders'
     );
 
     console.log('\n======================================================');

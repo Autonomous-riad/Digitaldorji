@@ -28,15 +28,15 @@ export const Footer: React.FC = () => {
               onClick={() => navigate('/')}
               className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
-                <Scissors className="w-5 h-5 text-cream-50" />
+              <div className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-xs group-hover:bg-[#166FE5] transition-all">
+                <Scissors className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="text-xl font-bold tracking-tight text-purple-950 font-serif-title">
-                  Digital Dorji <span className="text-purple-800 font-serif-title">BD</span>
+                <span className="text-xl font-black tracking-tight text-[#1877F2]">
+                  Digital Dorji <span className="text-[#0866FF]">BD</span>
                 </span>
-                <span className="block text-[10px] text-purple-900/80 font-medium">
-                  {t('Doorstep Bespoke Tailoring Atelier', 'ডোরস্টেপ কাস্টম সেলাই ও টেইলারিং')}
+                <span className="block text-[10px] text-[#65676B] font-medium">
+                  {t('Doorstep Bespoke Tailoring Platform', 'ডোরস্টেপ কাস্টম সেলাই ও টেইলারিং')}
                 </span>
               </div>
             </button>

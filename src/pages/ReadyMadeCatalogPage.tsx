@@ -236,46 +236,46 @@ export const ReadyMadeCatalogPage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 pb-28 sm:pb-24">
       
-      {/* Hero Banner Section - Atelier Deep Plum & Gold */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-950 via-[#3b1549] to-[#220a2a] text-cream-50 p-4 sm:p-7 lg:p-8 border border-purple-900/50 shadow-md">
-        {/* Subtle decorative warm antique-gold glow */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-800/20 rounded-full blur-3xl pointer-events-none" />
+      {/* Hero Banner Section - Facebook Blue Concept */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#1877F2] via-[#0866FF] to-[#0052CC] text-white p-4 sm:p-7 lg:p-8 border border-blue-600/30 shadow-sm">
+        {/* Subtle decorative background light */}
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-900/30 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-900/80 border border-purple-800 text-amber-200 text-[11px] sm:text-xs font-semibold backdrop-blur-xs mb-2 sm:mb-3 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 border border-white/30 text-white text-[11px] sm:text-xs font-semibold backdrop-blur-xs mb-2 sm:mb-3 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-yellow-300 shrink-0" />
             <span className="truncate">{t('Handcrafted & Ready-To-Wear Atelier Collection', 'হস্তনির্মিত ও রেডিমেড কালেকশন')}</span>
           </div>
 
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif-title tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">
             {t('Ready-Made Atelier Collection — Express Delivery', 'রেডিমেড প্রিমিয়াম পোশাক — ২৪-৪৮ ঘণ্টায় ঘরে ডেলিভারি')}
           </h1>
 
-          <p className="text-xs sm:text-sm text-cream-200/90 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
+          <p className="text-xs sm:text-sm text-blue-50 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
             {t(
               'Explore our ready-to-ship sartorial collection. Designed with bespoke tailoring craftsmanship, available in standardized sizes with instant custom modification options.',
               'রেডি টু শিপ পোশাকের চমৎকার সমাহার। ডিজিটাল দরজির সুনিপুণ ফিটিংস, প্রিমিয়াম ফেব্রিক ও তাৎক্ষণিক কাস্টমাইজেশন সুবিধা সহ ঘরে বসেই অর্ডার করুন।'
             )}
           </p>
 
-          {/* 4-Step Visual Process - Atelier Workflow */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-purple-900/60">
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fit & Size', 'ডিজাইন ও সাইজ')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Panjabi, Shirt, Pajama & Kurti', 'পাঞ্জাবি, শার্ট ও কুর্তি')}</p>
+          {/* 4-Step Visual Process - Facebook Workflow */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-white/20">
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fit & Size', 'ডিজাইন ও সাইজ')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Panjabi, Shirt, Pajama & Kurti', 'পাঞ্জাবি, শার্ট ও কুর্তি')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Custom Fitting', 'কাস্টম অলটার')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Sleeve, length & fit options', 'প্রয়োজনে সাইজ কাস্টমাইজ')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Custom Fitting', 'কাস্টম অলটার')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Sleeve, length & fit options', 'প্রয়োজনে সাইজ কাস্টমাইজ')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Express Dispatch', 'দ্রুত ডিসপ্যাচ')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Packed & dispatched in 24-48h', '২৪-৪৮ ঘণ্টায় ডেলিভারি')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Express Dispatch', 'দ্রুত ডিসপ্যাচ')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Packed & dispatched in 24-48h', '২৪-৪৮ ঘণ্টায় ডেলিভারি')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Exchange Guarantee', 'সহজ রিটার্ন')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('7-day free size exchange', '৭ দিনে ফ্রি সাইজ এক্সচেঞ্জ')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Exchange Guarantee', 'সহজ রিটার্ন')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('7-day free size exchange', '৭ দিনে ফ্রি সাইজ এক্সচেঞ্জ')}</p>
             </div>
           </div>
         </div>

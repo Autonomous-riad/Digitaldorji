@@ -27,6 +27,7 @@ import {
 import { MeasurementGuideModal } from './MeasurementGuideModal';
 import { MobileBottomActionBar } from './MobileBottomActionBar';
 import { UseMyClothesReference } from './UseMyClothesReference';
+import { HowToMeasureInteractiveGuide } from './measurement/HowToMeasureInteractiveGuide';
 import { 
   inchToCm, 
   cmToInch, 
@@ -63,6 +64,16 @@ export const MeasurementForm: React.FC = () => {
   const [displayUnit, setDisplayUnit] = useState<'inch' | 'cm'>('inch');
   const [activeDiagramPreview, setActiveDiagramPreview] = useState<{ field: MeasurementSchemaField; diagramSrc: string } | null>(null);
 
+  // Interactive 'How to Measure' guide states triggered on hover & focus
+  const [hoveredField, setHoveredField] = useState<MeasurementSchemaField | null>(null);
+  const [focusedField, setFocusedField] = useState<MeasurementSchemaField | null>(null);
+  const [lastHoveredField, setLastHoveredField] = useState<MeasurementSchemaField | null>(null);
+  const [pinnedField, setPinnedField] = useState<MeasurementSchemaField | null>(null);
+  const [isGuidePinned, setIsGuidePinned] = useState<boolean>(false);
+  const [showLiveGuidePanel, setShowLiveGuidePanel] = useState<boolean>(true);
+  const [showFloatingCompanion, setShowFloatingCompanion] = useState<boolean>(true);
+  const [activeInteractiveModalField, setActiveInteractiveModalField] = useState<MeasurementSchemaField | null>(null);
+
   // Normalized schema fields: use measurement_schema.fields if available, else map measurementFields
   const schemaFields: MeasurementSchemaField[] = useMemo(() => {
     if (!activeGarment) return [];
@@ -83,6 +94,15 @@ export const MeasurementForm: React.FC = () => {
       hint_bn: f.hintBn
     }));
   }, [activeGarment]);
+
+  // Active guide field resolution: pinned > hovered > focused > last hovered > first field
+  const activeHoveredGuideField = useMemo(() => {
+    if (isGuidePinned && pinnedField) return pinnedField;
+    if (hoveredField) return hoveredField;
+    if (focusedField) return focusedField;
+    if (lastHoveredField) return lastHoveredField;
+    return schemaFields[0] || null;
+  }, [isGuidePinned, pinnedField, hoveredField, focusedField, lastHoveredField, schemaFields]);
 
   if (!activeGarment) {
     return (
@@ -461,17 +481,65 @@ export const MeasurementForm: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-800"></span>
-              {t(`Garment Measurement Specifications (${displayUnit.toUpperCase()})`, `পোশাকের প্রতিটি অংশের সুনির্দিষ্ট মাপ (${displayUnit === 'inch' ? 'ইঞ্চিতে' : 'সেমিতে'})`)}
-            </h3>
-            <span className="text-xs text-amber-900 font-semibold bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">
-              {schemaFields.length} {t('Measurement Points', 'টি পয়েন্ট')}
-            </span>
+          {/* Header Bar with Points count and Guide Toggle */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-800"></span>
+                {t(`Garment Measurement Specifications (${displayUnit.toUpperCase()})`, `পোশাকের প্রতিটি অংশের সুনির্দিষ্ট মাপ (${displayUnit === 'inch' ? 'ইঞ্চিতে' : 'সেমিতে'})`)}
+              </h3>
+              <p className="text-[11px] text-stone-500 mt-0.5">
+                {t('Hover over any field below to view animated step-by-step visual measuring guidance.', 'যেকোনো মাপের বক্সে মাউস ধরুন (হোভার করুন) অ্যানিমেটেড চিত্রসহ মাপার নিয়ম দেখার জন্য।')}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setShowLiveGuidePanel(!showLiveGuidePanel)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold border flex items-center gap-1.5 transition-colors cursor-pointer ${
+                  showLiveGuidePanel 
+                    ? 'bg-purple-950 text-cream-50 border-purple-950 shadow-xs' 
+                    : 'bg-cream-100 text-purple-950 border-cream-300 hover:bg-cream-200'
+                }`}
+                title={t('Toggle live hover measurement guide', 'লাইভ ইন্টারেক্টিভ গাইড চালু বা বন্ধ করুন')}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <span>{showLiveGuidePanel ? t('Live Guide Active', 'লাইভ গাইড চালু') : t('Show Live Guide', 'লাইভ গাইড দেখুন')}</span>
+              </button>
+
+              <span className="text-xs text-amber-900 font-semibold bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                {schemaFields.length} {t('Points', 'পয়েন্ট')}
+              </span>
+            </div>
           </div>
 
-          {/* Interactive Measurement Input Grid */}
+          {/* Interactive 'How to Measure' Live Guide Triggered by Hover / Focus */}
+          {showLiveGuidePanel && activeHoveredGuideField && (
+            <div className="animate-in fade-in duration-200">
+              <HowToMeasureInteractiveGuide
+                field={activeHoveredGuideField}
+                garment={activeGarment}
+                displayUnit={displayUnit}
+                currentValue={getInchValue(activeHoveredGuideField)}
+                onApplyValue={(val) => handleValueChange(activeHoveredGuideField, val)}
+                isPinned={isGuidePinned}
+                onTogglePin={() => {
+                  if (isGuidePinned) {
+                    setIsGuidePinned(false);
+                    setPinnedField(null);
+                  } else {
+                    setIsGuidePinned(true);
+                    setPinnedField(activeHoveredGuideField);
+                  }
+                }}
+                onClose={() => setShowLiveGuidePanel(false)}
+                variant="docked"
+              />
+            </div>
+          )}
+
+          {/* Interactive Measurement Input Grid with Hover Triggers */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
             {schemaFields.map((field) => {
               const inchVal = getInchValue(field);
@@ -479,49 +547,102 @@ export const MeasurementForm: React.FC = () => {
               const minDisplay = displayUnit === 'cm' ? inchToCm(field.min) : field.min;
               const maxDisplay = displayUnit === 'cm' ? inchToCm(field.max) : field.max;
               const validation = validateMeasurementValue(inchVal, field);
-              const diagramSrc = `/diagrams/${field.diagram || 'shoulder'}.svg`;
+              const isHoveredOrActive = activeHoveredGuideField?.key === field.key;
 
               return (
                 <div 
                   key={field.key}
-                  className={`p-3.5 sm:p-4 rounded-xl border transition-all flex flex-col justify-between gap-3 shadow-xs ${
-                    validation.valid
-                      ? 'border-stone-200 bg-stone-50/50 hover:bg-white hover:border-amber-400'
-                      : 'border-rose-300 bg-rose-50/40'
+                  onMouseEnter={() => {
+                    setHoveredField(field);
+                    setLastHoveredField(field);
+                    if (!showLiveGuidePanel) setShowLiveGuidePanel(true);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredField(null);
+                  }}
+                  onFocus={() => {
+                    setFocusedField(field);
+                    setLastHoveredField(field);
+                    if (!showLiveGuidePanel) setShowLiveGuidePanel(true);
+                  }}
+                  className={`p-3.5 sm:p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between gap-3 shadow-xs cursor-pointer ${
+                    isHoveredOrActive
+                      ? 'border-purple-900 ring-2 ring-purple-900/30 bg-purple-50/40 shadow-md'
+                      : validation.valid
+                        ? 'border-stone-200 bg-stone-50/50 hover:bg-white hover:border-amber-400'
+                        : 'border-rose-300 bg-rose-50/40'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h4 className="text-sm font-bold text-stone-900">
-                          {t(field.label_en, field.label_bn)}
-                        </h4>
-                        {field.required !== false ? (
-                          <span className="text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
-                            {t('Required *', 'আবশ্যক *')}
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-medium text-stone-600 bg-stone-100 px-1.5 py-0.2 rounded">
-                            {t('Optional', 'ঐচ্ছিক')}
-                          </span>
+                    <div className="flex items-start gap-2.5">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveInteractiveModalField(field);
+                        }}
+                        className={`relative p-1 rounded-lg border transition-all cursor-pointer shrink-0 ${
+                          isHoveredOrActive 
+                            ? 'bg-amber-100/90 border-amber-400 shadow-xs ring-2 ring-amber-400/30' 
+                            : 'bg-cream-100 border-cream-300 hover:bg-cream-200'
+                        }`}
+                        title={t('Click to open 3-step interactive diagram guide', 'অ্যানিমেটেড নির্দেশিকা দেখতে ক্লিক করুন')}
+                      >
+                        <img 
+                          src={`/diagrams/${field.diagram || (field.key.includes('shoulder') ? 'shoulder' : field.key.includes('chest') ? 'chest' : field.key.includes('waist') ? 'waist' : field.key.includes('sleeve') ? 'sleeve' : field.key.includes('neck') ? 'neck' : 'length')}.svg`} 
+                          alt="" 
+                          className="w-7 h-7 object-contain" 
+                          onError={(e) => { (e.target as HTMLImageElement).src = '/diagrams/shoulder.svg'; }}
+                        />
+                        {isHoveredOrActive && (
+                          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
                         )}
+                      </button>
 
-                        {/* Visual Diagram Trigger */}
-                        {field.diagram && (
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="text-sm font-bold text-stone-900">
+                            {t(field.label_en, field.label_bn)}
+                          </h4>
+                          {field.required !== false ? (
+                            <span className="text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+                              {t('Required *', 'আবশ্যক *')}
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-medium text-stone-600 bg-stone-100 px-1.5 py-0.2 rounded">
+                              {t('Optional', 'ঐচ্ছিক')}
+                            </span>
+                          )}
+
+                          {isHoveredOrActive && (
+                            <span className="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-1.5 py-0.2 rounded border border-amber-300 flex items-center gap-1">
+                              <Sparkles className="w-2.5 h-2.5 text-amber-700" />
+                              {t('Live Guide', 'গাইড চালু')}
+                            </span>
+                          )}
+
+                          {/* Interactive Step-by-Step Guide Modal Trigger Button */}
                           <button
                             type="button"
-                            onClick={() => setActiveDiagramPreview({ field, diagramSrc })}
-                            className="inline-flex items-center gap-1 text-[11px] text-amber-800 hover:text-amber-950 bg-amber-100/70 hover:bg-amber-200/80 px-1.5 py-0.5 rounded cursor-pointer transition-colors"
-                            title={t('View measurement guide diagram', 'মাপ নেওয়ার ছবি দেখুন')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveInteractiveModalField(field);
+                            }}
+                            className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded cursor-pointer transition-colors font-medium shadow-2xs ${
+                              isHoveredOrActive
+                                ? 'bg-purple-950 text-cream-50 hover:bg-purple-900'
+                                : 'text-amber-800 hover:text-amber-950 bg-amber-100/70 hover:bg-amber-200/80'
+                            }`}
+                            title={t('Open step-by-step interactive measurement guide', 'স্টেপ-বাই-স্টেপ মাপার নির্দেশিকা খুলুন')}
                           >
                             <Eye className="w-3 h-3" />
-                            <span>{t('Diagram', 'ছবি')}</span>
+                            <span>{t('Guide', 'গাইড')}</span>
                           </button>
-                        )}
+                        </div>
+                        <p className="text-[11px] text-stone-500 line-clamp-1">
+                          {t(field.hint_en || '', field.hint_bn || '')}
+                        </p>
                       </div>
-                      <p className="text-[11px] text-stone-500 line-clamp-1">
-                        {t(field.hint_en || '', field.hint_bn || '')}
-                      </p>
                     </div>
 
                     <div className="text-right shrink-0">
@@ -626,56 +747,96 @@ export const MeasurementForm: React.FC = () => {
         <UseMyClothesReference onProceed={handleProceedToStyle} />
       )}
 
-      {/* Diagram Preview Popover / Modal */}
-      {activeDiagramPreview && (
-        <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-amber-100 text-amber-900 flex items-center justify-center font-bold text-xs">
-                  <Ruler className="w-4 h-4" />
-                </span>
-                <h3 className="text-base font-bold text-stone-900">
-                  {t(activeDiagramPreview.field.label_en, activeDiagramPreview.field.label_bn)} {t('Measurement Guide', 'পরিমাপ গাইড')}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveDiagramPreview(null)}
-                className="w-8 h-8 rounded-lg hover:bg-stone-100 text-stone-700 flex items-center justify-center cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 flex items-center justify-center min-h-[180px]">
-              <img 
-                src={activeDiagramPreview.diagramSrc} 
-                alt={activeDiagramPreview.field.label_en}
-                className="max-h-44 w-auto object-contain rounded-lg"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-
-            <div className="text-xs text-stone-700 space-y-1">
-              <p className="font-semibold text-stone-900">
-                {t('How to measure accurately:', 'সঠিকভাবে মাপ নেওয়ার নিয়ম:')}
-              </p>
-              <p className="text-stone-600">
-                {t(activeDiagramPreview.field.hint_en || '', activeDiagramPreview.field.hint_bn || '')}
-              </p>
-              <div className="mt-2 pt-2 border-t border-stone-200 text-[11px] text-amber-900 font-medium">
-                {t('Acceptable range:', 'অনুমোদিত পরিসীমা:')} {activeDiagramPreview.field.min}" - {activeDiagramPreview.field.max}" ({inchToCm(activeDiagramPreview.field.min)} - {inchToCm(activeDiagramPreview.field.max)} cm)
-              </div>
-            </div>
-
+      {/* Sticky Floating 'How to Measure' Live Companion (Always within reach when scrolling) */}
+      {showFloatingCompanion && activeHoveredGuideField && (measurementMethod === 'custom_manual' || measurementMethod === 'preset_size') && (
+        <aside 
+          aria-label="Interactive measurement guide floating assistant"
+          className="fixed bottom-20 right-3 sm:right-6 z-40 max-w-xs sm:max-w-sm bg-purple-950/95 backdrop-blur-md text-cream-50 p-2.5 sm:p-3 rounded-2xl border border-amber-400/40 shadow-xl flex items-center justify-between gap-2.5 sm:gap-3 animate-in fade-in slide-in-from-bottom-2"
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
             <button
               type="button"
-              onClick={() => setActiveDiagramPreview(null)}
-              className="w-full py-2.5 bg-amber-900 hover:bg-amber-950 text-white rounded-xl text-xs font-bold cursor-pointer"
+              onClick={() => setActiveInteractiveModalField(activeHoveredGuideField)}
+              className="relative w-10 h-10 rounded-xl bg-purple-900 border border-purple-700/80 p-1 shrink-0 flex items-center justify-center cursor-pointer hover:border-amber-400 transition-colors"
+              title={t('Open full 3-step interactive guide', 'সম্পূর্ণ ৩ ধাপের নির্দেশিকা খুলুন')}
             >
-              {t('Got It', 'বুঝেছি')}
+              <img
+                src={`/diagrams/${activeHoveredGuideField.diagram || (activeHoveredGuideField.key.includes('shoulder') ? 'shoulder' : activeHoveredGuideField.key.includes('chest') ? 'chest' : activeHoveredGuideField.key.includes('waist') ? 'waist' : activeHoveredGuideField.key.includes('sleeve') ? 'sleeve' : activeHoveredGuideField.key.includes('neck') ? 'neck' : 'length')}.svg`}
+                alt=""
+                className="w-full h-full object-contain filter drop-shadow-xs"
+                onError={(e) => { (e.target as HTMLImageElement).src = '/diagrams/shoulder.svg'; }}
+              />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
             </button>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1">
+                  <Sparkles className="w-2.5 h-2.5" />
+                  {isGuidePinned ? 'পিন করা গাইড' : 'লাইভ গাইড'}
+                </span>
+                <span className="text-[10px] font-mono text-purple-200">
+                  {displayUnit === 'cm' ? `${inchToCm(getInchValue(activeHoveredGuideField)).toFixed(1)} cm` : `${getInchValue(activeHoveredGuideField)}" in`}
+                </span>
+              </div>
+              <h5 className="text-xs font-bold text-white truncate leading-tight mt-0.5">
+                {t(activeHoveredGuideField.label_en, activeHoveredGuideField.label_bn)}
+              </h5>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              type="button"
+              onClick={() => setActiveInteractiveModalField(activeHoveredGuideField)}
+              className="px-2.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-purple-950 text-xs font-bold rounded-xl flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+              title={t('Open full 3-step interactive guide', 'সম্পূর্ণ ৩ ধাপের নির্দেশিকা খুলুন')}
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span className="hidden xs:inline">{t('Guide', 'গাইড')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowFloatingCompanion(false)}
+              className="p-1 text-cream-200 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+              aria-label="Dismiss floating assistant"
+              title={t('Hide floating guide', 'হাইড করুন')}
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* Interactive Step-by-Step 'How to Measure' Modal (Triggered by Guide button or Preview) */}
+      {activeInteractiveModalField && (
+        <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="max-w-xl w-full my-auto">
+            <HowToMeasureInteractiveGuide
+              field={activeInteractiveModalField}
+              garment={activeGarment}
+              displayUnit={displayUnit}
+              currentValue={getInchValue(activeInteractiveModalField)}
+              onApplyValue={(val) => handleValueChange(activeInteractiveModalField, val)}
+              onClose={() => setActiveInteractiveModalField(null)}
+              variant="modal"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Fallback Legacy Diagram Preview if triggered via other legacy components */}
+      {activeDiagramPreview && !activeInteractiveModalField && (
+        <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="max-w-xl w-full my-auto">
+            <HowToMeasureInteractiveGuide
+              field={activeDiagramPreview.field}
+              garment={activeGarment}
+              displayUnit={displayUnit}
+              currentValue={getInchValue(activeDiagramPreview.field)}
+              onApplyValue={(val) => handleValueChange(activeDiagramPreview.field, val)}
+              onClose={() => setActiveDiagramPreview(null)}
+              variant="modal"
+            />
           </div>
         </div>
       )}

@@ -37,17 +37,17 @@ export const Header: React.FC = () => {
   const activeNav = getActiveNav();
 
   const NavLinks = () => (
-    <div className="flex items-center gap-1 bg-cream-200/70 p-1 rounded-full border border-cream-300/80 shadow-2xs">
+    <div className="flex items-center gap-1 bg-[#F0F2F5] p-1 rounded-full border border-[#CED0D4]/70 shadow-2xs">
       <button
         onClick={() => {
           setActiveStep('catalog');
           navigate('/');
           setMobileMenuOpen(false);
         }}
-        className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer min-h-[34px] ${
+        className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
           activeNav === 'tailoring'
-            ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
-            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80'
+            ? 'bg-[#1877F2] text-white shadow-xs font-bold'
+            : 'text-[#65676B] hover:text-[#050505] hover:bg-[#E4E6EB] font-semibold'
         }`}
       >
         <Scissors className="w-3.5 h-3.5 shrink-0" />
@@ -60,10 +60,10 @@ export const Header: React.FC = () => {
           navigate('/fabric-catalog');
           setMobileMenuOpen(false);
         }}
-        className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer min-h-[34px] ${
+        className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
           activeNav === 'fabrics'
-            ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
-            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80'
+            ? 'bg-[#1877F2] text-white shadow-xs font-bold'
+            : 'text-[#65676B] hover:text-[#050505] hover:bg-[#E4E6EB] font-semibold'
         }`}
       >
         <Layers className="w-3.5 h-3.5 shrink-0" />
@@ -75,10 +75,10 @@ export const Header: React.FC = () => {
           navigate('/ready-made');
           setMobileMenuOpen(false);
         }}
-        className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 cursor-pointer min-h-[34px] ${
+        className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
           activeNav === 'clothes'
-            ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
-            : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80'
+            ? 'bg-[#1877F2] text-white shadow-xs font-bold'
+            : 'text-[#65676B] hover:text-[#050505] hover:bg-[#E4E6EB] font-semibold'
         }`}
       >
         <Shirt className="w-3.5 h-3.5 shrink-0" />
@@ -90,13 +90,17 @@ export const Header: React.FC = () => {
           setIsCartOpen(true);
           setMobileMenuOpen(false);
         }}
-        className="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 text-purple-950/80 hover:text-purple-950 hover:bg-cream-100/80 cursor-pointer min-h-[34px]"
+        className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
+          cartCount > 0 && activeNav === null
+            ? 'text-[#050505] hover:bg-[#E4E6EB] font-semibold'
+            : 'text-[#65676B] hover:text-[#050505] hover:bg-[#E4E6EB] font-semibold'
+        }`}
         title={t('View Shopping Cart', 'শপিং কার্ট দেখুন')}
       >
-        <ShoppingBag className="w-3.5 h-3.5 text-purple-950 shrink-0" />
+        <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
         <span>{t('Cart', 'কার্ট')}</span>
         {cartCount > 0 && (
-          <span className="ml-0.5 px-1.5 py-0.2 text-[10px] font-bold bg-purple-950 text-cream-50 rounded-full flex items-center justify-center min-w-[18px] h-[18px]">
+          <span className="ml-0.5 px-1.5 py-0.2 text-[10px] font-bold bg-[#E41E3F] text-white rounded-full flex items-center justify-center min-w-[18px] h-[18px] shadow-xs">
             {cartCount}
           </span>
         )}
@@ -106,20 +110,20 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-cream-50/90 backdrop-blur-xl text-purple-950 border-b border-cream-300/80 shadow-xs">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl text-[#050505] border-b border-[#CED0D4] shadow-[0_1px_2px_rgba(0,0,0,0.06)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-3">
             {/* Mobile Menu Toggle */}
             <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 -ml-2 text-purple-950 hover:text-purple-900 focus:outline-none rounded-lg hover:bg-cream-200/60 transition-colors cursor-pointer"
+                className="p-2 -ml-2 text-[#050505] hover:text-[#1877F2] focus:outline-none rounded-lg hover:bg-[#E4E6EB] transition-colors cursor-pointer"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
 
-            {/* Brand Logo */}
+            {/* Brand Logo - Facebook Blue Style */}
             <button 
               onClick={() => {
                 setActiveStep('catalog');
@@ -128,12 +132,12 @@ export const Header: React.FC = () => {
               }}
               className="flex items-center gap-2 sm:gap-3 text-left focus:outline-none group cursor-pointer shrink-0"
             >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
-                <Scissors className="w-4 h-4 sm:w-5 sm:h-5 text-cream-50" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-xs group-hover:bg-[#166FE5] transition-all shrink-0">
+                <Scissors className="w-5 h-5 text-white" />
               </div>
               <div className="hidden sm:block">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xl sm:text-2xl font-bold tracking-tight text-purple-950 font-serif-title leading-none">
+                  <span className="text-xl sm:text-2xl font-black tracking-tight text-[#1877F2] leading-none">
                     Digital Dorji
                   </span>
                 </div>
@@ -147,13 +151,13 @@ export const Header: React.FC = () => {
 
             {/* Right Action Controls */}
             <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
-              {/* Language Switcher */}
+              {/* Language Switcher - Facebook Circular Button */}
               <button
                 onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-purple-950 hover:bg-cream-200 transition-colors cursor-pointer border border-cream-300 bg-cream-50 shadow-2xs"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#050505] hover:bg-[#D8DADF] transition-colors cursor-pointer border border-[#CED0D4] bg-[#E4E6EB] shadow-2xs"
                 title={t('Switch Language', 'ভাষা পরিবর্তন করুন')}
               >
-                <Globe className="w-3.5 h-3.5 text-purple-950" />
+                <Globe className="w-3.5 h-3.5 text-[#1877F2]" />
                 <span>{lang === 'en' ? 'বাংলা' : 'EN'}</span>
               </button>
 
@@ -170,10 +174,10 @@ export const Header: React.FC = () => {
                       }
                     }}
                     id="header-user-name-button"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cream-200 hover:bg-cream-300/80 border border-cream-300 text-purple-950 transition-colors cursor-pointer text-xs font-bold shadow-2xs"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E4E6EB] hover:bg-[#D8DADF] border border-[#CED0D4] text-[#050505] transition-colors cursor-pointer text-xs font-bold shadow-2xs"
                     title={user.role === 'admin' ? t('Admin Portal', 'অ্যাডমিন পোর্টাল') : t('My Account', 'আমার অ্যাকাউন্ট')}
                   >
-                    <div className="w-5 h-5 rounded-full bg-purple-950 text-cream-50 flex items-center justify-center text-[10px] font-bold shrink-0">
+                    <div className="w-5 h-5 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                       {user.name ? user.name[0].toUpperCase() : 'U'}
                     </div>
                     <span className="truncate max-w-[90px] sm:max-w-[140px]">{user.name}</span>
@@ -183,7 +187,7 @@ export const Header: React.FC = () => {
                   <button
                     onClick={logout}
                     id="header-logout-button"
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-cream-50 border border-rose-200 text-rose-700 hover:bg-rose-50 hover:border-rose-300 transition-colors shadow-2xs cursor-pointer"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-rose-200 text-rose-700 hover:bg-rose-50 hover:border-rose-300 transition-colors shadow-2xs cursor-pointer"
                     title={t('Sign out', 'লগআউট')}
                   >
                     <LogOut className="w-3.5 h-3.5" />
@@ -194,7 +198,7 @@ export const Header: React.FC = () => {
                 <button
                   onClick={() => navigate('/login')}
                   id="header-login-button"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs sm:text-sm font-bold bg-purple-950 hover:bg-purple-900 text-cream-50 transition-colors shadow-xs cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-[#1877F2] hover:bg-[#166FE5] text-white transition-colors shadow-xs cursor-pointer"
                 >
                   <User className="w-4 h-4" />
                   <span>{t('Login', 'লগইন')}</span>

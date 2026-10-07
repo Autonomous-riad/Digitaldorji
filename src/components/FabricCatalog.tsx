@@ -87,46 +87,46 @@ export const FabricCatalog: React.FC = () => {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-12">
-      {/* Hero Header - Atelier Deep Plum & Gold */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-950 via-[#3b1549] to-[#220a2a] text-cream-50 p-4 sm:p-7 lg:p-8 border border-purple-900/50 shadow-md">
-        {/* Subtle decorative warm antique-gold glow */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-800/20 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Hero Header - Facebook Blue Concept */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#1877F2] via-[#0866FF] to-[#0052CC] text-white p-4 sm:p-7 lg:p-8 border border-blue-600/30 shadow-sm">
+        {/* Subtle decorative background light */}
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-900/30 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-900/80 text-amber-200 text-[11px] sm:text-xs font-semibold border border-purple-800 mb-2 sm:mb-3 backdrop-blur-xs shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 text-white text-[11px] sm:text-xs font-semibold border border-white/30 mb-2 sm:mb-3 backdrop-blur-xs shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-yellow-300 shrink-0" />
             <span className="truncate">{t('Digital Dorji Sourced Atelier Fabrics', 'ডিজিটাল দর্জি প্রিমিয়াম ফেব্রিক শোরুম')}</span>
           </div>
 
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif-title tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">
             {t('Premium Men & Women Fabrics Directly at Our Atelier', 'আটেলিয়ার প্রিমিয়াম কাপড় বেছে নিয়ে সেলাই অর্ডার করুন')}
           </h1>
 
-          <p className="text-xs sm:text-sm text-cream-200/90 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
+          <p className="text-xs sm:text-sm text-blue-50 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
             {t(
               'Don\'t have unstitched fabric at home? Browse our curated collection of Egyptian Giza Cotton, Irish Linen, Suiting Merino Wool, Pure Mulberry Silk, Georgette, Chiffon, and Zari Brocade Jamdani.',
               'আপনার বাসায় কাপড় কেনা না থাকলেও চিন্তা নেই! আমাদের সেরা মিশরীয় গিজা কটন, আইরিশ লিনেন, র সিল্ক, জর্জেট, স্যুট ক্লথ ও জামদানি ব্রাউজ করুন এবং ঘরে বসেই সেলাই অর্ডার দিন।'
             )}
           </p>
 
-          {/* 4-Step Visual Process - Atelier Workflow */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-purple-900/60">
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fabric', 'কাপড় পছন্দ')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Cotton, Linen, Silk & Suiting', 'সুতি, লিনেন ও সিল্ক থান')}</p>
+          {/* 4-Step Visual Process - Facebook Workflow */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-white/20">
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fabric', 'কাপড় পছন্দ')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Cotton, Linen, Silk & Suiting', 'সুতি, লিনেন ও সিল্ক থান')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Color & Yardage', 'রং ও গজ নির্বাচন')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Accurate length for your fit', 'প্রয়োজনীয় মাপ অনুযায়ী গজ')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Color & Yardage', 'রং ও গজ নির্বাচন')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Accurate length for your fit', 'প্রয়োজনীয় মাপ অনুযায়ী গজ')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Bespoke Stitching', 'মাস্টার সেলাই')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Direct tailored with custom sizing', 'মাপ অনুযায়ী নিখুঁত সেলাই')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Bespoke Stitching', 'মাস্টার সেলাই')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Direct tailored with custom sizing', 'মাপ অনুযায়ী নিখুঁত সেলাই')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-colors">
-              <span className="text-amber-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Doorstep Delivery', 'হোম ডেলিভারি')}</span>
-              <p className="text-[11px] sm:text-xs text-cream-200 font-medium leading-tight">{t('Delivered in 4 days with guarantee', '৪ দিনে ডেলিভারি + গ্যারান্টি')}</p>
+            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
+              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Doorstep Delivery', 'হোম ডেলিভারি')}</span>
+              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Delivered in 4 days with guarantee', '৪ দিনে ডেলিভারি + গ্যারান্টি')}</p>
             </div>
           </div>
         </div>
