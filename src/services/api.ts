@@ -231,38 +231,6 @@ export const adminApi = {
     apiRequest('/api/admin/staff', { method: 'POST', body: JSON.stringify(data) }),
   updateStaff: (id: string, data: { active?: boolean; phone?: string; experienceYears?: number }) =>
     apiRequest(`/api/admin/staff/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  getUsers: () => apiRequest<{ users: any[] }>('/api/admin/users'),
-  addUser: (data: {
-    name: string;
-    email: string;
-    password: string;
-    role: 'admin' | 'staff' | 'customer';
-    title?: string;
-    phone?: string;
-    permissions?: {
-      canFollowUpOrders?: boolean;
-      canManageCustomizations?: boolean;
-      canManageCatalog?: boolean;
-      canManageStaff?: boolean;
-    };
-    active?: boolean;
-  }) => apiRequest<{ message: string; user: any }>('/api/admin/users', { method: 'POST', body: JSON.stringify(data) }),
-  updateUser: (id: string, data: {
-    name?: string;
-    email?: string;
-    password?: string;
-    role?: 'admin' | 'staff' | 'customer';
-    title?: string;
-    phone?: string;
-    active?: boolean;
-    permissions?: {
-      canFollowUpOrders?: boolean;
-      canManageCustomizations?: boolean;
-      canManageCatalog?: boolean;
-      canManageStaff?: boolean;
-    };
-  }) => apiRequest<{ message: string; user: any }>(`/api/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  deleteUser: (id: string) => apiRequest<{ message: string }>(`/api/admin/users/${id}`, { method: 'DELETE' }),
   getSettings: () => apiRequest<{ settings: any }>('/api/admin/settings'),
   updateSettings: (data: any) =>
     apiRequest('/api/admin/settings', { method: 'PUT', body: JSON.stringify(data) })

@@ -61,14 +61,6 @@ export const handleAdminLogin = (req: Request, res: Response) => {
     });
   }
 
-  // Deactivated account check
-  if (user.active === false) {
-    return res.status(403).json({
-      error: 'This account has been deactivated. Please contact the Shop Master Administrator.',
-      code: 'ACCOUNT_DEACTIVATED'
-    });
-  }
-
   // Server-side check: Role MUST be admin or staff (Customers are strictly forbidden)
   if (user.role !== 'admin' && user.role !== 'staff') {
     return res.status(403).json({

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTailor } from '../../context/TailorContext';
 import { useRouter } from '../../context/RouterContext';
-import { UserAccessManagerModal } from './UserAccessManagerModal';
 import { 
   Scissors, 
   LayoutDashboard, 
@@ -17,8 +16,7 @@ import {
   Menu,
   X,
   Database,
-  Shirt,
-  UserPlus
+  Shirt
 } from 'lucide-react';
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -26,7 +24,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const { lang, setLang, t } = useTailor();
   const { currentPath, navigate } = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showUserModal, setShowUserModal] = useState(false);
 
   // Extract base route for matching
   const activeRoute = currentPath.split('?')[0];
@@ -38,11 +35,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const navItems = [
     { path: '/admin/dashboard', icon: LayoutDashboard, labelEn: 'Dashboard', labelBn: 'ড্যাশবোর্ড' },
-    { path: '/admin/orders', icon: ShoppingBag, labelEn: 'Orders & Follow-up', labelBn: 'অর্ডার ও ফলো-আপ' },
+    { path: '/admin/orders', icon: ShoppingBag, labelEn: 'Orders', labelBn: 'অর্ডারসমূহ' },
     { path: '/admin/ready-made', icon: Shirt, labelEn: 'Ready-Made Shop', labelBn: 'রেডিমেড শপ' },
     { path: '/admin/customers', icon: Users, labelEn: 'Customers', labelBn: 'কাস্টমারস' },
-    { path: '/admin/staff', icon: Scissors, labelEn: 'Staff & Artisans', labelBn: 'স্টাফ ও কারিগর' },
-    { path: '/admin/users', icon: ShieldCheck, labelEn: 'Users & Permissions', labelBn: 'ব্যবহারকারী ও অ্যাক্সেস' },
+    { path: '/admin/staff', icon: Scissors, labelEn: 'Staff & Tailors', labelBn: 'স্টাফ ও দর্জি' },
     { path: '/admin/products', icon: Ruler, labelEn: 'Products & Catalog', labelBn: 'পণ্য ও ক্যাটালগ' },
     { path: '/admin/reports', icon: Database, labelEn: 'Reports & CSV', labelBn: 'রিপোর্টস' },
     { path: '/admin/settings', icon: Settings, labelEn: 'Settings', labelBn: 'সেটিংস' },
@@ -111,32 +107,21 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
             <span className="hidden sm:inline">{t('Customer Storefront', 'গ্রাহক ভিউ')}</span>
           </button>
 
-          {/* Admin User Profile Pill & User Access Trigger (Selected CSS Element) */}
-          <div className="flex items-center">
-            <button
-              onClick={() => setShowUserModal(true)}
-              className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-cream-50 hover:bg-cream-200/80 rounded-xl border border-cream-300 shadow-xs transition-all cursor-pointer group text-left"
-              title={t('Click to add or remove users and manage permissions for orders and customizations', 'ইউজার যোগ/রিমুভ এবং অর্ডার ও কাস্টমাইজেশন অ্যাক্সেস দিতে ক্লিক করুন')}
-            >
-              <img
-                src={user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'}
-                alt={user?.name}
-                className="w-6 h-6 rounded-full object-cover border border-cream-300 shrink-0"
-              />
-              <div className="hidden md:block">
-                <span className="text-xs font-semibold text-purple-950 block leading-tight truncate max-w-[130px]">
-                  {user?.name || 'Master Kabir'}
-                </span>
-                <span className="text-[10px] text-purple-900/70 font-mono flex items-center gap-1 leading-tight mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                  {user?.title || (user?.role === 'admin' ? 'Shop Master' : 'Workshop Staff')}
-                </span>
-              </div>
-              <div className="flex items-center gap-1 ml-0.5 sm:ml-1 px-1.5 py-0.5 rounded-lg bg-purple-100 group-hover:bg-purple-200 text-purple-950 text-[10px] font-bold border border-purple-200">
-                <ShieldCheck className="w-3 h-3 text-amber-700" />
-                <span className="hidden sm:inline">{t('Users & Access', 'ইউজার ও এক্সেস')}</span>
-              </div>
-            </button>
+          {/* Admin User Profile Pill */}
+          <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-cream-50 rounded-xl border border-cream-300 shadow-sm">
+            <img
+              src={user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'}
+              alt={user?.name}
+              className="w-6 h-6 rounded-full object-cover border border-cream-300"
+            />
+            <div className="text-left">
+              <span className="text-xs font-semibold text-purple-950 block leading-tight truncate max-w-[120px]">
+                {user?.name || 'Master Kabir'}
+              </span>
+              <span className="text-[10px] text-purple-900/70 block font-mono leading-tight">
+                Shop Master
+              </span>
+            </div>
           </div>
 
           {/* Logout button */}
@@ -248,12 +233,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           </div>
         </main>
       </div>
-
-      {/* User Access & Permissions Manager Modal */}
-      <UserAccessManagerModal
-        isOpen={showUserModal}
-        onClose={() => setShowUserModal(false)}
-      />
     </div>
   );
 };

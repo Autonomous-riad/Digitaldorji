@@ -22,13 +22,6 @@ import {
   INITIAL_COUPONS
 } from './readyMadeData';
 
-export interface UserPermissions {
-  canFollowUpOrders: boolean;
-  canManageCustomizations: boolean;
-  canManageCatalog: boolean;
-  canManageStaff: boolean;
-}
-
 export interface User {
   id: string;
   name: string;
@@ -41,9 +34,6 @@ export interface User {
   gender: 'men' | 'women';
   avatar?: string;
   createdAt: string;
-  active?: boolean;
-  title?: string;
-  permissions?: UserPermissions;
 }
 
 export interface AdminStaff {
@@ -264,19 +254,11 @@ const INITIAL_DB: DatabaseSchema = {
       email: 'admin@digitaldorji.com',
       password: 'admin123', // Demo credentials for Shop Master
       role: 'admin',
-      title: 'Shop Master & Head Tailor',
       phone: '01711-002233',
       address: 'Digital Dorji Central Atelier, Road 4, Dhanmondi',
       city: 'Dhaka',
       gender: 'men',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-      active: true,
-      permissions: {
-        canFollowUpOrders: true,
-        canManageCustomizations: true,
-        canManageCatalog: true,
-        canManageStaff: true
-      },
       createdAt: '2024-01-01T09:00:00.000Z'
     },
     {
@@ -285,62 +267,12 @@ const INITIAL_DB: DatabaseSchema = {
       email: 'staff@digitaldorji.com',
       password: 'staff123', // Demo credentials for Staff / Tailor
       role: 'staff',
-      title: 'Cutting Master & Artisan Lead',
       phone: '01712-334455',
       address: 'Digital Dorji Atelier Workshop Floor, Elephant Road',
       city: 'Dhaka',
       gender: 'men',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      active: true,
-      permissions: {
-        canFollowUpOrders: true,
-        canManageCustomizations: true,
-        canManageCatalog: true,
-        canManageStaff: false
-      },
       createdAt: '2024-01-15T09:00:00.000Z'
-    },
-    {
-      id: 'usr-staff-02',
-      name: 'Sadia Rahman (Order Follow-up Lead)',
-      email: 'orders@digitaldorji.com',
-      password: 'order123',
-      role: 'staff',
-      title: 'Order Follow-up & Client Care',
-      phone: '01715-667788',
-      address: 'Digital Dorji Atelier Customer Desk, Dhanmondi',
-      city: 'Dhaka',
-      gender: 'women',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-      active: true,
-      permissions: {
-        canFollowUpOrders: true,
-        canManageCustomizations: false,
-        canManageCatalog: false,
-        canManageStaff: false
-      },
-      createdAt: '2024-02-01T10:00:00.000Z'
-    },
-    {
-      id: 'usr-staff-03',
-      name: 'Kamrul Hasan (Customization Specialist)',
-      email: 'custom@digitaldorji.com',
-      password: 'custom123',
-      role: 'staff',
-      title: 'Customization & Pattern Specialist',
-      phone: '01718-990011',
-      address: 'Digital Dorji Atelier Design Lab, Dhanmondi',
-      city: 'Dhaka',
-      gender: 'men',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-      active: true,
-      permissions: {
-        canFollowUpOrders: true,
-        canManageCustomizations: true,
-        canManageCatalog: true,
-        canManageStaff: false
-      },
-      createdAt: '2024-02-15T10:00:00.000Z'
     },
     {
       id: 'usr-cust-01',
@@ -348,19 +280,11 @@ const INITIAL_DB: DatabaseSchema = {
       email: 'customer@example.com',
       password: 'customer123', // Demo credentials for Customer
       role: 'customer',
-      title: 'Premium Client',
       phone: '01819-554433',
       address: 'House 42, Road 9/A, Dhanmondi',
       city: 'Dhaka',
       gender: 'men',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-      active: true,
-      permissions: {
-        canFollowUpOrders: false,
-        canManageCustomizations: false,
-        canManageCatalog: false,
-        canManageStaff: false
-      },
       createdAt: '2024-02-10T14:30:00.000Z'
     },
     {
