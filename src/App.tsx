@@ -235,7 +235,7 @@ const AppRouterContent: React.FC = () => {
           {currentPath === '/admin/delivery' && <AdminDelivery />}
           {currentPath === '/admin/payments' && <AdminPayments />}
           {(currentPath === '/admin/products' || currentPath === '/admin/catalog') && <AdminCatalog />}
-          {currentPath === '/admin/staff' && <AdminStaff />}
+          {(currentPath === '/admin/staff' || currentPath === '/admin/users') && <AdminStaff />}
           {currentPath === '/admin/reports' && <AdminReports />}
           {currentPath === '/admin/database' && <DatabaseSchemaViewer />}
           {currentPath === '/admin/settings' && <AdminSettings />}
