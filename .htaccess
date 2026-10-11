@@ -67,4 +67,6 @@ AddDefaultCharset UTF-8
   Header set X-XSS-Protection "1; mode=block"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-DNS-Prefetch-Control "on"
+  Header set Cross-Origin-Opener-Policy "same-origin-allow-popups"
 </IfModule>

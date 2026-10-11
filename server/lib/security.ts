@@ -194,6 +194,10 @@ export function securityHeadersMiddleware(_req: Request, res: Response, next: Ne
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   // XSS Protection
   res.setHeader('X-XSS-Protection', '1; mode=block');
+  // Chrome DNS Prefetching Control
+  res.setHeader('X-DNS-Prefetch-Control', 'on');
+  // Chrome Cross-Origin Opener Policy (allows Google sign-in popups safely)
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
   // Content Security Policy
   res.setHeader(
     'Content-Security-Policy',

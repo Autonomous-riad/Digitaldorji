@@ -19,6 +19,7 @@ export default defineConfig((): UserConfig => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     build: {
+      target: ['chrome100', 'es2022'],
       outDir: 'dist',
       sourcemap: false,
       cssCodeSplit: true,
@@ -29,10 +30,13 @@ export default defineConfig((): UserConfig => {
             'vendor-react': ['react', 'react-dom'],
             'vendor-icons': ['lucide-react'],
             'vendor-charts': ['recharts'],
+            'vendor-supabase': ['@supabase/supabase-js'],
+            'vendor-confetti': ['canvas-confetti'],
+            'vendor-zod': ['zod'],
           },
         },
       },
-      chunkSizeWarningLimit: 1000,
+      chunkSizeWarningLimit: 800,
     },
   };
 });

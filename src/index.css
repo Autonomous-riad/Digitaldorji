@@ -282,6 +282,29 @@
   padding-top: env(safe-area-inset-top, 0px);
 }
 
+/* Chrome / Blink Engine Rendering Optimizations */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  touch-action: manipulation;
+}
+
+/* Chrome Content Visibility for high-performance scrolling */
+.chrome-optimize-render {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 450px;
+}
+
+/* Chrome GPU Hardware Acceleration for smooth 60/120fps transitions */
+.gpu-layer {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform, opacity;
+}
+
 @media print {
   body * {
     visibility: hidden;

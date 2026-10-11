@@ -75,6 +75,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         alt={alt || 'Digital Dorji bespoke tailored garment'}
         loading={priority ? 'eager' : 'lazy'}
         decoding={priority ? 'sync' : 'async'}
+        fetchPriority={priority ? 'high' : 'auto'}
         onLoad={() => setIsLoaded(true)}
         onError={() => {
           setHasError(true);
