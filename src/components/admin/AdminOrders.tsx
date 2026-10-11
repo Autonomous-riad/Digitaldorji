@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../services/api';
 import { useTailor } from '../../context/TailorContext';
+import { useAuth } from '../../context/AuthContext';
 import { 
   ShoppingBag, 
   Search, 
@@ -26,6 +27,9 @@ import {
 
 export const AdminOrders: React.FC = () => {
   const { t } = useTailor();
+  const { user } = useAuth();
+  const canFollowUp = user?.role === 'admin' || user?.permissions?.canFollowUpOrders !== false;
+
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -191,13 +195,20 @@ export const AdminOrders: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={fetchOrders}
-          className="p-2.5 bg-white hover:bg-slate-100 text-slate-700 rounded-xl border border-slate-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-xs"
-        >
-          <RefreshCw className="w-4 h-4 text-slate-700" />
-          <span>{t('Refresh', 'রিফ্রেশ')}</span>
-        </button>
+        <div className="flex items-center gap-2">
+          {!canFollowUp && (
+            <span className="px-3 py-1.5 bg-amber-50 border border-amber-300 text-amber-900 rounded-xl text-xs font-semibold">
+              {t('View Only Mode (Follow-up access restricted)', 'ভিউ অনলি মোড (ফলো-আপ এক্সেস সীমিত)')}
+            </span>
+          )}
+          <button
+            onClick={fetchOrders}
+            className="p-2.5 bg-white hover:bg-slate-100 text-slate-700 rounded-xl border border-slate-200 cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-xs"
+          >
+            <RefreshCw className="w-4 h-4 text-slate-700" />
+            <span>{t('Refresh', 'রিফ্রেশ')}</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Search Bar */}

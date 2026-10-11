@@ -8,6 +8,7 @@ interface CustomizationArtProps {
   labelEn?: string;
   className?: string;
   isSelected?: boolean;
+  customImage?: string | null;
 }
 
 /**
@@ -17,8 +18,10 @@ interface CustomizationArtProps {
  */
 export const CustomizationOptionArt: React.FC<CustomizationArtProps> = ({
   optionId,
+  labelEn,
   className = 'w-full h-32',
   isSelected = false,
+  customImage,
 }) => {
   const guide = CUSTOMIZATION_GUIDES[optionId];
 
@@ -1434,6 +1437,27 @@ export const CustomizationOptionArt: React.FC<CustomizationArtProps> = ({
         );
     }
   };
+
+  if (customImage && typeof customImage === 'string' && customImage.trim()) {
+    return (
+      <div className={`relative ${className} w-full h-full flex items-center justify-center overflow-hidden rounded-lg bg-stone-100`}>
+        <img
+          src={customImage}
+          alt={labelEn || optionId}
+          className="w-full h-full object-cover object-center rounded-lg transition-transform duration-300 group-hover:scale-105"
+          onError={(e) => {
+            const target = e.currentTarget as HTMLElement;
+            target.style.display = 'none';
+            const fallbackEl = target.parentElement?.querySelector('.custom-art-fallback') as HTMLElement;
+            if (fallbackEl) fallbackEl.style.display = 'block';
+          }}
+        />
+        <div className="custom-art-fallback hidden w-full h-full">
+          {renderComponent()}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`relative ${className} flex items-center justify-center`}>

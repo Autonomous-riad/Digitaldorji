@@ -1,5 +1,12 @@
 export type UserRole = 'customer' | 'admin' | 'staff';
 
+export interface UserPermissions {
+  canFollowUpOrders: boolean;
+  canManageCustomizations: boolean;
+  canManageCatalog: boolean;
+  canManageStaff: boolean;
+}
+
 export interface UserProfile {
   id: string;
   name: string;
@@ -11,6 +18,9 @@ export interface UserProfile {
   gender: 'men' | 'women';
   avatar?: string;
   createdAt: string;
+  active?: boolean;
+  title?: string;
+  permissions?: UserPermissions;
 }
 
 export interface AuthState {

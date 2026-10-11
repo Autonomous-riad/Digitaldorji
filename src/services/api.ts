@@ -206,10 +206,15 @@ export const adminApi = {
       body: JSON.stringify({ status, trxId })
     }),
   getCatalog: () => apiRequest<{ garments: any[]; fabrics: any[] }>('/api/admin/catalog'),
-  updateGarment: (id: string, data: { basePrice?: number; standardDays?: number; recommendedFabricGaz?: number; popular?: boolean; active?: boolean; image?: string }) =>
+  updateGarment: (id: string, data: { basePrice?: number; standardDays?: number; recommendedFabricGaz?: number; popular?: boolean; active?: boolean; image?: string; customizationGroups?: any[] }) =>
     apiRequest(`/api/admin/catalog/garments/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data)
+    }),
+  updateOptionImage: (garmentId: string, optionId: string, image: string | null) =>
+    apiRequest<{ message: string; option: any; garment: any }>(`/api/admin/catalog/garments/${garmentId}/options/${optionId}/image`, {
+      method: 'PUT',
+      body: JSON.stringify({ image })
     }),
   updateFabric: (id: string, data: { pricePerGaz?: number; inStock?: boolean; featured?: boolean; image?: string; swatchImage?: string; nameEn?: string; nameBn?: string; colorName?: string; materialCategory?: string; pattern?: string }) =>
     apiRequest(`/api/admin/catalog/fabrics/${id}`, {
@@ -226,6 +231,38 @@ export const adminApi = {
     apiRequest('/api/admin/staff', { method: 'POST', body: JSON.stringify(data) }),
   updateStaff: (id: string, data: { active?: boolean; phone?: string; experienceYears?: number }) =>
     apiRequest(`/api/admin/staff/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  getUsers: () => apiRequest<{ users: any[] }>('/api/admin/users'),
+  addUser: (data: {
+    name: string;
+    email: string;
+    password: string;
+    role: 'admin' | 'staff' | 'customer';
+    title?: string;
+    phone?: string;
+    permissions?: {
+      canFollowUpOrders?: boolean;
+      canManageCustomizations?: boolean;
+      canManageCatalog?: boolean;
+      canManageStaff?: boolean;
+    };
+    active?: boolean;
+  }) => apiRequest<{ message: string; user: any }>('/api/admin/users', { method: 'POST', body: JSON.stringify(data) }),
+  updateUser: (id: string, data: {
+    name?: string;
+    email?: string;
+    password?: string;
+    role?: 'admin' | 'staff' | 'customer';
+    title?: string;
+    phone?: string;
+    active?: boolean;
+    permissions?: {
+      canFollowUpOrders?: boolean;
+      canManageCustomizations?: boolean;
+      canManageCatalog?: boolean;
+      canManageStaff?: boolean;
+    };
+  }) => apiRequest<{ message: string; user: any }>(`/api/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteUser: (id: string) => apiRequest<{ message: string }>(`/api/admin/users/${id}`, { method: 'DELETE' }),
   getSettings: () => apiRequest<{ settings: any }>('/api/admin/settings'),
   updateSettings: (data: any) =>
     apiRequest('/api/admin/settings', { method: 'PUT', body: JSON.stringify(data) })

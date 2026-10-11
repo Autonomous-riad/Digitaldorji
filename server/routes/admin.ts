@@ -564,6 +564,147 @@ adminRouter.delete('/staff/:id', requireAdmin, (req: AuthenticatedRequest, res: 
   res.json({ message: 'Staff member deleted' });
 });
 
+// ==========================================
+// SYSTEM USERS & ACCESS MANAGEMENT ENDPOINTS
+// ==========================================
+
+// GET /api/admin/users - List system users with permissions and active status
+adminRouter.get('/users', (req: AuthenticatedRequest, res: Response) => {
+  const data = db.getData();
+  const users = (data.users || []).map(u => {
+    const { password: _, ...safe } = u;
+    return safe;
+  });
+  res.json({ users });
+});
+
+// POST /api/admin/users - Add a new user with customizable access
+adminRouter.post('/users', (req: AuthenticatedRequest, res: Response) => {
+  // Check permission: must be admin or staff with canManageStaff
+  if (req.user?.role !== 'admin' && !req.user?.permissions?.canManageStaff) {
+    return res.status(403).json({ error: 'Permission denied: User administration access required' });
+  }
+
+  const { name, email, password, role, title, phone, permissions, active } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Name, email, and password are required' });
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const data = db.getData();
+  if (data.users.some(u => u.email.toLowerCase() === normalizedEmail)) {
+    return res.status(400).json({ error: 'A user with this email address already exists' });
+  }
+
+  const newUserRole: 'admin' | 'staff' | 'customer' = role === 'admin' ? 'admin' : (role === 'customer' ? 'customer' : 'staff');
+  
+  const defaultPermissions = newUserRole === 'admin' 
+    ? { canFollowUpOrders: true, canManageCustomizations: true, canManageCatalog: true, canManageStaff: true }
+    : (newUserRole === 'staff' 
+        ? {
+            canFollowUpOrders: permissions?.canFollowUpOrders !== undefined ? Boolean(permissions.canFollowUpOrders) : true,
+            canManageCustomizations: permissions?.canManageCustomizations !== undefined ? Boolean(permissions.canManageCustomizations) : true,
+            canManageCatalog: permissions?.canManageCatalog !== undefined ? Boolean(permissions.canManageCatalog) : false,
+            canManageStaff: permissions?.canManageStaff !== undefined ? Boolean(permissions.canManageStaff) : false
+          }
+        : { canFollowUpOrders: false, canManageCustomizations: false, canManageCatalog: false, canManageStaff: false });
+
+  const newUser = {
+    id: 'usr-' + (newUserRole === 'admin' ? 'adm-' : 'stf-') + Date.now().toString(36),
+    name: name.trim(),
+    email: normalizedEmail,
+    password: String(password).trim(),
+    role: newUserRole,
+    title: title ? title.trim() : (newUserRole === 'admin' ? 'Shop Administrator' : 'Artisan / Staff'),
+    phone: phone ? phone.trim() : '01700-000000',
+    address: 'Digital Dorji Central Atelier, Dhaka',
+    city: 'Dhaka',
+    gender: 'men' as const,
+    avatar: `https://images.unsplash.com/photo-${newUserRole === 'admin' ? '1472099645785-5658abf4ff4e' : '1534528741775-53994a69daeb'}?w=150&auto=format&fit=crop&q=80`,
+    active: active !== undefined ? Boolean(active) : true,
+    permissions: permissions ? {
+      canFollowUpOrders: Boolean(permissions.canFollowUpOrders),
+      canManageCustomizations: Boolean(permissions.canManageCustomizations),
+      canManageCatalog: Boolean(permissions.canManageCatalog),
+      canManageStaff: Boolean(permissions.canManageStaff)
+    } : defaultPermissions,
+    createdAt: new Date().toISOString()
+  };
+
+  db.mutate(data => {
+    if (!data.users) data.users = [];
+    data.users.push(newUser);
+  });
+
+  const { password: _, ...safeUser } = newUser;
+  res.status(201).json({ message: 'User created successfully', user: safeUser });
+});
+
+// PUT /api/admin/users/:id - Update user permissions, role, title, active status
+adminRouter.put('/users/:id', (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== 'admin' && !req.user?.permissions?.canManageStaff) {
+    return res.status(403).json({ error: 'Permission denied: User administration access required' });
+  }
+
+  const { id } = req.params;
+  const { name, title, phone, role, active, permissions, password } = req.body;
+
+  let updatedUser: any = null;
+  db.mutate(data => {
+    const user = (data.users || []).find(u => u.id === id);
+    if (user) {
+      if (name) user.name = name.trim();
+      if (title !== undefined) user.title = title.trim();
+      if (phone !== undefined) user.phone = phone.trim();
+      if (role && (role === 'admin' || role === 'staff' || role === 'customer')) user.role = role;
+      if (active !== undefined) user.active = Boolean(active);
+      if (password && String(password).trim().length > 0) user.password = String(password).trim();
+      if (permissions) {
+        user.permissions = {
+          canFollowUpOrders: permissions.canFollowUpOrders !== undefined ? Boolean(permissions.canFollowUpOrders) : (user.permissions?.canFollowUpOrders ?? true),
+          canManageCustomizations: permissions.canManageCustomizations !== undefined ? Boolean(permissions.canManageCustomizations) : (user.permissions?.canManageCustomizations ?? true),
+          canManageCatalog: permissions.canManageCatalog !== undefined ? Boolean(permissions.canManageCatalog) : (user.permissions?.canManageCatalog ?? false),
+          canManageStaff: permissions.canManageStaff !== undefined ? Boolean(permissions.canManageStaff) : (user.permissions?.canManageStaff ?? false),
+        };
+      }
+      updatedUser = user;
+    }
+  });
+
+  if (!updatedUser) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const { password: _, ...safeUser } = updatedUser;
+  res.json({ message: 'User updated successfully', user: safeUser });
+});
+
+// DELETE /api/admin/users/:id - Delete a user
+adminRouter.delete('/users/:id', (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== 'admin' && !req.user?.permissions?.canManageStaff) {
+    return res.status(403).json({ error: 'Permission denied: User administration access required' });
+  }
+
+  const { id } = req.params;
+
+  if (id === 'usr-admin-01' || req.user?.id === id) {
+    return res.status(400).json({ error: 'Cannot delete the primary Shop Master account or your own logged-in session.' });
+  }
+
+  let deleted = false;
+  db.mutate(data => {
+    const initialCount = data.users.length;
+    data.users = data.users.filter(u => u.id !== id);
+    deleted = data.users.length < initialCount;
+  });
+
+  if (!deleted) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  res.json({ message: 'User removed successfully' });
+});
+
 // GET /api/admin/products - Garment products CRUD
 adminRouter.get('/products', (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
@@ -997,7 +1138,7 @@ adminRouter.get('/catalog', (req: AuthenticatedRequest, res: Response) => {
 // PUT /api/admin/catalog/garments/:id - Update dynamic garment catalog item
 adminRouter.put('/catalog/garments/:id', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
-  const { basePrice, standardDays, recommendedFabricGaz, popular, active, image } = req.body;
+  const { basePrice, standardDays, recommendedFabricGaz, popular, active, image, customizationGroups } = req.body;
 
   // Input sanitization and validation (Harden Admin Panel Requirement)
   if (basePrice !== undefined && (isNaN(Number(basePrice)) || Number(basePrice) < 0)) {
@@ -1021,6 +1162,7 @@ adminRouter.put('/catalog/garments/:id', requireAdmin, (req: AuthenticatedReques
       if (popular !== undefined) item.popular = Boolean(popular);
       if (active !== undefined) item.active = Boolean(active);
       if (image !== undefined && typeof image === 'string' && image.trim()) item.image = image.trim();
+      if (customizationGroups !== undefined && Array.isArray(customizationGroups)) item.customizationGroups = customizationGroups;
       updatedGarment = item;
     }
   });
@@ -1030,6 +1172,53 @@ adminRouter.put('/catalog/garments/:id', requireAdmin, (req: AuthenticatedReques
   }
 
   res.json({ message: 'Garment updated successfully', garment: updatedGarment });
+});
+
+// PUT /api/admin/catalog/garments/:garmentId/options/:optionId/image - Update customization option picture
+adminRouter.put('/catalog/garments/:garmentId/options/:optionId/image', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+  const { garmentId, optionId } = req.params;
+  const { image } = req.body;
+
+  let found = false;
+  let updatedOption: any = null;
+  let updatedGarment: any = null;
+
+  db.mutate(data => {
+    const list = data.garments_catalog || [];
+    const garment = list.find(g => g.id === garmentId);
+    if (garment && garment.customizationGroups) {
+      for (const group of garment.customizationGroups) {
+        const opt = group.options.find((o: any) => o.id === optionId);
+        if (opt) {
+          opt.image = image && typeof image === 'string' && image.trim() ? image.trim() : null;
+          updatedOption = opt;
+          updatedGarment = garment;
+          found = true;
+          break;
+        }
+      }
+    }
+  });
+
+  if (!found) {
+    return res.status(404).json({ error: 'Garment or customization option not found' });
+  }
+
+  // Broadcast realtime update to clients
+  broadcastServerNotification({
+    type: 'catalog_updated',
+    titleEn: 'Style Option Picture Updated',
+    titleBn: 'কাস্টমাইজেশন অপশনের ছবি আপডেট',
+    messageEn: `Picture for ${updatedOption.labelEn || optionId} updated by admin`,
+    messageBn: `অ্যাডমিন দ্বারা ${updatedOption.labelBn || optionId}-এর ছবি পরিবর্তন করা হয়েছে`,
+    data: { garmentId, optionId, image: updatedOption.image }
+  });
+
+  res.json({
+    message: 'Customization option picture updated successfully',
+    option: updatedOption,
+    garment: updatedGarment
+  });
 });
 
 // PUT /api/admin/catalog/fabrics/:id - Update dynamic fabric catalog item

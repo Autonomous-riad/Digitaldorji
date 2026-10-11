@@ -11,12 +11,14 @@ import {
   PaymentMethod, 
   OrderStage,
   FabricProduct,
-  StitchingSpecifications
+  StitchingSpecifications,
+  GarmentCustomizationGroup,
+  GarmentCustomizationOption
 } from '../types/tailor';
 import { GARMENTS_DATA, SAMPLE_ORDERS, DELIVERY_SPEED_OPTIONS, BANGLADESH_DIVISIONS_AREAS } from '../data/garments';
 import { DIGITAL_FABRICS_DATA } from '../data/fabrics';
 import { getDeliveryChargeForDistrict } from '../data/bangladeshGeo';
-import { ordersApi } from '../services/api';
+import { ordersApi, adminApi } from '../services/api';
 import { createMeasurementsSnapshot } from '../utils/measurementConverter';
 import { realtimeNotificationService } from '../services/realtimeNotifications';
 import { createNotificationFromOrder } from '../utils/orderStageMeta';
@@ -73,6 +75,14 @@ interface TailorContextType {
   applySizePreset: (presetKey: string) => void;
   updateReferenceClothDetails: (details: Partial<ReferenceClothDetails>) => void;
   updateCustomization: (groupId: string, optionId: string) => void;
+  updateOptionImage: (garmentId: string, groupId: string, optionId: string, imageUrl: string | null) => Promise<void>;
+  updateGarmentCustomizationGroups: (garmentId: string, customizationGroups: GarmentCustomizationGroup[]) => Promise<void>;
+  addCustomizationOption: (garmentId: string, groupId: string, option: GarmentCustomizationOption) => Promise<void>;
+  removeCustomizationOption: (garmentId: string, groupId: string, optionId: string) => Promise<void>;
+  updateCustomizationOption: (garmentId: string, groupId: string, optionId: string, updates: Partial<GarmentCustomizationOption>) => Promise<void>;
+  addCustomizationGroup: (garmentId: string, group: GarmentCustomizationGroup) => Promise<void>;
+  removeCustomizationGroup: (garmentId: string, groupId: string) => Promise<void>;
+  resetGarmentCustomizationsToDefault: (garmentId: string) => Promise<void>;
   updateFabricDetails: (details: Partial<FabricDetails>) => void;
   updateStitchingSpecs: (specs: Partial<StitchingSpecifications>) => void;
   updatePickupAddress: (address: Partial<PickupAddress>) => void;
@@ -181,7 +191,33 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   
   // Fabrics data & active selection (Dynamically synchronized with the database)
   const [fabrics, setFabrics] = useState<FabricProduct[]>(DIGITAL_FABRICS_DATA);
-  const [garments, setGarments] = useState<GarmentItem[]>(GARMENTS_DATA);
+  // Helper to merge cached custom option groups & images into garment catalog
+  const applyCustomOptionImages = (garmentList: GarmentItem[]): GarmentItem[] => {
+    try {
+      const rawGroups = localStorage.getItem('dorji_custom_garments_groups');
+      const customGroupsMap = rawGroups ? JSON.parse(rawGroups) : {};
+      const raw = localStorage.getItem('dorji_custom_option_images');
+      const cache = raw ? JSON.parse(raw) : {};
+
+      return garmentList.map(g => {
+        const baseGroups = customGroupsMap[g.id] || g.customizationGroups || [];
+        return {
+          ...g,
+          customizationGroups: baseGroups.map((grp: GarmentCustomizationGroup) => ({
+            ...grp,
+            options: (grp.options || []).map((opt: GarmentCustomizationOption) => {
+              const customImg = cache[`${g.id}_${opt.id}`] || cache[opt.id] || opt.image;
+              return customImg ? { ...opt, image: customImg } : opt;
+            })
+          }))
+        };
+      });
+    } catch {
+      return garmentList;
+    }
+  };
+
+  const [garments, setGarments] = useState<GarmentItem[]>(() => applyCustomOptionImages(GARMENTS_DATA));
   const [selectedShopFabric, setSelectedShopFabric] = useState<FabricProduct | null>(null);
 
   // Catalog & Active item
@@ -198,11 +234,12 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         if (gRes.ok) {
           const gData = await gRes.json();
           if (gData.garments && gData.garments.length > 0) {
-            setGarments(gData.garments);
+            const enriched = applyCustomOptionImages(gData.garments);
+            setGarments(enriched);
             // Only refresh activeGarment if user already initiated a draft in their session
             setActiveGarment(prev => {
               if (prev) {
-                const refreshed = gData.garments.find((x: any) => x.id === prev.id);
+                const refreshed = enriched.find((x: any) => x.id === prev.id);
                 return refreshed || prev;
               }
               return null;
@@ -397,11 +434,12 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 
   // Start order with garment
   const startOrderWithGarment = (garment: GarmentItem) => {
-    setActiveGarment(garment);
+    const enriched = applyCustomOptionImages([garment])[0] || garment;
+    setActiveGarment(enriched);
     
     // Init default customizations
     const initialCustoms: Record<string, string> = {};
-    garment.customizationGroups.forEach(g => {
+    enriched.customizationGroups.forEach(g => {
       initialCustoms[g.id] = g.defaultOptionId;
     });
     setSelectedCustomizations(initialCustoms);
@@ -448,6 +486,183 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       ...prev,
       [groupId]: optionId
     }));
+  };
+
+  const updateOptionImage = async (garmentId: string, groupId: string, optionId: string, imageUrl: string | null) => {
+    const cleanUrl = imageUrl && typeof imageUrl === 'string' && imageUrl.trim() ? imageUrl.trim() : null;
+
+    // 1. Update localStorage cache so customization picture persists instantly
+    try {
+      const raw = localStorage.getItem('dorji_custom_option_images');
+      const cache = raw ? JSON.parse(raw) : {};
+      if (cleanUrl) {
+        cache[`${garmentId}_${optionId}`] = cleanUrl;
+        cache[optionId] = cleanUrl;
+      } else {
+        delete cache[`${garmentId}_${optionId}`];
+        delete cache[optionId];
+      }
+      localStorage.setItem('dorji_custom_option_images', JSON.stringify(cache));
+    } catch (e) {
+      console.warn('localStorage error for option image:', e);
+    }
+
+    // 2. Update garments state immediately
+    setGarments(prevGarments =>
+      prevGarments.map(g => {
+        if (g.id !== garmentId) return g;
+        return {
+          ...g,
+          customizationGroups: (g.customizationGroups || []).map(grp => {
+            if (grp.id !== groupId) return grp;
+            return {
+              ...grp,
+              options: (grp.options || []).map(opt => {
+                if (opt.id !== optionId) return opt;
+                return { ...opt, image: cleanUrl || undefined };
+              })
+            };
+          })
+        };
+      })
+    );
+
+    // 3. Update activeGarment if currently active
+    setActiveGarment(prev => {
+      if (!prev || prev.id !== garmentId) return prev;
+      return {
+        ...prev,
+        customizationGroups: (prev.customizationGroups || []).map(grp => {
+          if (grp.id !== groupId) return grp;
+          return {
+            ...grp,
+            options: (grp.options || []).map(opt => {
+              if (opt.id !== optionId) return opt;
+              return { ...opt, image: cleanUrl || undefined };
+            })
+          };
+        })
+      };
+    });
+
+    // 4. Send API update to server
+    try {
+      await adminApi.updateOptionImage(garmentId, optionId, cleanUrl);
+    } catch (err) {
+      console.warn('Server updateOptionImage fallback:', err);
+    }
+  };
+
+  const updateGarmentCustomizationGroups = async (garmentId: string, customizationGroups: GarmentCustomizationGroup[]) => {
+    // 1. Save to localStorage
+    try {
+      const raw = localStorage.getItem('dorji_custom_garments_groups');
+      const map = raw ? JSON.parse(raw) : {};
+      map[garmentId] = customizationGroups;
+      localStorage.setItem('dorji_custom_garments_groups', JSON.stringify(map));
+    } catch (e) {
+      console.warn('localStorage error for customization groups:', e);
+    }
+
+    // 2. Update garments state
+    setGarments(prev => prev.map(g => {
+      if (g.id !== garmentId) return g;
+      return { ...g, customizationGroups };
+    }));
+
+    // 3. Update activeGarment if currently active
+    setActiveGarment(prev => {
+      if (!prev || prev.id !== garmentId) return prev;
+      return { ...prev, customizationGroups };
+    });
+
+    // 4. Update server
+    try {
+      await adminApi.updateGarment(garmentId, { customizationGroups });
+    } catch (err) {
+      console.warn('Server updateGarment fallback:', err);
+    }
+  };
+
+  const addCustomizationOption = async (garmentId: string, groupId: string, option: GarmentCustomizationOption) => {
+    const target = garments.find(g => g.id === garmentId) || (activeGarment?.id === garmentId ? activeGarment : null) || GARMENTS_DATA.find(g => g.id === garmentId);
+    if (!target) return;
+    const currentGroups = target.customizationGroups || [];
+    const updatedGroups = currentGroups.map(grp => {
+      if (grp.id !== groupId) return grp;
+      const safeId = option.id || `opt_${Date.now()}`;
+      const safeOption = { ...option, id: safeId };
+      return {
+        ...grp,
+        options: [...(grp.options || []).filter(o => o.id !== safeId), safeOption]
+      };
+    });
+    await updateGarmentCustomizationGroups(garmentId, updatedGroups);
+  };
+
+  const removeCustomizationOption = async (garmentId: string, groupId: string, optionId: string) => {
+    const target = garments.find(g => g.id === garmentId) || (activeGarment?.id === garmentId ? activeGarment : null) || GARMENTS_DATA.find(g => g.id === garmentId);
+    if (!target) return;
+    const currentGroups = target.customizationGroups || [];
+    const updatedGroups = currentGroups.map(grp => {
+      if (grp.id !== groupId) return grp;
+      const remainingOptions = (grp.options || []).filter(o => o.id !== optionId);
+      const defaultOptionId = grp.defaultOptionId === optionId 
+        ? (remainingOptions[0]?.id || '') 
+        : grp.defaultOptionId;
+      return {
+        ...grp,
+        options: remainingOptions,
+        defaultOptionId
+      };
+    });
+    await updateGarmentCustomizationGroups(garmentId, updatedGroups);
+  };
+
+  const updateCustomizationOption = async (garmentId: string, groupId: string, optionId: string, updates: Partial<GarmentCustomizationOption>) => {
+    const target = garments.find(g => g.id === garmentId) || (activeGarment?.id === garmentId ? activeGarment : null) || GARMENTS_DATA.find(g => g.id === garmentId);
+    if (!target) return;
+    const currentGroups = target.customizationGroups || [];
+    const updatedGroups = currentGroups.map(grp => {
+      if (grp.id !== groupId) return grp;
+      return {
+        ...grp,
+        options: (grp.options || []).map(o => o.id === optionId ? { ...o, ...updates } : o)
+      };
+    });
+    await updateGarmentCustomizationGroups(garmentId, updatedGroups);
+  };
+
+  const addCustomizationGroup = async (garmentId: string, group: GarmentCustomizationGroup) => {
+    const target = garments.find(g => g.id === garmentId) || (activeGarment?.id === garmentId ? activeGarment : null) || GARMENTS_DATA.find(g => g.id === garmentId);
+    if (!target) return;
+    const currentGroups = target.customizationGroups || [];
+    const safeGroupId = group.id || `group_${Date.now()}`;
+    const safeGroup = { ...group, id: safeGroupId };
+    const updatedGroups = [...currentGroups.filter(g => g.id !== safeGroupId), safeGroup];
+    await updateGarmentCustomizationGroups(garmentId, updatedGroups);
+  };
+
+  const removeCustomizationGroup = async (garmentId: string, groupId: string) => {
+    const target = garments.find(g => g.id === garmentId) || (activeGarment?.id === garmentId ? activeGarment : null) || GARMENTS_DATA.find(g => g.id === garmentId);
+    if (!target) return;
+    const currentGroups = target.customizationGroups || [];
+    const updatedGroups = currentGroups.filter(g => g.id !== groupId);
+    await updateGarmentCustomizationGroups(garmentId, updatedGroups);
+  };
+
+  const resetGarmentCustomizationsToDefault = async (garmentId: string) => {
+    const original = GARMENTS_DATA.find(g => g.id === garmentId);
+    if (!original) return;
+    try {
+      const raw = localStorage.getItem('dorji_custom_garments_groups');
+      if (raw) {
+        const map = JSON.parse(raw);
+        delete map[garmentId];
+        localStorage.setItem('dorji_custom_garments_groups', JSON.stringify(map));
+      }
+    } catch {}
+    await updateGarmentCustomizationGroups(garmentId, original.customizationGroups || []);
   };
 
   const updateStitchingSpecs = (specs: Partial<StitchingSpecifications>) => {
@@ -831,6 +1046,14 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         applySizePreset,
         updateReferenceClothDetails,
         updateCustomization,
+        updateOptionImage,
+        updateGarmentCustomizationGroups,
+        addCustomizationOption,
+        removeCustomizationOption,
+        updateCustomizationOption,
+        addCustomizationGroup,
+        removeCustomizationGroup,
+        resetGarmentCustomizationsToDefault,
         updateStitchingSpecs,
         updateFabricDetails,
         updatePickupAddress,
