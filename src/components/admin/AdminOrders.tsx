@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../services/api';
 import { useTailor } from '../../context/TailorContext';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'sonner';
 import { 
   ShoppingBag, 
   Search, 
@@ -94,24 +95,34 @@ export const AdminOrders: React.FC = () => {
   };
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
+    if (!canFollowUp) {
+      toast.error(t('Permission denied: You do not have access to follow up or change order stages.', 'অনুমতি নেই: অর্ডার স্টেজ পরিবর্তন করার অনুমতি আপনার নেই।'));
+      return;
+    }
     try {
       const res = await adminApi.updateOrderStatus(orderId, newStatus);
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, currentStage: newStatus, status: newStatus } : o));
       if (selectedOrder?.id === orderId) {
         setSelectedOrder(res.order || { ...selectedOrder, currentStage: newStatus, status: newStatus });
       }
+      toast.success(t('Order stage updated successfully', 'অর্ডার স্টেজ সফলভাবে আপডেট করা হয়েছে'));
     } catch (err) {
       console.error('Failed to update order status:', err);
     }
   };
 
   const handleAssignStaff = async (orderId: string, assignedTailor?: string, assignedRider?: string) => {
+    if (!canFollowUp) {
+      toast.error(t('Permission denied: You do not have access to assign staff to orders.', 'অনুমতি নেই: অর্ডারে স্টাফ অ্যাসাইন করার অনুমতি আপনার নেই।'));
+      return;
+    }
     try {
       const res = await adminApi.assignOrderStaff(orderId, { assignedTailor, assignedRider });
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, assignedTailor, assignedRider } : o));
       if (selectedOrder?.id === orderId) {
         setSelectedOrder(res.order || { ...selectedOrder, assignedTailor, assignedRider });
       }
+      toast.success(t('Staff assigned successfully', 'স্টাফ সফলভাবে অ্যাসাইন করা হয়েছে'));
     } catch (err) {
       console.error('Failed to assign staff:', err);
     }
@@ -119,11 +130,16 @@ export const AdminOrders: React.FC = () => {
 
   const handleSaveNotes = async () => {
     if (!selectedOrder) return;
+    if (!canFollowUp) {
+      toast.error(t('Permission denied: You do not have access to update order notes.', 'অনুমতি নেই: নোট আপডেট করার অনুমতি আপনার নেই।'));
+      return;
+    }
     try {
       await adminApi.updateOrderNotes(selectedOrder.id, notesInput);
       setSelectedOrder({ ...selectedOrder, tailorNotes: notesInput });
       setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, tailorNotes: notesInput } : o));
       setEditingNotes(false);
+      toast.success(t('Notes saved', 'নোট সেভ করা হয়েছে'));
     } catch (err) {
       console.error('Failed to save note:', err);
     }
@@ -131,11 +147,16 @@ export const AdminOrders: React.FC = () => {
 
   const handleSaveProofPhoto = async () => {
     if (!selectedOrder || !proofUrlInput.trim()) return;
+    if (!canFollowUp) {
+      toast.error(t('Permission denied: You do not have access to upload proof photos.', 'অনুমতি নেই: প্রুফ ফটো যুক্ত করার অনুমতি নেই।'));
+      return;
+    }
     try {
       await adminApi.updateOrderProof(selectedOrder.id, { proofPhotoUrl: proofUrlInput.trim() });
       setSelectedOrder({ ...selectedOrder, proofPhotoUrl: proofUrlInput.trim() });
       setShowProofModal(false);
       setProofUrlInput('');
+      toast.success(t('Proof photo updated', 'প্রুফ ফটো আপডেট করা হয়েছে'));
     } catch (err) {
       console.error('Failed to save proof photo:', err);
     }

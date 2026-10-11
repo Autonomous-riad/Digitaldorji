@@ -108,6 +108,10 @@ export const CustomizerForm: React.FC = () => {
 
   const handleWizardAddOption = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isCustomizationRestricted) {
+      toast.error(t('Access Denied: You do not have permission to add customization options.', 'অ্যাক্সেস অস্বীকৃত: আপনার কাস্টমাইজেশন অপশন যোগ করার অনুমতি নেই।'));
+      return;
+    }
     if (!activeGarment || !addingOptionInWizard) return;
     if (!wizardNewOptionForm.labelEn.trim()) return;
 
@@ -134,6 +138,10 @@ export const CustomizerForm: React.FC = () => {
   };
 
   const handleWizardRemoveOption = async (groupId: string, optionId: string, label: string) => {
+    if (isCustomizationRestricted) {
+      toast.error(t('Access Denied: You do not have permission to delete customization options.', 'অ্যাক্সেস অস্বীকৃত: আপনার কাস্টমাইজেশন অপশন মুছে ফেলার অনুমতি নেই।'));
+      return;
+    }
     if (!activeGarment) return;
     const grp = activeGarment.customizationGroups.find(g => g.id === groupId);
     if (grp && grp.options.length <= 1) {
@@ -585,6 +593,10 @@ export const CustomizerForm: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
+                        if (isCustomizationRestricted) {
+                          toast.error(t('Access Denied: You do not have permission to add customization options.', 'অ্যাক্সেস অস্বীকৃত: আপনার কাস্টমাইজেশন অপশন যোগ করার অনুমতি নেই।'));
+                          return;
+                        }
                         setAddingOptionInWizard({
                           groupId: group.id,
                           groupTitleEn: group.titleEn,
@@ -662,6 +674,10 @@ export const CustomizerForm: React.FC = () => {
                           type="button"
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (isCustomizationRestricted) {
+                              toast.error(t('Access Denied: You do not have permission to customize pictures.', 'অ্যাক্সেস অস্বীকৃত: আপনার ছবি পরিবর্তন করার অনুমতি নেই।'));
+                              return;
+                            }
                             setEditingOptionPicture({
                               groupId: group.id,
                               groupTitleEn: group.titleEn,
