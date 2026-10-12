@@ -4,6 +4,11 @@ import { useTailor } from '../../context/TailorContext';
 import { useRouter } from '../../context/RouterContext';
 import { UserAccessManagerModal } from './UserAccessManagerModal';
 import { 
+  hasPermission, 
+  canAccessRoute, 
+  getStaffRoleTier 
+} from '../../utils/permissions';
+import { 
   Scissors, 
   LayoutDashboard, 
   ShoppingBag, 
@@ -12,13 +17,16 @@ import {
   LogOut,
   ChevronRight,
   ShieldCheck,
+  ShieldAlert,
   ExternalLink,
   Ruler,
   Menu,
   X,
   Database,
   Shirt,
-  UserPlus
+  UserPlus,
+  Eye,
+  Lock
 } from 'lucide-react';
 
 export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -31,12 +39,16 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   // Extract base route for matching
   const activeRoute = currentPath.split('?')[0];
 
+  const roleTier = getStaffRoleTier(user);
+  const canAccessCurrent = canAccessRoute(user, activeRoute);
+  const canManageStaff = hasPermission(user, 'staff', 'view') || hasPermission(user, 'staff', 'manage');
+
   const handleLogout = () => {
     logout();
     navigate('/admin/login');
   };
 
-  const navItems = [
+  const allNavItems = [
     { path: '/admin/dashboard', icon: LayoutDashboard, labelEn: 'Dashboard', labelBn: 'ড্যাশবোর্ড' },
     { path: '/admin/orders', icon: ShoppingBag, labelEn: 'Orders & Follow-up', labelBn: 'অর্ডার ও ফলো-আপ' },
     { path: '/admin/ready-made', icon: Shirt, labelEn: 'Ready-Made Shop', labelBn: 'রেডিমেড শপ' },
@@ -47,6 +59,16 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     { path: '/admin/reports', icon: Database, labelEn: 'Reports & CSV', labelBn: 'রিপোর্টস' },
     { path: '/admin/settings', icon: Settings, labelEn: 'Settings', labelBn: 'সেটিংস' },
   ];
+
+  // Conditionally render navigation items based on role-based access
+  const navItems = allNavItems.filter(item => canAccessRoute(user, item.path));
+
+  // Role tier badge label
+  const roleBadgeConfig = {
+    admin: { label: t('Shop Master (Admin)', 'অ্যাডমিন'), color: 'bg-emerald-100 text-emerald-900 border-emerald-300' },
+    editor: { label: t('Editor', 'এডিটর'), color: 'bg-indigo-100 text-indigo-900 border-indigo-300' },
+    viewer: { label: t('View-Only', 'ভিউ-অনলি'), color: 'bg-amber-100 text-amber-900 border-amber-300' }
+  }[roleTier] || { label: 'Staff', color: 'bg-slate-100 text-slate-800 border-slate-300' };
 
   return (
     <div className="h-screen bg-cream-100 flex flex-col font-sans overflow-hidden">
@@ -114,9 +136,19 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           {/* Admin User Profile Pill & User Access Trigger (Selected CSS Element) */}
           <div className="flex items-center">
             <button
-              onClick={() => setShowUserModal(true)}
-              className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-cream-50 hover:bg-cream-200/80 rounded-xl border border-cream-300 shadow-xs transition-all cursor-pointer group text-left"
-              title={t('Click to add or remove users and manage permissions for orders and customizations', 'ইউজার যোগ/রিমুভ এবং অর্ডার ও কাস্টমাইজেশন অ্যাক্সেস দিতে ক্লিক করুন')}
+              onClick={() => {
+                if (canManageStaff) {
+                  setShowUserModal(true);
+                }
+              }}
+              className={`flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-cream-50 hover:bg-cream-200/80 rounded-xl border border-cream-300 shadow-xs transition-all text-left ${
+                canManageStaff ? 'cursor-pointer' : 'cursor-default'
+              }`}
+              title={
+                canManageStaff
+                  ? t('Click to manage team users & access permissions', 'ইউজার ও পারমিশন পরিচালনা করতে ক্লিক করুন')
+                  : t('Current role: View-only access', 'বর্তমান রোল: ভিউ-অনলি এক্সেস')
+              }
             >
               <img
                 src={user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'}
@@ -128,13 +160,15 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                   {user?.name || 'Master Kabir'}
                 </span>
                 <span className="text-[10px] text-purple-900/70 font-mono flex items-center gap-1 leading-tight mt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+                  <span className={`w-1.5 h-1.5 rounded-full inline-block ${
+                    roleTier === 'admin' ? 'bg-emerald-500' : (roleTier === 'editor' ? 'bg-indigo-500' : 'bg-amber-500')
+                  }`}></span>
                   {user?.title || (user?.role === 'admin' ? 'Shop Master' : 'Workshop Staff')}
                 </span>
               </div>
-              <div className="flex items-center gap-1 ml-0.5 sm:ml-1 px-1.5 py-0.5 rounded-lg bg-purple-100 group-hover:bg-purple-200 text-purple-950 text-[10px] font-bold border border-purple-200">
-                <ShieldCheck className="w-3 h-3 text-amber-700" />
-                <span className="hidden sm:inline">{t('Users & Access', 'ইউজার ও এক্সেস')}</span>
+              <div className={`flex items-center gap-1 ml-0.5 sm:ml-1 px-1.5 py-0.5 rounded-lg text-[10px] font-bold border ${roleBadgeConfig.color}`}>
+                {roleTier === 'viewer' ? <Eye className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
+                <span className="hidden sm:inline">{roleBadgeConfig.label}</span>
               </div>
             </button>
           </div>
@@ -244,7 +278,42 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         {/* Main Admin Content View Area */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-cream-100">
           <div className="max-w-7xl mx-auto space-y-6">
-            {children}
+            {canAccessCurrent ? (
+              children
+            ) : (
+              <div className="bg-white rounded-2xl border border-rose-200 p-8 sm:p-12 text-center max-w-xl mx-auto my-12 shadow-sm space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto shadow-inner">
+                  <ShieldAlert className="w-8 h-8" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900 font-serif-title">
+                    {t('Access Restricted: Permission Required', 'অ্যাক্সেস সংরক্ষিত: অনুমতির প্রয়োজন')}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                    {t(
+                      `Your current account role (${roleTier.toUpperCase()}) does not have permission to view or manage this workshop section. Contact your Shop Master Administrator for elevated access.`,
+                      `আপনার বর্তমান রোল (${roleTier.toUpperCase()})-এ এই কারখানা বিভাগটি দেখার অনুমতি নেই। এক্সেস পেতে শপ মাস্টার অ্যাডমিনের সাথে যোগাযোগ করুন।`
+                    )}
+                  </p>
+                </div>
+                <div className="pt-2 flex justify-center gap-3">
+                  <button
+                    onClick={() => navigate('/admin/dashboard')}
+                    className="px-4 py-2.5 bg-purple-950 text-cream-50 hover:bg-purple-900 rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  >
+                    {t('Go to Allowed Dashboard', 'অনুমোদিত ড্যাশবোর্ডে ফিরে যান')}
+                  </button>
+                  {hasPermission(user, 'orders', 'view') && (
+                    <button
+                      onClick={() => navigate('/admin/orders')}
+                      className="px-4 py-2.5 bg-cream-100 hover:bg-cream-200 text-purple-950 rounded-xl text-xs font-bold border border-cream-300 transition-all cursor-pointer"
+                    >
+                      {t('View Orders', 'অর্ডারসমূহ দেখুন')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>

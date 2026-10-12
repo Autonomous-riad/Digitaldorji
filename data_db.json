@@ -11,7 +11,59 @@
       "city": "Dhaka",
       "gender": "men",
       "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-      "createdAt": "2024-01-01T09:00:00.000Z"
+      "createdAt": "2024-01-01T09:00:00.000Z",
+      "permissions": {
+        "staffRole": "admin",
+        "canFollowUpOrders": true,
+        "canManageCustomizations": true,
+        "canManageCatalog": true,
+        "canManageStaff": true,
+        "modules": {
+          "orders": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": true
+          },
+          "catalog": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": true
+          },
+          "readyMade": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": true
+          },
+          "customers": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": true
+          },
+          "staff": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": true,
+            "manage": true
+          },
+          "reports": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": true
+          },
+          "settings": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": true
+          }
+        }
+      }
     },
     {
       "id": "usr-staff-01",
@@ -24,7 +76,59 @@
       "city": "Dhaka",
       "gender": "men",
       "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-      "createdAt": "2024-01-15T09:00:00.000Z"
+      "createdAt": "2024-01-15T09:00:00.000Z",
+      "permissions": {
+        "staffRole": "editor",
+        "canFollowUpOrders": true,
+        "canManageCustomizations": true,
+        "canManageCatalog": true,
+        "canManageStaff": false,
+        "modules": {
+          "orders": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "catalog": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "readyMade": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "customers": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "staff": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false,
+            "manage": false
+          },
+          "reports": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "settings": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          }
+        }
+      }
     },
     {
       "id": "usr-cust-01",
@@ -64,6 +168,207 @@
       "gender": "men",
       "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80",
       "createdAt": "2026-09-18T19:24:46.289Z"
+    },
+    {
+      "id": "usr-staff-02",
+      "name": "Sadia Rahman (Order Follow-up Lead)",
+      "email": "orders@digitaldorji.com",
+      "password": "order123",
+      "role": "staff",
+      "title": "Order Follow-up & Client Care",
+      "phone": "01715-667788",
+      "address": "Digital Dorji Atelier Customer Desk, Dhanmondi",
+      "city": "Dhaka",
+      "gender": "women",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      "active": true,
+      "permissions": {
+        "staffRole": "editor",
+        "canFollowUpOrders": true,
+        "canManageCustomizations": false,
+        "canManageCatalog": false,
+        "canManageStaff": false,
+        "modules": {
+          "orders": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "catalog": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "readyMade": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "customers": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "staff": {
+            "view": false,
+            "create": false,
+            "edit": false,
+            "delete": false,
+            "manage": false
+          },
+          "reports": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "settings": {
+            "view": false,
+            "create": false,
+            "edit": false,
+            "delete": false
+          }
+        }
+      },
+      "createdAt": "2024-02-01T10:00:00.000Z"
+    },
+    {
+      "id": "usr-staff-03",
+      "name": "Kamrul Hasan (Customization Specialist)",
+      "email": "custom@digitaldorji.com",
+      "password": "custom123",
+      "role": "staff",
+      "title": "Customization & Pattern Specialist",
+      "phone": "01718-990011",
+      "address": "Digital Dorji Atelier Design Lab, Dhanmondi",
+      "city": "Dhaka",
+      "gender": "men",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+      "active": true,
+      "permissions": {
+        "staffRole": "editor",
+        "canFollowUpOrders": true,
+        "canManageCustomizations": true,
+        "canManageCatalog": true,
+        "canManageStaff": false,
+        "modules": {
+          "orders": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "catalog": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "readyMade": {
+            "view": true,
+            "create": true,
+            "edit": true,
+            "delete": false
+          },
+          "customers": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "staff": {
+            "view": false,
+            "create": false,
+            "edit": false,
+            "delete": false,
+            "manage": false
+          },
+          "reports": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "settings": {
+            "view": false,
+            "create": false,
+            "edit": false,
+            "delete": false
+          }
+        }
+      },
+      "createdAt": "2024-02-15T10:00:00.000Z"
+    },
+    {
+      "id": "usr-staff-04",
+      "name": "Farhana Akter (Quality Auditor & Observer)",
+      "email": "viewer@digitaldorji.com",
+      "password": "viewer123",
+      "role": "staff",
+      "title": "Auditor & Floor Observer (View-Only)",
+      "phone": "01719-223344",
+      "address": "Digital Dorji Atelier, Dhaka",
+      "city": "Dhaka",
+      "gender": "women",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80",
+      "active": true,
+      "permissions": {
+        "staffRole": "viewer",
+        "canFollowUpOrders": false,
+        "canManageCustomizations": false,
+        "canManageCatalog": false,
+        "canManageStaff": false,
+        "modules": {
+          "orders": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "catalog": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "readyMade": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "customers": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "staff": {
+            "view": false,
+            "create": false,
+            "edit": false,
+            "delete": false,
+            "manage": false
+          },
+          "reports": {
+            "view": true,
+            "create": false,
+            "edit": false,
+            "delete": false
+          },
+          "settings": {
+            "view": false,
+            "create": false,
+            "edit": false,
+            "delete": false
+          }
+        }
+      },
+      "createdAt": "2024-03-01T10:00:00.000Z"
     }
   ],
   "staff": [
@@ -202,7 +507,6 @@
         "vehicleNumber": "DHAKA METRO-HA-5921"
       },
       "masterTailorName": "Ustad Jalal Master",
-      "tailorNotes": "Standard precision tailoring.",
       "idempotencyKey": "test-idemp-1790193995111"
     },
     {
@@ -446,6 +750,59 @@
         "sleeve": 25,
         "neck": 16,
         "waist": 37.5
+      }
+    },
+    {
+      "id": "demo-order-001",
+      "orderNumber": "DEMO-2026-0001",
+      "isDemo": true,
+      "isFictionalDemo": true,
+      "userId": "usr-demo-guest",
+      "customerName": "Demo Customer (Anonymized)",
+      "customerPhone": "01700-000000",
+      "customerEmail": "demo@example.com",
+      "createdAt": "2026-10-01T10:00:00.000Z",
+      "garment": {
+        "id": "mens-panjabi-classic",
+        "nameEn": "Classic Royal Semi-Fit Panjabi",
+        "nameBn": "ক্লাসিক রয়েল সেমি-ফিট পাঞ্জাবি",
+        "gender": "men",
+        "basePrice": 850,
+        "image": "/images/garments/panjabi-kurta.jpg"
+      },
+      "fabricDetails": {
+        "fabricSource": "shop_fabric",
+        "fabricType": "Demo Studio Linen Cotton",
+        "colorName": "Royal Cream",
+        "lengthGaz": 2.75,
+        "needLiningAstra": false
+      },
+      "pickupAddress": {
+        "fullName": "Demo Customer (Anonymized)",
+        "phone": "01700-000000",
+        "division": "Dhaka",
+        "area": "Dhanmondi",
+        "streetAddress": "Fictional Demo Studio, Road 1",
+        "apartmentFloor": "Suite 1A",
+        "pickupDate": "2026-10-02",
+        "pickupSlot": "morning"
+      },
+      "deliveryUrgency": "standard",
+      "estimatedDeliveryDate": "2026-10-06",
+      "grandTotal": 930,
+      "paymentMethod": "cod",
+      "paymentStatus": "paid",
+      "currentStage": "cutting_in_progress",
+      "assignedTailor": "Demo Workshop Master",
+      "assignedRider": "Demo Rider",
+      "tailorNotes": "Isolated demo order for interactive stage progression testing.",
+      "measurements": {
+        "chest": 40,
+        "length": 42,
+        "shoulder": 18,
+        "sleeve": 25,
+        "neck": 16,
+        "waist": 38
       }
     }
   ],

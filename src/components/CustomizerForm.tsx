@@ -189,6 +189,7 @@ export const CustomizerForm: React.FC = () => {
           <img
             src={activeGarment.image}
             alt={activeGarment.nameEn}
+            loading="lazy"
             className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover border border-stone-200 shadow-xs shrink-0"
             referrerPolicy="no-referrer"
           />
@@ -273,6 +274,7 @@ export const CustomizerForm: React.FC = () => {
             <img
               src={fabricDetails.selectedShopFabric.image}
               alt={fabricDetails.selectedShopFabric.nameEn}
+              loading="lazy"
               className="w-12 h-12 rounded-lg object-cover border border-amber-200"
               referrerPolicy="no-referrer"
             />

@@ -311,6 +311,7 @@ export const CheckoutReview: React.FC = () => {
                 <img
                   src={activeGarment.image}
                   alt={activeGarment.nameEn}
+                  loading="lazy"
                   className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border border-slate-200 shadow-xs"
                   referrerPolicy="no-referrer"
                 />
@@ -369,6 +370,7 @@ export const CheckoutReview: React.FC = () => {
                 <img
                   src={fabricDetails.selectedShopFabric.image}
                   alt={fabricDetails.selectedShopFabric.nameEn}
+                  loading="lazy"
                   className="w-16 h-16 rounded-xl object-cover border border-slate-200 shrink-0"
                   referrerPolicy="no-referrer"
                 />

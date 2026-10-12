@@ -10,19 +10,21 @@ export type ItemCardProps =
       type: 'garment';
       item: GarmentItem;
       priority?: boolean;
+      loading?: 'lazy' | 'eager';
       onAction: (garment: GarmentItem) => void;
     }
   | {
       type: 'fabric';
       item: FabricProduct;
       priority?: boolean;
+      loading?: 'lazy' | 'eager';
       onInspect?: (fabric: FabricProduct) => void;
       onAction: (fabric: FabricProduct) => void;
     };
 
 export const ItemCard: React.FC<ItemCardProps> = (props) => {
   const { t, lang } = useTailor();
-  const { type, item, priority } = props;
+  const { type, item, priority, loading = 'lazy' } = props;
 
   const isGarment = type === 'garment';
   const garment = isGarment ? (item as GarmentItem) : null;
@@ -39,6 +41,7 @@ export const ItemCard: React.FC<ItemCardProps> = (props) => {
             : `${item.nameEn} (${item.nameBn}) - ${fabric?.materialComposition || 'Textile'} Swatch`}
           fallbackSrc={isGarment ? '/images/garments/panjabi-kurta.jpg' : '/images/fabrics/giza-egyptian-cotton.jpg'}
           priority={priority}
+          loading={loading}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
       </div>

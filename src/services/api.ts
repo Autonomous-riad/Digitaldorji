@@ -244,6 +244,8 @@ export const adminApi = {
       canManageCustomizations?: boolean;
       canManageCatalog?: boolean;
       canManageStaff?: boolean;
+      staffRole?: 'admin' | 'editor' | 'viewer';
+      modules?: any;
     };
     active?: boolean;
   }) => apiRequest<{ message: string; user: any }>('/api/admin/users', { method: 'POST', body: JSON.stringify(data) }),
@@ -260,6 +262,8 @@ export const adminApi = {
       canManageCustomizations?: boolean;
       canManageCatalog?: boolean;
       canManageStaff?: boolean;
+      staffRole?: 'admin' | 'editor' | 'viewer';
+      modules?: any;
     };
   }) => apiRequest<{ message: string; user: any }>(`/api/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteUser: (id: string) => apiRequest<{ message: string }>(`/api/admin/users/${id}`, { method: 'DELETE' }),

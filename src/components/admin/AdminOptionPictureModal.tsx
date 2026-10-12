@@ -302,6 +302,7 @@ export const AdminOptionPictureModal: React.FC<AdminOptionPictureModalProps> = (
                         <img
                           src={preset.thumbnail || preset.url}
                           alt={preset.nameEn}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         {isPresetSelected && (

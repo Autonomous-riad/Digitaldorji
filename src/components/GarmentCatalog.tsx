@@ -348,12 +348,12 @@ export const GarmentCatalog: React.FC = () => {
 
       {/* Garment Grid: Responsive CSS grid with equal height ItemCards */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-        {filteredGarments.map((garment, idx) => (
+        {filteredGarments.map((garment) => (
           <ItemCard
             key={garment.id}
             type="garment"
             item={garment}
-            priority={idx < 4}
+            loading="lazy"
             onAction={startOrderWithGarment}
           />
         ))}

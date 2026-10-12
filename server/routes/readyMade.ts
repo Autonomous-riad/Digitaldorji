@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../db';
+import { requirePermission } from '../lib/permissions';
+import { AuthenticatedRequest } from '../auth';
 import {
   INITIAL_CATEGORIES,
   INITIAL_PRODUCTS,
@@ -555,6 +557,9 @@ router.get('/orders/:orderNumber', (req: Request, res: Response) => {
 // ADMIN READY-MADE APIS
 // ==========================================
 
+// Enforce readyMade view permission for all admin readyMade endpoints
+router.use('/admin', requirePermission('readyMade', 'view'));
+
 // GET /api/ready-made/admin/products
 router.get('/admin/products', (req: Request, res: Response) => {
   try {
@@ -566,7 +571,7 @@ router.get('/admin/products', (req: Request, res: Response) => {
 });
 
 // POST /api/ready-made/admin/products
-router.post('/admin/products', (req: Request, res: Response) => {
+router.post('/admin/products', requirePermission('readyMade', 'create'), (req: Request, res: Response) => {
   try {
     const payload = req.body;
     const now = new Date().toISOString();
@@ -675,7 +680,7 @@ router.post('/admin/products', (req: Request, res: Response) => {
 });
 
 // PUT /api/ready-made/admin/products/:id
-router.put('/admin/products/:id', (req: Request, res: Response) => {
+router.put('/admin/products/:id', requirePermission('readyMade', 'edit'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const payload = req.body;
@@ -764,7 +769,7 @@ router.put('/admin/products/:id', (req: Request, res: Response) => {
 });
 
 // PUT /api/ready-made/admin/products/:id/images (Dedicated image updater)
-router.put('/admin/products/:id/images', (req: Request, res: Response) => {
+router.put('/admin/products/:id/images', requirePermission('readyMade', 'edit'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { primary_image, images } = req.body;
@@ -827,7 +832,7 @@ router.put('/admin/products/:id/images', (req: Request, res: Response) => {
 });
 
 // DELETE /api/ready-made/admin/products/:id
-router.delete('/admin/products/:id', (req: Request, res: Response) => {
+router.delete('/admin/products/:id', requirePermission('readyMade', 'delete'), (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     let deleted = false;

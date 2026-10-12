@@ -248,6 +248,7 @@ export const FabricPickupForm: React.FC = () => {
                 <img
                   src={selectedShopFabric.image}
                   alt={selectedShopFabric.nameEn}
+                  loading="lazy"
                   className="w-16 h-16 rounded-xl object-cover border border-stone-200 shrink-0"
                   referrerPolicy="no-referrer"
                 />
@@ -298,6 +299,7 @@ export const FabricPickupForm: React.FC = () => {
                       <img
                         src={fab.image}
                         alt={fab.nameEn}
+                        loading="lazy"
                         className="w-12 h-12 rounded-lg object-cover border border-slate-200 shrink-0"
                         referrerPolicy="no-referrer"
                       />

@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "Digital Dorji (ডিজিটাল দর্জি)",
+  "short_name": "DigitalDorji",
+  "description": "Bespoke tailoring, fabric service, and complete Ready-Made products commerce in Bangladesh with real-time tracking.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1877f2",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -743,6 +743,7 @@ export const AdminCatalog: React.FC = () => {
                     <img
                       src={g.image}
                       alt={g.nameEn}
+                      loading="lazy"
                       className="w-16 h-16 rounded-xl object-cover border border-slate-200 bg-slate-50"
                       onError={(e) => { (e.target as HTMLImageElement).src = '/images/garments/panjabi-kurta.jpg'; }}
                     />
@@ -831,6 +832,7 @@ export const AdminCatalog: React.FC = () => {
                   <img
                     src={f.image}
                     alt={f.nameEn}
+                    loading="lazy"
                     className="w-16 h-16 rounded-xl object-cover border border-slate-200 bg-slate-50"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/images/fabrics/giza-egyptian-cotton.jpg'; }}
                   />
@@ -918,6 +920,7 @@ export const AdminCatalog: React.FC = () => {
                 <img
                   src={imageDraftUrl}
                   alt="Fabric Preview"
+                  loading="lazy"
                   className="w-24 h-24 rounded-xl object-cover border-2 border-indigo-600 shadow-sm bg-white"
                   onError={(e) => { (e.target as HTMLImageElement).src = '/images/fabrics/giza-egyptian-cotton.jpg'; }}
                 />
@@ -999,6 +1002,7 @@ export const AdminCatalog: React.FC = () => {
                         <img
                           src={preset.url}
                           alt={preset.name}
+                          loading="lazy"
                           className="w-full h-16 object-cover rounded-lg mb-1 border border-slate-100"
                         />
                         <p className="text-[10px] font-bold text-slate-900 leading-tight truncate">{preset.name}</p>
@@ -1122,6 +1126,7 @@ export const AdminCatalog: React.FC = () => {
                 <img
                   src={imageDraftUrl}
                   alt="Garment Preview"
+                  loading="lazy"
                   className="w-24 h-24 rounded-xl object-cover border-2 border-indigo-600 shadow-sm bg-white"
                   onError={(e) => { (e.target as HTMLImageElement).src = '/images/garments/panjabi-kurta.jpg'; }}
                 />
@@ -1203,6 +1208,7 @@ export const AdminCatalog: React.FC = () => {
                         <img
                           src={preset.url}
                           alt={preset.name}
+                          loading="lazy"
                           className="w-full h-20 object-cover rounded-lg mb-1 border border-slate-100"
                         />
                         <p className="text-[11px] font-bold text-slate-900 leading-tight truncate">{preset.name}</p>
@@ -1356,6 +1362,7 @@ export const AdminCatalog: React.FC = () => {
                   <img
                     src={fabricFormData.image}
                     alt="Preview"
+                    loading="lazy"
                     className="w-8 h-8 rounded-lg object-cover border border-slate-200 shrink-0"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/images/fabrics/giza-egyptian-cotton.jpg'; }}
                   />

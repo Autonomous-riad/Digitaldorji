@@ -424,12 +424,12 @@ export const FabricCatalog: React.FC = () => {
 
       {/* Fabric Cards Grid - Responsive CSS Grid with equal height ItemCards */}
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-        {filteredFabrics.map((fabric, idx) => (
+        {filteredFabrics.map((fabric) => (
           <ItemCard
             key={fabric.id}
             type="fabric"
             item={fabric}
-            priority={idx < 4}
+            loading="lazy"
             onInspect={(fab) => setInspectFabric(fab)}
             onAction={(fab) => setShowGarmentSelectModal(fab)}
           />
@@ -476,6 +476,7 @@ export const FabricCatalog: React.FC = () => {
                     src={inspectFabric.image}
                     alt={`${inspectFabric.nameEn} - Macro Texture Swatch`}
                     fallbackSrc="/images/fabrics/giza-egyptian-cotton.jpg"
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-purple-950/85 text-cream-50 text-[10px] rounded font-bold">
@@ -487,6 +488,7 @@ export const FabricCatalog: React.FC = () => {
                     src={inspectFabric.swatchImage}
                     alt={`${inspectFabric.nameEn} - Drape & Weave Swatch`}
                     fallbackSrc="/images/fabrics/giza-egyptian-cotton.jpg"
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-purple-950/85 text-cream-50 text-[10px] rounded font-bold">
@@ -603,6 +605,7 @@ export const FabricCatalog: React.FC = () => {
                         <OptimizedImage
                           src={garment.image}
                           alt={garment.nameEn}
+                          loading="lazy"
                           className="w-12 h-12 rounded-lg object-cover border border-cream-300 shrink-0"
                         />
                         <div>

@@ -21,12 +21,23 @@ import {
   INITIAL_PRODUCT_IMAGES,
   INITIAL_COUPONS
 } from './readyMadeData';
+import { getStaffRoleTier, buildUserPermissions } from '../src/utils/permissions';
 
 export interface UserPermissions {
   canFollowUpOrders: boolean;
   canManageCustomizations: boolean;
   canManageCatalog: boolean;
   canManageStaff: boolean;
+  staffRole?: 'admin' | 'editor' | 'viewer';
+  modules?: {
+    orders?: { view: boolean; create: boolean; edit: boolean; delete: boolean };
+    catalog?: { view: boolean; create: boolean; edit: boolean; delete: boolean };
+    readyMade?: { view: boolean; create: boolean; edit: boolean; delete: boolean };
+    customers?: { view: boolean; create: boolean; edit: boolean; delete: boolean };
+    staff?: { view: boolean; create: boolean; edit: boolean; delete: boolean; manage?: boolean };
+    reports?: { view: boolean; create?: boolean; edit?: boolean; delete?: boolean };
+    settings?: { view: boolean; create?: boolean; edit?: boolean; delete?: boolean };
+  };
 }
 
 export interface User {
@@ -272,10 +283,20 @@ const INITIAL_DB: DatabaseSchema = {
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
       active: true,
       permissions: {
+        staffRole: 'admin',
         canFollowUpOrders: true,
         canManageCustomizations: true,
         canManageCatalog: true,
-        canManageStaff: true
+        canManageStaff: true,
+        modules: {
+          orders: { view: true, create: true, edit: true, delete: true },
+          catalog: { view: true, create: true, edit: true, delete: true },
+          readyMade: { view: true, create: true, edit: true, delete: true },
+          customers: { view: true, create: true, edit: true, delete: true },
+          staff: { view: true, create: true, edit: true, delete: true, manage: true },
+          reports: { view: true, create: true, edit: true, delete: true },
+          settings: { view: true, create: true, edit: true, delete: true }
+        }
       },
       createdAt: '2024-01-01T09:00:00.000Z'
     },
@@ -293,10 +314,20 @@ const INITIAL_DB: DatabaseSchema = {
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       active: true,
       permissions: {
+        staffRole: 'editor',
         canFollowUpOrders: true,
         canManageCustomizations: true,
         canManageCatalog: true,
-        canManageStaff: false
+        canManageStaff: false,
+        modules: {
+          orders: { view: true, create: true, edit: true, delete: false },
+          catalog: { view: true, create: true, edit: true, delete: false },
+          readyMade: { view: true, create: true, edit: true, delete: false },
+          customers: { view: true, create: true, edit: true, delete: false },
+          staff: { view: true, create: false, edit: false, delete: false, manage: false },
+          reports: { view: true, create: false, edit: false, delete: false },
+          settings: { view: true, create: false, edit: false, delete: false }
+        }
       },
       createdAt: '2024-01-15T09:00:00.000Z'
     },
@@ -314,10 +345,20 @@ const INITIAL_DB: DatabaseSchema = {
       avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
       active: true,
       permissions: {
+        staffRole: 'editor',
         canFollowUpOrders: true,
         canManageCustomizations: false,
         canManageCatalog: false,
-        canManageStaff: false
+        canManageStaff: false,
+        modules: {
+          orders: { view: true, create: true, edit: true, delete: false },
+          catalog: { view: true, create: false, edit: false, delete: false },
+          readyMade: { view: true, create: false, edit: false, delete: false },
+          customers: { view: true, create: true, edit: true, delete: false },
+          staff: { view: false, create: false, edit: false, delete: false, manage: false },
+          reports: { view: true, create: false, edit: false, delete: false },
+          settings: { view: false, create: false, edit: false, delete: false }
+        }
       },
       createdAt: '2024-02-01T10:00:00.000Z'
     },
@@ -335,12 +376,53 @@ const INITIAL_DB: DatabaseSchema = {
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
       active: true,
       permissions: {
+        staffRole: 'editor',
         canFollowUpOrders: true,
         canManageCustomizations: true,
         canManageCatalog: true,
-        canManageStaff: false
+        canManageStaff: false,
+        modules: {
+          orders: { view: true, create: true, edit: true, delete: false },
+          catalog: { view: true, create: true, edit: true, delete: false },
+          readyMade: { view: true, create: true, edit: true, delete: false },
+          customers: { view: true, create: false, edit: false, delete: false },
+          staff: { view: false, create: false, edit: false, delete: false, manage: false },
+          reports: { view: true, create: false, edit: false, delete: false },
+          settings: { view: false, create: false, edit: false, delete: false }
+        }
       },
       createdAt: '2024-02-15T10:00:00.000Z'
+    },
+    {
+      id: 'usr-staff-04',
+      name: 'Farhana Akter (Quality Auditor & Observer)',
+      email: 'viewer@digitaldorji.com',
+      password: 'viewer123', // Demo credentials for View-Only staff
+      role: 'staff',
+      title: 'Auditor & Floor Observer (View-Only)',
+      phone: '01719-223344',
+      address: 'Digital Dorji Atelier, Dhaka',
+      city: 'Dhaka',
+      gender: 'women',
+      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80',
+      active: true,
+      permissions: {
+        staffRole: 'viewer',
+        canFollowUpOrders: false,
+        canManageCustomizations: false,
+        canManageCatalog: false,
+        canManageStaff: false,
+        modules: {
+          orders: { view: true, create: false, edit: false, delete: false },
+          catalog: { view: true, create: false, edit: false, delete: false },
+          readyMade: { view: true, create: false, edit: false, delete: false },
+          customers: { view: true, create: false, edit: false, delete: false },
+          staff: { view: false, create: false, edit: false, delete: false, manage: false },
+          reports: { view: true, create: false, edit: false, delete: false },
+          settings: { view: false, create: false, edit: false, delete: false }
+        }
+      },
+      createdAt: '2024-03-01T10:00:00.000Z'
     },
     {
       id: 'usr-cust-01',
@@ -1117,6 +1199,25 @@ class Database {
           const demoOrder = INITIAL_DB.orders.find(o => o.orderNumber === 'DEMO-2026-0001');
           if (demoOrder) merged.orders.push(demoOrder);
         }
+
+        // Ensure all built-in staff users (including view-only auditor) from INITIAL_DB are present
+        if (!merged.users) merged.users = [];
+        for (const initUser of INITIAL_DB.users) {
+          const existing = merged.users.find(u => u.id === initUser.id || u.email.toLowerCase() === initUser.email.toLowerCase());
+          if (!existing) {
+            merged.users.push(initUser);
+          } else {
+            // Guarantee role tier & modules are populated
+            if (!existing.permissions?.modules && (existing.role === 'admin' || existing.role === 'staff')) {
+              const tier = getStaffRoleTier(existing);
+              existing.permissions = {
+                ...buildUserPermissions(tier, existing.permissions as any),
+                ...existing.permissions
+              };
+            }
+          }
+        }
+
         return merged;
       }
     } catch (err) {

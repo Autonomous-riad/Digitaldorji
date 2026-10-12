@@ -1,6 +1,12 @@
 import { Router, Response } from 'express';
 import { db } from '../db';
 import { requireAdmin, requireStaffOrAdmin, AuthenticatedRequest } from '../auth';
+import {
+  requirePermission,
+  validateStaffMutation,
+  buildUserPermissions,
+  getStaffRoleTier
+} from '../lib/permissions';
 import { handleAdminLogin } from './auth';
 import { broadcastServerNotification } from './realtime';
 
@@ -115,7 +121,7 @@ export function createAdminOrderNotification(order: any, stage: string, note?: s
 }
 
 // GET /api/admin/dashboard - Dashboard KPIs, Weekly Revenue Chart & Top 5 Garments
-adminRouter.get('/dashboard', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/dashboard', requirePermission('reports', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const orders = data.orders || [];
   const todayStr = new Date().toISOString().split('T')[0];
@@ -197,7 +203,7 @@ adminRouter.get('/dashboard', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/admin/orders - Table list with status, date range, payment status, phone filter
-adminRouter.get('/orders', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/orders', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const { status, dateRange, paymentStatus, search } = req.query;
   let orders = [...(db.getData().orders || [])];
 
@@ -237,7 +243,7 @@ adminRouter.get('/orders', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/admin/orders/:id - Order details by ID
-adminRouter.get('/orders/:id', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/orders/:id', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const data = db.getData();
   const order = data.orders.find(o => o.id === id || o.orderNumber === id);
@@ -333,11 +339,11 @@ const handleStatusUpdate = (req: AuthenticatedRequest, res: Response) => {
   res.json({ message: 'Order status updated and real-time alert broadcasted', order: updatedOrder, notification: createdNotif });
 };
 
-adminRouter.put('/orders/:id/status', handleStatusUpdate);
-adminRouter.put('/orders/:id/stage', handleStatusUpdate);
+adminRouter.put('/orders/:id/status', requirePermission('orders', 'edit'), handleStatusUpdate);
+adminRouter.put('/orders/:id/stage', requirePermission('orders', 'edit'), handleStatusUpdate);
 
 // PUT /api/admin/orders/:id/assign - Assign tailor or delivery rider
-adminRouter.put('/orders/:id/assign', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/orders/:id/assign', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { assignedTailor, assignedRider } = req.body;
 
@@ -359,7 +365,7 @@ adminRouter.put('/orders/:id/assign', (req: AuthenticatedRequest, res: Response)
 });
 
 // PUT /api/admin/orders/:id/notes - Add internal tailor notes
-adminRouter.put('/orders/:id/notes', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/orders/:id/notes', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { tailorNotes } = req.body;
 
@@ -380,7 +386,7 @@ adminRouter.put('/orders/:id/notes', (req: AuthenticatedRequest, res: Response) 
 });
 
 // PUT /api/admin/orders/:id/proof - Upload fabric photo / delivery proof
-adminRouter.put('/orders/:id/proof', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/orders/:id/proof', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { fabricPhotoUrl, proofPhotoUrl } = req.body;
 
@@ -407,7 +413,7 @@ adminRouter.put('/orders/:id/proof', (req: AuthenticatedRequest, res: Response) 
 });
 
 // POST /api/admin/orders/:id/refund - Trigger refund
-adminRouter.post('/orders/:id/refund', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.post('/orders/:id/refund', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { refundAmount, reason } = req.body;
 
@@ -441,7 +447,7 @@ adminRouter.post('/orders/:id/refund', (req: AuthenticatedRequest, res: Response
 });
 
 // GET /api/admin/customers - Customer list & CRM
-adminRouter.get('/customers', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/customers', requirePermission('customers', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const customers = data.users.filter(u => u.role === 'customer').map(c => {
     const customerOrders = data.orders.filter(o => o.userId === c.id || o.customerPhone === c.phone || o.customerEmail === c.email);
@@ -461,7 +467,7 @@ adminRouter.get('/customers', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/admin/customers/:id - Detailed Customer Profile
-adminRouter.get('/customers/:id', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/customers/:id', requirePermission('customers', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const data = db.getData();
   const customer = data.users.find(u => u.id === id || u.phone === id);
@@ -485,7 +491,7 @@ adminRouter.get('/customers/:id', (req: AuthenticatedRequest, res: Response) => 
 });
 
 // GET /api/admin/staff - Staff & Tailors list with performance stats
-adminRouter.get('/staff', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/staff', requirePermission('staff', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const staffList = data.staff.map(s => {
     const assignedOrders = data.orders.filter(o => o.assignedTailor === s.name || o.assignedRider === s.name);
@@ -504,7 +510,7 @@ adminRouter.get('/staff', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // POST /api/admin/staff - Add staff
-adminRouter.post('/staff', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.post('/staff', requirePermission('staff', 'create'), (req: AuthenticatedRequest, res: Response) => {
   const { name, role, phone, experienceYears } = req.body;
   if (!name || !role || !phone) {
     return res.status(400).json({ error: 'Name, role, and phone are required' });
@@ -529,7 +535,7 @@ adminRouter.post('/staff', requireAdmin, (req: AuthenticatedRequest, res: Respon
 });
 
 // PUT /api/admin/staff/:id - Edit staff
-adminRouter.put('/staff/:id', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/staff/:id', requirePermission('staff', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { name, role, phone, active, experienceYears } = req.body;
 
@@ -554,7 +560,7 @@ adminRouter.put('/staff/:id', requireAdmin, (req: AuthenticatedRequest, res: Res
 });
 
 // DELETE /api/admin/staff/:id - Delete staff member
-adminRouter.delete('/staff/:id', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.delete('/staff/:id', requirePermission('staff', 'delete'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   db.mutate(data => {
@@ -569,7 +575,7 @@ adminRouter.delete('/staff/:id', requireAdmin, (req: AuthenticatedRequest, res: 
 // ==========================================
 
 // GET /api/admin/users - List system users with permissions and active status
-adminRouter.get('/users', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/users', requirePermission('staff', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const users = (data.users || []).map(u => {
     const { password: _, ...safe } = u;
@@ -579,15 +585,16 @@ adminRouter.get('/users', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // POST /api/admin/users - Add a new user with customizable access
-adminRouter.post('/users', (req: AuthenticatedRequest, res: Response) => {
-  // Check permission: must be admin or staff with canManageStaff
-  if (req.user?.role !== 'admin' && !req.user?.permissions?.canManageStaff) {
-    return res.status(403).json({ error: 'Permission denied: User administration access required' });
-  }
-
+adminRouter.post('/users', requirePermission('staff', 'create'), (req: AuthenticatedRequest, res: Response) => {
   const { name, email, password, role, title, phone, permissions, active } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'Name, email, and password are required' });
+  }
+
+  // Prevent privilege escalation: non-admins cannot create admin users or grant higher permissions
+  const mutationValidation = validateStaffMutation(req.user!, null, { role, permissions, active });
+  if (!mutationValidation.allowed) {
+    return res.status(403).json({ error: mutationValidation.error, code: 'PERMISSION_DENIED' });
   }
 
   const normalizedEmail = email.trim().toLowerCase();
@@ -598,16 +605,16 @@ adminRouter.post('/users', (req: AuthenticatedRequest, res: Response) => {
 
   const newUserRole: 'admin' | 'staff' | 'customer' = role === 'admin' ? 'admin' : (role === 'customer' ? 'customer' : 'staff');
   
-  const defaultPermissions = newUserRole === 'admin' 
-    ? { canFollowUpOrders: true, canManageCustomizations: true, canManageCatalog: true, canManageStaff: true }
-    : (newUserRole === 'staff' 
-        ? {
-            canFollowUpOrders: permissions?.canFollowUpOrders !== undefined ? Boolean(permissions.canFollowUpOrders) : true,
-            canManageCustomizations: permissions?.canManageCustomizations !== undefined ? Boolean(permissions.canManageCustomizations) : true,
-            canManageCatalog: permissions?.canManageCatalog !== undefined ? Boolean(permissions.canManageCatalog) : false,
-            canManageStaff: permissions?.canManageStaff !== undefined ? Boolean(permissions.canManageStaff) : false
-          }
-        : { canFollowUpOrders: false, canManageCustomizations: false, canManageCatalog: false, canManageStaff: false });
+  // Resolve staff role tier: 'admin' | 'editor' | 'viewer'
+  const resolvedStaffTier = newUserRole === 'admin' 
+    ? 'admin' 
+    : (permissions?.staffRole ? permissions.staffRole : (newUserRole === 'staff' ? 'editor' : 'viewer'));
+
+  const finalPermissions = buildUserPermissions(resolvedStaffTier, permissions?.modules);
+  if (permissions?.canFollowUpOrders !== undefined) finalPermissions.canFollowUpOrders = Boolean(permissions.canFollowUpOrders);
+  if (permissions?.canManageCustomizations !== undefined) finalPermissions.canManageCustomizations = Boolean(permissions.canManageCustomizations);
+  if (permissions?.canManageCatalog !== undefined) finalPermissions.canManageCatalog = Boolean(permissions.canManageCatalog);
+  if (permissions?.canManageStaff !== undefined && req.user?.role === 'admin') finalPermissions.canManageStaff = Boolean(permissions.canManageStaff);
 
   const newUser = {
     id: 'usr-' + (newUserRole === 'admin' ? 'adm-' : 'stf-') + Date.now().toString(36),
@@ -622,12 +629,7 @@ adminRouter.post('/users', (req: AuthenticatedRequest, res: Response) => {
     gender: 'men' as const,
     avatar: `https://images.unsplash.com/photo-${newUserRole === 'admin' ? '1472099645785-5658abf4ff4e' : '1534528741775-53994a69daeb'}?w=150&auto=format&fit=crop&q=80`,
     active: active !== undefined ? Boolean(active) : true,
-    permissions: permissions ? {
-      canFollowUpOrders: Boolean(permissions.canFollowUpOrders),
-      canManageCustomizations: Boolean(permissions.canManageCustomizations),
-      canManageCatalog: Boolean(permissions.canManageCatalog),
-      canManageStaff: Boolean(permissions.canManageStaff)
-    } : defaultPermissions,
+    permissions: finalPermissions,
     createdAt: new Date().toISOString()
   };
 
@@ -641,13 +643,15 @@ adminRouter.post('/users', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // PUT /api/admin/users/:id - Update user permissions, role, title, active status
-adminRouter.put('/users/:id', (req: AuthenticatedRequest, res: Response) => {
-  if (req.user?.role !== 'admin' && !req.user?.permissions?.canManageStaff) {
-    return res.status(403).json({ error: 'Permission denied: User administration access required' });
-  }
-
+adminRouter.put('/users/:id', requirePermission('staff', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { name, title, phone, role, active, permissions, password } = req.body;
+
+  // Strict anti self-escalation check: prevents staff modifying their own role or permissions
+  const mutationValidation = validateStaffMutation(req.user!, id, { role, permissions, active });
+  if (!mutationValidation.allowed) {
+    return res.status(403).json({ error: mutationValidation.error, code: 'PERMISSION_DENIED' });
+  }
 
   let updatedUser: any = null;
   db.mutate(data => {
@@ -656,16 +660,25 @@ adminRouter.put('/users/:id', (req: AuthenticatedRequest, res: Response) => {
       if (name) user.name = name.trim();
       if (title !== undefined) user.title = title.trim();
       if (phone !== undefined) user.phone = phone.trim();
-      if (role && (role === 'admin' || role === 'staff' || role === 'customer')) user.role = role;
-      if (active !== undefined) user.active = Boolean(active);
-      if (password && String(password).trim().length > 0) user.password = String(password).trim();
-      if (permissions) {
-        user.permissions = {
-          canFollowUpOrders: permissions.canFollowUpOrders !== undefined ? Boolean(permissions.canFollowUpOrders) : (user.permissions?.canFollowUpOrders ?? true),
-          canManageCustomizations: permissions.canManageCustomizations !== undefined ? Boolean(permissions.canManageCustomizations) : (user.permissions?.canManageCustomizations ?? true),
-          canManageCatalog: permissions.canManageCatalog !== undefined ? Boolean(permissions.canManageCatalog) : (user.permissions?.canManageCatalog ?? false),
-          canManageStaff: permissions.canManageStaff !== undefined ? Boolean(permissions.canManageStaff) : (user.permissions?.canManageStaff ?? false),
-        };
+      if (role && (role === 'admin' || role === 'staff' || role === 'customer')) {
+        if (role !== 'admin' || req.user?.role === 'admin') {
+          user.role = role;
+        }
+      }
+      if (active !== undefined && req.user?.id !== id) {
+        user.active = Boolean(active);
+      }
+      if (password && String(password).trim().length > 0) {
+        user.password = String(password).trim();
+      }
+      if (permissions && req.user?.id !== id) {
+        const staffTier = permissions.staffRole || (user.role === 'admin' ? 'admin' : (permissions.canFollowUpOrders === false ? 'viewer' : 'editor'));
+        const nextPerms = buildUserPermissions(staffTier, permissions.modules);
+        if (permissions.canFollowUpOrders !== undefined) nextPerms.canFollowUpOrders = Boolean(permissions.canFollowUpOrders);
+        if (permissions.canManageCustomizations !== undefined) nextPerms.canManageCustomizations = Boolean(permissions.canManageCustomizations);
+        if (permissions.canManageCatalog !== undefined) nextPerms.canManageCatalog = Boolean(permissions.canManageCatalog);
+        if (permissions.canManageStaff !== undefined && req.user?.role === 'admin') nextPerms.canManageStaff = Boolean(permissions.canManageStaff);
+        user.permissions = nextPerms;
       }
       updatedUser = user;
     }
@@ -680,15 +693,17 @@ adminRouter.put('/users/:id', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // DELETE /api/admin/users/:id - Delete a user
-adminRouter.delete('/users/:id', (req: AuthenticatedRequest, res: Response) => {
-  if (req.user?.role !== 'admin' && !req.user?.permissions?.canManageStaff) {
-    return res.status(403).json({ error: 'Permission denied: User administration access required' });
-  }
-
+adminRouter.delete('/users/:id', requirePermission('staff', 'delete'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   if (id === 'usr-admin-01' || req.user?.id === id) {
     return res.status(400).json({ error: 'Cannot delete the primary Shop Master account or your own logged-in session.' });
+  }
+
+  // Non-super-admins cannot delete an admin user
+  const targetUser = db.getData().users.find(u => u.id === id);
+  if (targetUser && targetUser.role === 'admin' && req.user?.role !== 'admin') {
+    return res.status(403).json({ error: 'Permission denied: Cannot delete an Administrator account.' });
   }
 
   let deleted = false;
@@ -706,14 +721,14 @@ adminRouter.delete('/users/:id', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/admin/products - Garment products CRUD
-adminRouter.get('/products', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/products', requirePermission('catalog', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const garments = data.garments || [];
   res.json({ garments });
 });
 
 // POST /api/admin/products - Create product/garment
-adminRouter.post('/products', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.post('/products', requirePermission('catalog', 'create'), (req: AuthenticatedRequest, res: Response) => {
   const { name_en, name_bn, gender, base_price, fabric_yards, delivery_days, measurement_schema, image_url } = req.body;
   if (!name_en || !base_price) {
     return res.status(400).json({ error: 'Name and Base Price are required' });
@@ -745,7 +760,7 @@ adminRouter.post('/products', requireAdmin, (req: AuthenticatedRequest, res: Res
 });
 
 // PUT /api/admin/products/:id - Update product/garment
-adminRouter.put('/products/:id', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/products/:id', requirePermission('catalog', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const updates = req.body;
 
@@ -766,7 +781,7 @@ adminRouter.put('/products/:id', requireAdmin, (req: AuthenticatedRequest, res: 
 });
 
 // DELETE /api/admin/products/:id - Delete product/garment
-adminRouter.delete('/products/:id', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.delete('/products/:id', requirePermission('catalog', 'delete'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   db.mutate(data => {
@@ -777,7 +792,7 @@ adminRouter.delete('/products/:id', requireAdmin, (req: AuthenticatedRequest, re
 });
 
 // GET /api/admin/reports - Analytics & CSV Export Data
-adminRouter.get('/reports', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/reports', requirePermission('reports', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const orders = data.orders || [];
 
@@ -858,13 +873,13 @@ adminRouter.get('/reports', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // GET /api/admin/settings - Atelier & Shop settings + SMS Templates
-adminRouter.get('/settings', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/settings', requirePermission('settings', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const settings = db.getData().settings;
   res.json({ settings });
 });
 
 // PUT /api/admin/settings - Update settings (Delivery charges, Measurement fee, SMS templates, Business info)
-adminRouter.put('/settings', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/settings', requirePermission('settings', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const updates = req.body;
 
   let updatedSettings: any = null;
@@ -880,7 +895,7 @@ adminRouter.put('/settings', requireAdmin, (req: AuthenticatedRequest, res: Resp
 });
 
 // GET /api/admin/pickups - Doorstep fabric pickups
-adminRouter.get('/pickups', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/pickups', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const pickups = (data.pickups || []).map(p => {
     const order = (data.orders || []).find(o => o.id === p.order_id || o.orderNumber === p.order_number);
@@ -900,7 +915,7 @@ adminRouter.get('/pickups', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // PUT /api/admin/pickups/:id/status - Update pickup status & trigger fabric picked up alert
-adminRouter.put('/pickups/:id/status', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/pickups/:id/status', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { status, assignedRider } = req.body;
 
@@ -942,7 +957,7 @@ adminRouter.put('/pickups/:id/status', (req: AuthenticatedRequest, res: Response
 });
 
 // GET /api/admin/production - Workshop Cutting, Stitching, QC Queues
-adminRouter.get('/production', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/production', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const orders = data.orders || [];
 
@@ -974,7 +989,7 @@ adminRouter.get('/production', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // PUT /api/admin/production/:id/artisan - Assign artisan and/or advance stage
-adminRouter.put('/production/:id/artisan', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/production/:id/artisan', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { assignedTailor, currentStage, tailorNotes } = req.body;
 
@@ -1017,7 +1032,7 @@ adminRouter.put('/production/:id/artisan', (req: AuthenticatedRequest, res: Resp
 });
 
 // GET /api/admin/delivery - Out for delivery and ready orders
-adminRouter.get('/delivery', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/delivery', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const orders = data.orders || [];
 
@@ -1047,7 +1062,7 @@ adminRouter.get('/delivery', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // PUT /api/admin/delivery/:id/dispatch - Dispatch delivery rider
-adminRouter.put('/delivery/:id/dispatch', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/delivery/:id/dispatch', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { currentStage, assignedRider, trackingNumber } = req.body;
 
@@ -1090,7 +1105,7 @@ adminRouter.put('/delivery/:id/dispatch', (req: AuthenticatedRequest, res: Respo
 });
 
 // GET /api/admin/payments - Payment reconciliation
-adminRouter.get('/payments', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/payments', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const orders = data.orders || [];
   const payments = orders.map(o => ({
@@ -1110,7 +1125,7 @@ adminRouter.get('/payments', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // PUT /api/admin/payments/:id/verify - Verify payment
-adminRouter.put('/payments/:id/verify', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/payments/:id/verify', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { status, trxId } = req.body;
 
@@ -1128,7 +1143,7 @@ adminRouter.put('/payments/:id/verify', (req: AuthenticatedRequest, res: Respons
 });
 
 // GET /api/admin/catalog - Dynamic Garments & Fabrics catalog
-adminRouter.get('/catalog', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/catalog', requirePermission('catalog', 'view'), (req: AuthenticatedRequest, res: Response) => {
   res.json({
     garments: db.getGarmentsCatalog(),
     fabrics: db.getFabricsCatalog()
@@ -1136,7 +1151,7 @@ adminRouter.get('/catalog', (req: AuthenticatedRequest, res: Response) => {
 });
 
 // PUT /api/admin/catalog/garments/:id - Update dynamic garment catalog item
-adminRouter.put('/catalog/garments/:id', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/catalog/garments/:id', requirePermission('catalog', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { basePrice, standardDays, recommendedFabricGaz, popular, active, image, customizationGroups } = req.body;
 
@@ -1175,7 +1190,7 @@ adminRouter.put('/catalog/garments/:id', requireAdmin, (req: AuthenticatedReques
 });
 
 // PUT /api/admin/catalog/garments/:garmentId/options/:optionId/image - Update customization option picture
-adminRouter.put('/catalog/garments/:garmentId/options/:optionId/image', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/catalog/garments/:garmentId/options/:optionId/image', requirePermission('catalog', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { garmentId, optionId } = req.params;
   const { image } = req.body;
 
@@ -1222,7 +1237,7 @@ adminRouter.put('/catalog/garments/:garmentId/options/:optionId/image', requireA
 });
 
 // PUT /api/admin/catalog/fabrics/:id - Update dynamic fabric catalog item
-adminRouter.put('/catalog/fabrics/:id', requireAdmin, (req: AuthenticatedRequest, res: Response) => {
+adminRouter.put('/catalog/fabrics/:id', requirePermission('catalog', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { pricePerGaz, inStock, featured, image, swatchImage, nameEn, nameBn, colorName, materialCategory, pattern } = req.body;
 
@@ -1266,7 +1281,7 @@ adminRouter.put('/catalog/fabrics/:id', requireAdmin, (req: AuthenticatedRequest
 });
 
 // GET /api/admin/measurements - Customer saved measurements
-adminRouter.get('/measurements', (req: AuthenticatedRequest, res: Response) => {
+adminRouter.get('/measurements', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   res.json({
     measurements: data.savedMeasurements || [],

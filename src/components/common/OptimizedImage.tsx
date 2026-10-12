@@ -7,6 +7,7 @@ interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> 
   height?: number | string;
   className?: string;
   priority?: boolean;
+  loading?: 'lazy' | 'eager';
   aspectRatio?: string;
   fallbackSrc?: string;
 }
@@ -27,6 +28,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   height,
   className = '',
   priority = false,
+  loading = 'lazy',
   aspectRatio,
   fallbackSrc = '/images/garments/panjabi-kurta.jpg',
   ...props
@@ -73,9 +75,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       <img
         src={currentSrc}
         alt={alt || 'Digital Dorji bespoke tailored garment'}
-        loading={priority ? 'eager' : 'lazy'}
-        decoding={priority ? 'sync' : 'async'}
-        fetchPriority={priority ? 'high' : 'auto'}
+        loading={loading}
+        decoding={loading === 'lazy' ? 'async' : (priority ? 'sync' : 'async')}
+        fetchPriority={priority && loading !== 'lazy' ? 'high' : 'auto'}
         onLoad={() => setIsLoaded(true)}
         onError={() => {
           setHasError(true);

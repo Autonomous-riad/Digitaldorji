@@ -25,9 +25,23 @@ import {
   RefreshCw,
   Shield,
   HelpCircle,
-  Layers
+  Layers,
+  Eye
 } from 'lucide-react';
 import { UserPermissions } from '../../types/auth';
+import {
+  StaffRoleTier,
+  PermissionModule,
+  PermissionAction,
+  GranularPermissions
+} from '../../types/permissions';
+import {
+  getStaffRoleTier,
+  hasPermission,
+  buildUserPermissions,
+  DEFAULT_ROLE_PERMISSIONS
+} from '../../utils/permissions';
+import { PermissionMatrixEditor } from './PermissionMatrixEditor';
 
 interface ManagedUser {
   id: string;
@@ -59,23 +73,39 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
-  const [filterRole, setFilterRole] = useState<'all' | 'staff' | 'admin' | 'customization' | 'orders'>('all');
+  const [filterRole, setFilterRole] = useState<'all' | 'admin' | 'editor' | 'viewer'>('all');
 
   // Add/Edit user form states
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    password: string;
+    title: string;
+    phone: string;
+    role: 'admin' | 'staff' | 'customer';
+    active: boolean;
+    staffRole: StaffRoleTier;
+    modules: GranularPermissions;
+    canFollowUpOrders: boolean;
+    canManageCustomizations: boolean;
+    canManageCatalog: boolean;
+    canManageStaff: boolean;
+  }>({
     name: '',
     email: '',
     password: '',
-    title: '',
-    phone: '',
-    role: 'staff' as 'admin' | 'staff' | 'customer',
+    title: 'Workshop Production Editor',
+    phone: '017',
+    role: 'staff',
     active: true,
+    staffRole: 'editor',
+    modules: { ...DEFAULT_ROLE_PERMISSIONS.editor },
     canFollowUpOrders: true,
     canManageCustomizations: true,
-    canManageCatalog: false,
+    canManageCatalog: true,
     canManageStaff: false
   });
 
@@ -102,12 +132,46 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
   }, [isOpen]);
 
   // Quick Preset Handlers
-  const applyPreset = (preset: 'followup' | 'customizer' | 'admin') => {
-    if (preset === 'followup') {
+  const applyPreset = (preset: 'viewer' | 'editor' | 'admin' | 'followup' | 'customizer') => {
+    if (preset === 'viewer') {
+      const viewerMods = { ...DEFAULT_ROLE_PERMISSIONS.viewer };
+      setFormData(prev => ({
+        ...prev,
+        title: 'Auditor & Floor Observer (View-Only)',
+        role: 'staff',
+        staffRole: 'viewer',
+        modules: viewerMods,
+        canFollowUpOrders: false,
+        canManageCustomizations: false,
+        canManageCatalog: false,
+        canManageStaff: false
+      }));
+      toast.success(t('Template applied: View-Only Auditor', 'ভিউ-অনলি অডিটর টেমপ্লেট সেট করা হয়েছে'));
+    } else if (preset === 'editor') {
+      const editorMods = { ...DEFAULT_ROLE_PERMISSIONS.editor };
+      setFormData(prev => ({
+        ...prev,
+        title: 'Workshop Production Editor',
+        role: 'staff',
+        staffRole: 'editor',
+        modules: editorMods,
+        canFollowUpOrders: true,
+        canManageCustomizations: true,
+        canManageCatalog: true,
+        canManageStaff: false
+      }));
+      toast.success(t('Template applied: Workshop Editor', 'ওয়ার্কশপ এডিটর টেমপ্লেট সেট করা হয়েছে'));
+    } else if (preset === 'followup') {
+      const followupMods = {
+        ...DEFAULT_ROLE_PERMISSIONS.editor,
+        catalog: { view: true, create: false, edit: false, delete: false }
+      };
       setFormData(prev => ({
         ...prev,
         title: 'Order Follow-up Specialist',
         role: 'staff',
+        staffRole: 'editor',
+        modules: followupMods,
         canFollowUpOrders: true,
         canManageCustomizations: false,
         canManageCatalog: false,
@@ -115,10 +179,13 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
       }));
       toast.success(t('Template applied: Order Follow-up Specialist', 'অর্ডার ফলো-আপ স্পেশালিস্ট টেমপ্লেট সেট করা হয়েছে'));
     } else if (preset === 'customizer') {
+      const customizerMods = { ...DEFAULT_ROLE_PERMISSIONS.editor };
       setFormData(prev => ({
         ...prev,
         title: 'Customization & Tailoring Specialist',
         role: 'staff',
+        staffRole: 'editor',
+        modules: customizerMods,
         canFollowUpOrders: true,
         canManageCustomizations: true,
         canManageCatalog: false,
@@ -126,10 +193,13 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
       }));
       toast.success(t('Template applied: Customization & Tailoring Specialist', 'কাস্টমাইজেশন ও টেইলারিং স্পেশালিস্ট টেমপ্লেট সেট করা হয়েছে'));
     } else if (preset === 'admin') {
+      const adminMods = { ...DEFAULT_ROLE_PERMISSIONS.admin };
       setFormData(prev => ({
         ...prev,
         title: 'Workshop Admin & Manager',
         role: 'admin',
+        staffRole: 'admin',
+        modules: adminMods,
         canFollowUpOrders: true,
         canManageCustomizations: true,
         canManageCatalog: true,
@@ -145,13 +215,15 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
       name: '',
       email: '',
       password: '',
-      title: 'Order & Customization Specialist',
+      title: 'Workshop Production Editor',
       phone: '017',
       role: 'staff',
       active: true,
+      staffRole: 'editor',
+      modules: { ...DEFAULT_ROLE_PERMISSIONS.editor },
       canFollowUpOrders: true,
       canManageCustomizations: true,
-      canManageCatalog: false,
+      canManageCatalog: true,
       canManageStaff: false
     });
     setIsAddingUser(true);
@@ -159,18 +231,39 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
 
   const handleOpenEdit = (user: ManagedUser) => {
     setEditingUserId(user.id);
+    const resolvedTier = getStaffRoleTier(user);
+    const tierDefaults = DEFAULT_ROLE_PERMISSIONS[resolvedTier];
+    const userMods: any = user.permissions?.modules;
+    const existingModules: GranularPermissions = userMods
+      ? {
+          orders: { ...tierDefaults.orders, ...(userMods.orders || {}) },
+          catalog: { ...tierDefaults.catalog, ...(userMods.catalog || {}) },
+          readyMade: { ...tierDefaults.readyMade, ...(userMods.readyMade || {}) },
+          customers: { ...tierDefaults.customers, ...(userMods.customers || {}) },
+          staff: {
+            ...tierDefaults.staff,
+            ...(userMods.staff || {}),
+            manage: Boolean(userMods.staff?.manage ?? tierDefaults.staff.manage)
+          },
+          reports: { ...tierDefaults.reports, ...(userMods.reports || {}) },
+          settings: { ...tierDefaults.settings, ...(userMods.settings || {}) }
+        }
+      : { ...tierDefaults };
+
     setFormData({
       name: user.name || '',
       email: user.email || '',
-      password: '', // Leave blank unless changing
+      password: '',
       title: user.title || (user.role === 'admin' ? 'Shop Administrator' : 'Workshop Staff'),
       phone: user.phone || '',
       role: user.role,
       active: user.active !== false,
-      canFollowUpOrders: user.permissions?.canFollowUpOrders !== false,
-      canManageCustomizations: user.permissions?.canManageCustomizations !== false,
-      canManageCatalog: Boolean(user.permissions?.canManageCatalog),
-      canManageStaff: Boolean(user.permissions?.canManageStaff)
+      staffRole: resolvedTier,
+      modules: existingModules,
+      canFollowUpOrders: existingModules.orders.edit,
+      canManageCustomizations: existingModules.catalog.edit,
+      canManageCatalog: Boolean(existingModules.catalog.create || existingModules.catalog.edit),
+      canManageStaff: Boolean(existingModules.staff.manage || resolvedTier === 'admin')
     });
     setIsAddingUser(true);
   };
@@ -187,23 +280,43 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
       return;
     }
 
+    // Anti self-escalation check
+    const isSelf = currentUser?.id === editingUserId;
+    if (isSelf) {
+      if (formData.role !== currentUser?.role) {
+        toast.error(t('Self-escalation forbidden: You cannot change your own role.', 'আপনি নিজের রোল পরিবর্তন করতে পারবেন না।'));
+        return;
+      }
+    }
+
+    if (currentUser?.role !== 'admin') {
+      if (formData.role === 'admin' || formData.staffRole === 'admin' || formData.modules.staff.manage) {
+        toast.error(t('Only an existing Shop Master Administrator can assign Admin privileges.', 'শুধুমাত্র অ্যাডমিন নতুন অ্যাডমিন তৈরি করতে পারেন।'));
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
+      const payloadPermissions = {
+        staffRole: formData.staffRole,
+        modules: formData.modules,
+        canFollowUpOrders: Boolean(formData.modules.orders.edit),
+        canManageCustomizations: Boolean(formData.modules.catalog.edit),
+        canManageCatalog: Boolean(formData.modules.catalog.create || formData.modules.catalog.edit),
+        canManageStaff: Boolean(formData.staffRole === 'admin' || formData.modules.staff.manage)
+      };
+
       if (editingUserId) {
         // Update user
         await adminApi.updateUser(editingUserId, {
           name: formData.name.trim(),
           title: formData.title.trim(),
           phone: formData.phone.trim(),
-          role: formData.role,
-          active: formData.active,
+          role: isSelf ? currentUser?.role : formData.role,
+          active: isSelf ? true : formData.active,
           ...(formData.password.trim() ? { password: formData.password.trim() } : {}),
-          permissions: {
-            canFollowUpOrders: formData.canFollowUpOrders,
-            canManageCustomizations: formData.canManageCustomizations,
-            canManageCatalog: formData.canManageCatalog,
-            canManageStaff: formData.canManageStaff
-          }
+          permissions: isSelf ? undefined : payloadPermissions
         });
         toast.success(t('User permissions and details updated successfully!', 'ব্যবহারকারীর তথ্য ও পারমিশন সফলভাবে আপডেট হয়েছে!'));
       } else {
@@ -216,12 +329,7 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
           phone: formData.phone.trim(),
           role: formData.role,
           active: formData.active,
-          permissions: {
-            canFollowUpOrders: formData.canFollowUpOrders,
-            canManageCustomizations: formData.canManageCustomizations,
-            canManageCatalog: formData.canManageCatalog,
-            canManageStaff: formData.canManageStaff
-          }
+          permissions: payloadPermissions
         });
         toast.success(t('New user created with customized access!', 'কাস্টম পারমিশনসহ নতুন ব্যবহারকারী যুক্ত করা হয়েছে!'));
       }
@@ -242,11 +350,39 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
     targetUser: ManagedUser,
     permKey: keyof UserPermissions
   ) => {
+    // Anti-self-escalation check
+    if (currentUser?.id === targetUser.id) {
+      toast.error(t('Self-escalation forbidden: You cannot modify your own permissions.', 'আপনি নিজের পারমিশন পরিবর্তন করতে পারবেন না।'));
+      return;
+    }
+
+    if (currentUser?.role !== 'admin' && permKey === 'canManageStaff') {
+      toast.error(t('Only an Administrator can alter staff management privileges.', 'শুধুমাত্র অ্যাডমিন স্টাফ পারমিশন পরিবর্তন করতে পারেন।'));
+      return;
+    }
+
     const currentVal = targetUser.permissions?.[permKey] ?? (permKey === 'canFollowUpOrders' || permKey === 'canManageCustomizations');
     const newVal = !currentVal;
 
     try {
+      const targetTier = getStaffRoleTier(targetUser);
+      const baseModules = targetUser.permissions?.modules || DEFAULT_ROLE_PERMISSIONS[targetTier];
+      const updatedModules = { ...baseModules };
+
+      if (permKey === 'canFollowUpOrders') {
+        updatedModules.orders = { ...updatedModules.orders, edit: newVal };
+      } else if (permKey === 'canManageCustomizations') {
+        updatedModules.catalog = { ...updatedModules.catalog, edit: newVal };
+      } else if (permKey === 'canManageCatalog') {
+        updatedModules.catalog = { ...updatedModules.catalog, create: newVal, edit: newVal };
+        updatedModules.readyMade = { ...updatedModules.readyMade, create: newVal, edit: newVal };
+      } else if (permKey === 'canManageStaff') {
+        updatedModules.staff = { ...updatedModules.staff, manage: newVal, edit: newVal };
+      }
+
       const updatedPermissions: UserPermissions = {
+        staffRole: targetTier,
+        modules: updatedModules,
         canFollowUpOrders: targetUser.permissions?.canFollowUpOrders ?? true,
         canManageCustomizations: targetUser.permissions?.canManageCustomizations ?? true,
         canManageCatalog: Boolean(targetUser.permissions?.canManageCatalog),
@@ -319,10 +455,10 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
 
     if (!matchSearch) return false;
 
-    if (filterRole === 'staff') return u.role === 'staff';
-    if (filterRole === 'admin') return u.role === 'admin';
-    if (filterRole === 'orders') return Boolean(u.permissions?.canFollowUpOrders !== false);
-    if (filterRole === 'customization') return Boolean(u.permissions?.canManageCustomizations !== false);
+    const tier = getStaffRoleTier(u);
+    if (filterRole === 'admin') return tier === 'admin';
+    if (filterRole === 'editor') return tier === 'editor';
+    if (filterRole === 'viewer') return tier === 'viewer';
 
     return true;
   });
@@ -427,28 +563,38 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
 
                 {/* Quick Presets */}
                 {!editingUserId && (
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-[10px] font-semibold text-purple-900/70 mr-1 hidden sm:inline">
                       {t('Presets:', 'টেমপ্লেট:')}
                     </span>
                     <button
                       type="button"
-                      onClick={() => applyPreset('followup')}
+                      onClick={() => applyPreset('viewer')}
                       className="px-2 py-1 text-[11px] bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-lg font-medium cursor-pointer"
+                    >
+                      {t('View-Only', 'ভিউ-অনলি')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyPreset('editor')}
+                      className="px-2 py-1 text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded-lg font-medium cursor-pointer"
+                    >
+                      {t('Workshop Editor', 'এডিটর')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => applyPreset('followup')}
+                      className="px-2 py-1 text-[11px] bg-cream-100 hover:bg-cream-200 text-purple-900 border border-cream-300 rounded-lg font-medium cursor-pointer"
                     >
                       {t('Order Follow-up', 'অর্ডার ফলো-আপ')}
                     </button>
                     <button
                       type="button"
-                      onClick={() => applyPreset('customizer')}
-                      className="px-2 py-1 text-[11px] bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 rounded-lg font-medium cursor-pointer"
-                    >
-                      {t('Customizations', 'কাস্টমাইজেশন')}
-                    </button>
-                    <button
-                      type="button"
+                      disabled={currentUser?.role !== 'admin'}
                       onClick={() => applyPreset('admin')}
-                      className="px-2 py-1 text-[11px] bg-purple-50 hover:bg-purple-100 text-purple-950 border border-purple-200 rounded-lg font-medium cursor-pointer"
+                      className={`px-2 py-1 text-[11px] bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border border-emerald-200 rounded-lg font-medium ${
+                        currentUser?.role === 'admin' ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
+                      }`}
                     >
                       {t('Full Admin', 'অ্যাডমিন')}
                     </button>
@@ -531,108 +677,57 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
 
                   <div>
                     <label className="block text-purple-950 font-semibold mb-1">
-                      {t('System Role', 'সিস্টেম রোল')}
+                      {t('Account Category', 'অ্যাকাউন্ট ক্যাটাগরি')}
                     </label>
                     <select
                       value={formData.role}
-                      onChange={e => setFormData({ ...formData, role: e.target.value as any })}
-                      className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-xl text-purple-950 font-medium focus:outline-none focus:ring-2 focus:ring-purple-900"
+                      disabled={Boolean(editingUserId && currentUser?.id === editingUserId)}
+                      onChange={e => {
+                        const newRole = e.target.value as any;
+                        const newTier = newRole === 'admin' ? 'admin' : (formData.staffRole === 'admin' ? 'editor' : formData.staffRole);
+                        setFormData({
+                          ...formData,
+                          role: newRole,
+                          staffRole: newTier,
+                          modules: { ...DEFAULT_ROLE_PERMISSIONS[newTier] }
+                        });
+                      }}
+                      className="w-full p-2.5 bg-cream-50 border border-cream-300 rounded-xl text-purple-950 font-medium focus:outline-none focus:ring-2 focus:ring-purple-900 disabled:opacity-60"
                     >
-                      <option value="staff">{t('Workshop Staff / Tailor', 'ওয়ার্কশপ স্টাফ / দর্জি')}</option>
-                      <option value="admin">{t('Shop Master Admin', 'শপ মাস্টার অ্যাডমিন')}</option>
+                      <option value="staff">{t('Workshop Staff / Tailor Team', 'ওয়ার্কশপ স্টাফ / কারিগর টিম')}</option>
+                      {currentUser?.role === 'admin' && (
+                        <option value="admin">{t('Shop Master Admin', 'শপ মাস্টার অ্যাডমিন')}</option>
+                      )}
                       <option value="customer">{t('Storefront Customer', 'গ্রাহক')}</option>
                     </select>
                   </div>
                 </div>
 
-                {/* Permission Toggles Section */}
-                <div className="pt-3 border-t border-cream-200">
-                  <h4 className="text-xs font-bold text-purple-950 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-purple-900" />
-                    <span>{t('Granular Access & Customization Privileges', 'কাস্টম পারমিশন ও এক্সেস কন্ট্রোল')}</span>
-                  </h4>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    {/* canFollowUpOrders */}
-                    <label className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-colors ${
-                      formData.canFollowUpOrders ? 'bg-amber-50/70 border-amber-300' : 'bg-cream-100 border-cream-300 opacity-70'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        checked={formData.canFollowUpOrders}
-                        onChange={e => setFormData({ ...formData, canFollowUpOrders: e.target.checked })}
-                        className="mt-0.5 w-4 h-4 text-purple-900 rounded focus:ring-purple-900"
-                      />
-                      <div>
-                        <span className="font-bold text-purple-950 block">
-                          {t('Follow Up Orders & Status Tracking', 'অর্ডার ফলো-আপ ও ট্র্যাকিং')}
-                        </span>
-                        <span className="text-[11px] text-purple-900/70 block leading-tight mt-0.5">
-                          {t('Access orders pipeline, update stage progress, manage notes & client deliveries.', 'অর্ডার দেখতে পারবে, স্টেজ আপডেট করতে পারবে, টেইলার নোট ও ডেলিভারি ট্র্যাক করতে পারবে।')}
-                        </span>
-                      </div>
-                    </label>
-
-                    {/* canManageCustomizations */}
-                    <label className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-colors ${
-                      formData.canManageCustomizations ? 'bg-indigo-50/70 border-indigo-300' : 'bg-cream-100 border-cream-300 opacity-70'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        checked={formData.canManageCustomizations}
-                        onChange={e => setFormData({ ...formData, canManageCustomizations: e.target.checked })}
-                        className="mt-0.5 w-4 h-4 text-purple-900 rounded focus:ring-purple-900"
-                      />
-                      <div>
-                        <span className="font-bold text-purple-950 block">
-                          {t('Manage Customizations & Option Pictures', 'কাস্টমাইজেশন ও ছবির এক্সেস')}
-                        </span>
-                        <span className="text-[11px] text-purple-900/70 block leading-tight mt-0.5">
-                          {t('Add/edit customizer options, change option pictures, fabric styles, and tailoring specs.', 'কলার/কাফ/পকেট অপশন এডিট ও ছবি পরিবর্তন করতে পারবে, নতুন অপশন যুক্ত করতে পারবে।')}
-                        </span>
-                      </div>
-                    </label>
-
-                    {/* canManageCatalog */}
-                    <label className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-colors ${
-                      formData.canManageCatalog ? 'bg-emerald-50/70 border-emerald-300' : 'bg-cream-100 border-cream-300 opacity-70'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        checked={formData.canManageCatalog}
-                        onChange={e => setFormData({ ...formData, canManageCatalog: e.target.checked })}
-                        className="mt-0.5 w-4 h-4 text-purple-900 rounded focus:ring-purple-900"
-                      />
-                      <div>
-                        <span className="font-bold text-purple-950 block">
-                          {t('Ready-Made & Fabric Catalog Access', 'রেডিমেড ও ফেব্রিক ক্যাটালগ')}
-                        </span>
-                        <span className="text-[11px] text-purple-900/70 block leading-tight mt-0.5">
-                          {t('Add and edit ready-to-wear clothing products, stocks, and fabric inventory.', 'পণ্য ও কাপড়ের বিবরণ, স্টক ও দাম পরিবর্তন করতে পারবে।')}
-                        </span>
-                      </div>
-                    </label>
-
-                    {/* canManageStaff */}
-                    <label className={`flex items-start gap-2.5 p-3 rounded-xl border cursor-pointer transition-colors ${
-                      formData.canManageStaff ? 'bg-purple-50/70 border-purple-300' : 'bg-cream-100 border-cream-300 opacity-70'
-                    }`}>
-                      <input
-                        type="checkbox"
-                        checked={formData.canManageStaff}
-                        onChange={e => setFormData({ ...formData, canManageStaff: e.target.checked })}
-                        className="mt-0.5 w-4 h-4 text-purple-900 rounded focus:ring-purple-900"
-                      />
-                      <div>
-                        <span className="font-bold text-purple-950 block">
-                          {t('User & Access Administration', 'ইউজার অ্যাডমিনিস্ট্রেশন')}
-                        </span>
-                        <span className="text-[11px] text-purple-900/70 block leading-tight mt-0.5">
-                          {t('Permission to add, remove, and adjust permissions of other staff members.', 'অন্যান্য ইউজারদের যোগ বা বাদ দিতে পারবে এবং পারমিশন বদলাতে পারবে।')}
-                        </span>
-                      </div>
-                    </label>
-                  </div>
+                {/* Granular Permission Matrix & Role Tier */}
+                <div className="pt-2 border-t border-cream-200">
+                  <PermissionMatrixEditor
+                    roleTier={formData.staffRole}
+                    onRoleTierChange={(newTier) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        staffRole: newTier,
+                        role: newTier === 'admin' ? 'admin' : (prev.role === 'customer' ? 'customer' : 'staff')
+                      }));
+                    }}
+                    modules={formData.modules}
+                    onModulesChange={(newModules) => {
+                      setFormData(prev => ({
+                        ...prev,
+                        modules: newModules,
+                        canFollowUpOrders: Boolean(newModules.orders.edit),
+                        canManageCustomizations: Boolean(newModules.catalog.edit),
+                        canManageCatalog: Boolean(newModules.catalog.create || newModules.catalog.edit),
+                        canManageStaff: Boolean(newModules.staff.manage || prev.staffRole === 'admin')
+                      }));
+                    }}
+                    isSelf={Boolean(editingUserId && currentUser?.id === editingUserId)}
+                    canAssignAdmin={currentUser?.role === 'admin'}
+                  />
                 </div>
 
                 {/* Form Buttons */}
@@ -691,21 +786,30 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFilterRole('orders')}
+                  onClick={() => setFilterRole('admin')}
                   className={`px-2.5 py-1 rounded-lg font-medium cursor-pointer ${
-                    filterRole === 'orders' ? 'bg-white text-purple-950 shadow-2xs' : 'text-purple-900/70 hover:text-purple-950'
+                    filterRole === 'admin' ? 'bg-white text-emerald-950 shadow-2xs' : 'text-purple-900/70 hover:text-purple-950'
                   }`}
                 >
-                  {t('Orders', 'অর্ডার')}
+                  {t('Admins', 'অ্যাডমিন')}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setFilterRole('customization')}
+                  onClick={() => setFilterRole('editor')}
                   className={`px-2.5 py-1 rounded-lg font-medium cursor-pointer ${
-                    filterRole === 'customization' ? 'bg-white text-purple-950 shadow-2xs' : 'text-purple-900/70 hover:text-purple-950'
+                    filterRole === 'editor' ? 'bg-white text-indigo-950 shadow-2xs' : 'text-purple-900/70 hover:text-purple-950'
                   }`}
                 >
-                  {t('Customizations', 'কাস্টমাইজ')}
+                  {t('Editors', 'এডিটর')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFilterRole('viewer')}
+                  className={`px-2.5 py-1 rounded-lg font-medium cursor-pointer ${
+                    filterRole === 'viewer' ? 'bg-white text-amber-950 shadow-2xs' : 'text-purple-900/70 hover:text-purple-950'
+                  }`}
+                >
+                  {t('View-Only', 'ভিউ-অনলি')}
                 </button>
               </div>
             </div>
@@ -745,10 +849,11 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
               filteredUsers.map(user => {
                 const isPrimaryAdmin = user.id === 'usr-admin-01';
                 const isSelf = currentUser?.id === user.id;
+                const roleTier = getStaffRoleTier(user);
                 const canFollowUp = user.permissions?.canFollowUpOrders !== false;
                 const canCustomize = user.permissions?.canManageCustomizations !== false;
                 const canCatalog = Boolean(user.permissions?.canManageCatalog);
-                const canStaff = Boolean(user.permissions?.canManageStaff);
+                const canStaff = Boolean(user.permissions?.canManageStaff || roleTier === 'admin');
                 const isActive = user.active !== false;
 
                 return (
@@ -761,25 +866,32 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       {/* User Info */}
                       <div className="flex items-start gap-3">
-                        <img
-                          src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
-                          alt={user.name}
-                          className="w-10 h-10 rounded-full object-cover border border-cream-300 shrink-0"
-                        />
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="text-sm font-bold text-purple-950 font-serif-title">
-                              {user.name}
-                            </h4>
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                              user.role === 'admin'
-                                ? 'bg-purple-100 text-purple-950 border border-purple-200'
-                                : user.role === 'staff'
-                                ? 'bg-indigo-50 text-indigo-900 border border-indigo-200'
-                                : 'bg-cream-200 text-purple-900'
-                            }`}>
-                              {user.role}
-                            </span>
+                            <img
+                              src={user.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
+                              alt={user.name}
+                              className="w-10 h-10 rounded-full object-cover border border-cream-300 shrink-0"
+                            />
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 className="text-sm font-bold text-purple-950 font-serif-title">
+                                  {user.name}
+                                </h4>
+                                {roleTier === 'admin' ? (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-950 border border-emerald-300 flex items-center gap-1">
+                                    <ShieldCheck className="w-3 h-3 text-emerald-700" />
+                                    <span>{t('Shop Master (Admin)', 'অ্যাডমিন')}</span>
+                                  </span>
+                                ) : roleTier === 'editor' ? (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-950 border border-indigo-300 flex items-center gap-1">
+                                    <Edit2 className="w-3 h-3 text-indigo-700" />
+                                    <span>{t('Editor', 'এডিটর')}</span>
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-950 border border-amber-300 flex items-center gap-1">
+                                    <Eye className="w-3 h-3 text-amber-700" />
+                                    <span>{t('View-Only', 'ভিউ-অনলি')}</span>
+                                  </span>
+                                )}
                             {isPrimaryAdmin && (
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                                 {t('Shop Master', 'মাস্টার হেড')}
