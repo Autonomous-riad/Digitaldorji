@@ -35,8 +35,8 @@ export const AdminCustomers: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="space-y-6 w-full min-w-0">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 min-w-0">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-serif-title text-purple-950 flex items-center gap-2">
             <Users className="w-5 h-5 text-purple-900" />
@@ -76,7 +76,7 @@ export const AdminCustomers: React.FC = () => {
           <div
             key={customer.id}
             onClick={() => setSelectedCustomer(customer)}
-            className="bg-cream-50 rounded-2xl border border-cream-300 p-5 space-y-4 hover:border-purple-950 transition-all cursor-pointer shadow-xs"
+            className="bg-cream-50 rounded-2xl border border-cream-300 p-5 space-y-4 hover:border-purple-950 transition-all cursor-pointer shadow-xs min-w-0"
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">

@@ -47,7 +47,7 @@ export const GarmentCatalog: React.FC = () => {
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 text-white text-[11px] sm:text-xs font-semibold border border-white/30 mb-2 sm:mb-3 backdrop-blur-xs min-w-0 overflow-hidden shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-yellow-300 shrink-0" />
-            <span className="truncate min-w-0">{t('Doorstep Tailoring in Bangladesh', 'সারা বাংলাদেশে ডোরস্টেপ টেইলারিং')}</span>
+            <span className="truncate min-w-0">{t('Doorstep Tailoring', 'ডোরস্টেপ টেইলারিং')}</span>
           </div>
 
           <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">

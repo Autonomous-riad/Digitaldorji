@@ -71,44 +71,44 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   }[roleTier] || { label: 'Staff', color: 'bg-slate-100 text-slate-800 border-slate-300' };
 
   return (
-    <div className="h-screen bg-cream-100 flex flex-col font-sans overflow-hidden">
+    <div className="h-screen w-full bg-cream-100 flex flex-col font-sans overflow-hidden">
       {/* Top Header Navigation */}
-      <header className="h-16 bg-cream-50 border-b border-cream-300 flex items-center justify-between px-4 sm:px-6 shrink-0 z-20">
-        <div className="flex items-center gap-3">
+      <header className="h-16 w-full bg-cream-50 border-b border-cream-300 flex items-center justify-between px-3 sm:px-6 shrink-0 z-20">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-1.5 -ml-1.5 text-purple-950 hover:text-purple-900 focus:outline-none rounded-lg hover:bg-cream-200 transition-colors"
+            className="lg:hidden p-1.5 -ml-1 text-purple-950 hover:text-purple-900 focus:outline-none rounded-lg hover:bg-cream-200 transition-colors shrink-0"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-cream-50 shadow-sm">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-cream-50 shadow-sm shrink-0">
               <Scissors className="w-5 h-5" />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold tracking-tight text-purple-950 font-serif-title">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-xs sm:text-sm font-bold tracking-tight text-purple-950 font-serif-title truncate">
                   Digital Dorji Atelier
                 </span>
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-md bg-cream-200 text-purple-950 border border-cream-300 uppercase">
-                  Admin Portal
+                <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-md bg-cream-200 text-purple-950 border border-cream-300 uppercase shrink-0">
+                  Admin
                 </span>
               </div>
-              <p className="text-[11px] text-purple-900/80 hidden sm:block">
+              <p className="text-[11px] text-purple-900/80 hidden sm:block truncate">
                 {t('Master Workshop & Executive Control Center', 'প্রধান সেলাই কারখানা ও অ্যাডমিন কন্ট্রোল সেন্টার')}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Language Switcher */}
-          <div className="flex items-center bg-cream-200 rounded-lg p-0.5 border border-cream-300 text-xs">
+          <div className="flex items-center bg-cream-200 rounded-lg p-0.5 border border-cream-300 text-xs shrink-0">
             <button
               onClick={() => setLang('en')}
-              className={`px-2 py-1 rounded font-semibold cursor-pointer ${
+              className={`px-1.5 sm:px-2 py-1 rounded font-semibold cursor-pointer ${
                 lang === 'en' ? 'bg-cream-50 text-purple-950 shadow-sm' : 'text-purple-900/80 hover:text-purple-950'
               }`}
             >
@@ -116,7 +116,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
             </button>
             <button
               onClick={() => setLang('bn')}
-              className={`px-2 py-1 rounded font-semibold cursor-pointer ${
+              className={`px-1.5 sm:px-2 py-1 rounded font-semibold cursor-pointer ${
                 lang === 'bn' ? 'bg-cream-50 text-purple-950 font-bengali shadow-sm' : 'text-purple-900/80 hover:text-purple-950'
               }`}
             >
@@ -127,21 +127,21 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           {/* Switch to Storefront Button */}
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-cream-50 hover:bg-cream-200 text-purple-950 hover:text-purple-900 text-xs font-semibold rounded-xl border border-cream-300 transition-colors cursor-pointer shadow-xs"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-cream-50 hover:bg-cream-200 text-purple-950 hover:text-purple-900 text-xs font-semibold rounded-xl border border-cream-300 transition-colors cursor-pointer shadow-xs shrink-0"
           >
             <ExternalLink className="w-3.5 h-3.5 text-purple-950" />
             <span className="hidden sm:inline">{t('Customer Storefront', 'গ্রাহক ভিউ')}</span>
           </button>
 
           {/* Admin User Profile Pill & User Access Trigger (Selected CSS Element) */}
-          <div className="flex items-center">
+          <div className="flex items-center shrink-0">
             <button
               onClick={() => {
                 if (canManageStaff) {
                   setShowUserModal(true);
                 }
               }}
-              className={`flex items-center gap-2 px-2.5 sm:px-3 py-1.5 bg-cream-50 hover:bg-cream-200/80 rounded-xl border border-cream-300 shadow-xs transition-all text-left ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 bg-cream-50 hover:bg-cream-200/80 rounded-xl border border-cream-300 shadow-xs transition-all text-left ${
                 canManageStaff ? 'cursor-pointer' : 'cursor-default'
               }`}
               title={
@@ -166,7 +166,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
                   {user?.title || (user?.role === 'admin' ? 'Shop Master' : 'Workshop Staff')}
                 </span>
               </div>
-              <div className={`flex items-center gap-1 ml-0.5 sm:ml-1 px-1.5 py-0.5 rounded-lg text-[10px] font-bold border ${roleBadgeConfig.color}`}>
+              <div className={`flex items-center gap-1 ml-0.5 sm:ml-1 px-1.5 py-0.5 rounded-lg text-[10px] font-bold border ${roleBadgeConfig.color} shrink-0`}>
                 {roleTier === 'viewer' ? <Eye className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
                 <span className="hidden sm:inline">{roleBadgeConfig.label}</span>
               </div>
@@ -176,7 +176,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           {/* Logout button */}
           <button
             onClick={handleLogout}
-            className="p-2 text-purple-950/80 hover:text-red-700 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 text-purple-950/80 hover:text-red-700 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer shrink-0"
             title={t('Sign Out Admin Session', 'লগআউট')}
           >
             <LogOut className="w-4 h-4" />
@@ -184,7 +184,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         </div>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex min-w-0 overflow-hidden">
         {/* Desktop Sidebar Navigation */}
         <aside className="hidden lg:flex flex-col w-64 bg-cream-50 border-r border-cream-300 p-4 space-y-1 shrink-0 overflow-y-auto">
           <div className="px-3 py-2 text-[11px] font-bold text-purple-950/70 uppercase tracking-wider">
@@ -276,8 +276,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
         )}
 
         {/* Main Admin Content View Area */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-cream-100">
-          <div className="max-w-7xl mx-auto space-y-6">
+        <main className="flex-1 min-w-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-cream-100">
+          <div className="max-w-7xl w-full mx-auto space-y-6 min-w-0">
             {canAccessCurrent ? (
               children
             ) : (

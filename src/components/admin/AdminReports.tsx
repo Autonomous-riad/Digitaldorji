@@ -117,7 +117,7 @@ export const AdminReports: React.FC = () => {
   const topCustomers = data?.topCustomers || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full min-w-0">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -207,14 +207,14 @@ export const AdminReports: React.FC = () => {
       {/* Charts Grid: Pie Chart (Orders by Status) & Bar Chart (Top Garments) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pie Chart */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs min-w-0">
           <h2 className="text-sm font-bold text-slate-950 flex items-center gap-2">
             <PieChartIcon className="w-4 h-4 text-indigo-700" />
             <span>{t('Orders Breakdown by Status Stage', 'অর্ডার স্ট্যাটাস পাই চার্ট')}</span>
           </h2>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-64 w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <PieChart>
                 <Pie
                   data={ordersByStatus}
@@ -235,14 +235,14 @@ export const AdminReports: React.FC = () => {
         </div>
 
         {/* Bar Chart */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-xs min-w-0">
           <h2 className="text-sm font-bold text-slate-950 flex items-center gap-2">
             <Award className="w-4 h-4 text-indigo-700" />
             <span>{t('Top Garments Revenue Comparison', 'পোশাকভিত্তিক আয় চার্ট')}</span>
           </h2>
 
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-64 w-full min-w-0">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <BarChart data={topGarmentsChart} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="garment" stroke="#475569" fontSize={10} angle={-15} textAnchor="end" />
@@ -268,7 +268,7 @@ export const AdminReports: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full min-w-[500px] text-left text-xs">
             <thead className="text-[11px] uppercase text-slate-900 font-bold border-b border-slate-200 bg-slate-50">
               <tr>
                 <th className="p-3 font-bold">Rank</th>

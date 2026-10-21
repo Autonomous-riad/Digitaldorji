@@ -203,7 +203,7 @@ export const AdminOrders: React.FC = () => {
   const ridersList = staffList.filter(s => s.role === 'Delivery Rider');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full min-w-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -305,7 +305,7 @@ export const AdminOrders: React.FC = () => {
       {/* Main Grid: Orders Table + Order Inspector Panel */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Table List */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs min-w-0">
           <div className="p-3.5 border-b border-slate-200 flex items-center justify-between text-xs font-bold text-slate-700 bg-slate-50">
             <span>{orders.length} {t('Orders Found', 'টি অর্ডার পাওয়া গেছে')}</span>
           </div>
@@ -367,7 +367,7 @@ export const AdminOrders: React.FC = () => {
 
         {/* Selected Order Detail Dossier Inspector */}
         {selectedOrder ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-5 shadow-xs">
+          <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-5 shadow-xs min-w-0">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
               <div>
                 <span className="text-[10px] text-slate-600 font-mono uppercase block font-semibold">Dossier #</span>
