@@ -37,9 +37,9 @@ export const AdminDelivery: React.FC = () => {
     return <div className="p-8 text-center text-xs text-purple-950/70">Loading delivery logistics...</div>;
   }
 
-  const enroute = data?.enrouteDelivery || [];
-  const ready = data?.readyForDelivery || [];
-  const delivered = data?.deliveredOrders || [];
+  const enroute = data?.enrouteDelivery || data?.outForDelivery || [];
+  const ready = data?.readyForDelivery || data?.pendingDelivery || [];
+  const delivered = data?.deliveredOrders || data?.deliveredToday || [];
 
   return (
     <div className="space-y-6">

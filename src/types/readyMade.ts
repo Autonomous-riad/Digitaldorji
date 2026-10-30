@@ -262,6 +262,8 @@ export interface ReadyMadeOrder {
     note?: string;
     updated_by?: string;
   }[];
+  payment_trx_id?: string;
+  latest_tran_id?: string;
   created_at: string;
   updated_at: string;
 }

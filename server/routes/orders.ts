@@ -164,14 +164,22 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
   const newPickup = {
     id: `pic-${Date.now().toString(36)}`,
     orderId: newOrder.id,
+    order_id: newOrder.id,
     orderNumber: newOrder.orderNumber,
+    order_number: newOrder.orderNumber,
     customerName: fullName,
+    customer_name: fullName,
     customerPhone: phone,
+    phone,
     division,
     area,
     address: `${streetAddress}, ${orderData.pickupAddress?.apartmentFloor || ''}`,
+    pickup_address: `${streetAddress}, ${orderData.pickupAddress?.apartmentFloor || ''}`,
     scheduledDate: newOrder.pickupAddress.pickupDate,
+    preferred_date: newOrder.pickupAddress.pickupDate,
     timeSlot: newOrder.pickupAddress.pickupTimeSlot === 'morning_10_1' ? '10:00 AM - 01:00 PM' : '02:00 PM - 06:00 PM',
+    slot: newOrder.pickupAddress.pickupTimeSlot === 'morning_10_1' ? 'Morning (10 AM - 1 PM)' : 'Afternoon (2 PM - 6 PM)',
+    preferred_slot: newOrder.pickupAddress.pickupTimeSlot === 'morning_10_1' ? 'morning' : 'afternoon',
     status: 'scheduled',
     assignedRider: 'Md. Kamrul Hasan',
     fabricType: newOrder.fabricDetails.fabricType,
@@ -179,7 +187,8 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     lengthGaz: newOrder.fabricDetails.lengthGaz || 3.5,
     sampleGarmentProvided: newOrder.measurementMethod === 'sample_pickup',
     securityBagCode: `BAG-DH-${Math.floor(100 + Math.random() * 900)}`,
-    notes: newOrder.fabricDetails.specialInstructions || ''
+    fabricNotes: newOrder.fabricDetails.specialInstructions || `${newOrder.fabricDetails.fabricType || 'Fabric'} (${newOrder.fabricDetails.colorName || 'Default'})`,
+    notes: newOrder.fabricDetails.specialInstructions || `${newOrder.fabricDetails.fabricType || 'Fabric'} (${newOrder.fabricDetails.colorName || 'Default'})`
   };
 
   // Atomic database save

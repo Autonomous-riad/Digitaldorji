@@ -222,7 +222,7 @@ export class SSLCommerzService {
    * CRITICAL SECURITY: Never trust client-side callbacks.
    * Always verify val_id with SSLCommerz server directly.
    */
-  public async validatePayment(val_id: string): Promise<{
+  public async validatePayment(val_id: string, expectedAmount?: string | number): Promise<{
     isValid: boolean;
     data: SSLCommerzValidationResponse;
     error?: string;
@@ -237,13 +237,14 @@ export class SSLCommerzService {
 
     // Check if this was a built-in sandbox simulation
     if (val_id.startsWith('SANDBOX_VAL_') || val_id.startsWith('SAND_')) {
+      const parsedAmount = expectedAmount ? String(expectedAmount) : '0';
       return {
         isValid: true,
         data: {
           status: 'VALID',
           tran_id: val_id.replace('SANDBOX_VAL_', 'TRX_'),
           val_id,
-          amount: '0',
+          amount: parsedAmount,
           currency: 'BDT',
           bank_tran_id: `BANK-${Date.now()}`,
           card_type: 'SSLCommerz Sandbox Test Gateway',

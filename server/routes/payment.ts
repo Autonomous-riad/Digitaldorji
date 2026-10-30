@@ -85,6 +85,34 @@ paymentRouter.post('/initiate', async (req: Request, res: Response) => {
     order = data.orders.find(o => o.orderNumber === targetNumber);
   }
 
+  // Also check ready-made orders if targetId or targetNumber provided
+  if (!order && (targetId || targetNumber)) {
+    const rmo = (data.ready_made_orders || []).find(ro =>
+      (targetId && (ro.id === targetId || ro.order_number === targetId)) ||
+      (targetNumber && ro.order_number === targetNumber)
+    );
+    if (rmo) {
+      order = {
+        id: rmo.id,
+        orderNumber: rmo.order_number,
+        customerName: rmo.customer_name,
+        customerPhone: rmo.customer_phone,
+        customerEmail: rmo.customer_email,
+        grandTotal: rmo.total,
+        currentStage: 'ready_made_confirmed',
+        pickupAddress: {
+          fullName: rmo.customer_name,
+          phone: rmo.customer_phone,
+          streetAddress: rmo.delivery_address,
+          area: rmo.area || 'Dhaka',
+          division: rmo.district || 'Dhaka',
+          pickupDate: new Date().toISOString().split('T')[0],
+          pickupTimeSlot: 'standard'
+        }
+      };
+    }
+  }
+
   // If order does not exist yet but client sent order_data, upsert it
   if (!order && order_data) {
     order = {
@@ -219,7 +247,8 @@ async function processSuccessfulPayment(payload: any, res: Response) {
   const advanceType = payload.value_c;
 
   // CRITICAL SECURITY: Verify with SSLCommerz Validation API server-side
-  const validation = await sslcommerz.validatePayment(val_id);
+  const expectedAmt = payload.amount || payload.currency_amount || payload.value_d;
+  const validation = await sslcommerz.validatePayment(val_id, expectedAmt);
 
   if (!validation.isValid) {
     console.error('SSLCommerz Server-Side Validation REJECTED:', validation.error);
@@ -228,20 +257,36 @@ async function processSuccessfulPayment(payload: any, res: Response) {
   }
 
   const valData = validation.data;
-  const verifiedAmount = parseFloat(valData.amount || payload.amount || '0');
+  const verifiedAmount = parseFloat(
+    (valData.amount && valData.amount !== '0' ? valData.amount : '') ||
+    payload.amount ||
+    payload.currency_amount ||
+    payload.value_d ||
+    '0'
+  );
 
   let matchedOrder: any = null;
+  let matchedReadyMadeOrder: any = null;
 
   db.mutate(d => {
-    // Find order
+    // 1. Find bespoke order
     matchedOrder = d.orders.find(o =>
       (orderNumber && o.orderNumber === orderNumber) ||
       (orderId && o.id === orderId) ||
       (tran_id && (o.latestTranId === tran_id || tran_id.startsWith(o.orderNumber)))
     );
 
-    if (!matchedOrder && d.orders.length > 0) {
-      // Fallback to most recent order if orderNumber was lost
+    // 2. Find ready-made order if bespoke was not matched
+    if (!matchedOrder && d.ready_made_orders) {
+      matchedReadyMadeOrder = d.ready_made_orders.find(ro =>
+        (orderNumber && ro.order_number.toUpperCase() === orderNumber.toUpperCase()) ||
+        (orderId && ro.id === orderId) ||
+        (tran_id && (tran_id.startsWith(ro.order_number) || ro.latest_tran_id === tran_id))
+      );
+    }
+
+    // 3. Fallback to most recent bespoke order ONLY if orderNumber is not for a ready-made order
+    if (!matchedOrder && !matchedReadyMadeOrder && (!orderNumber || !orderNumber.startsWith('RMO-')) && d.orders.length > 0) {
       matchedOrder = d.orders[0];
     }
 
@@ -304,10 +349,49 @@ async function processSuccessfulPayment(payload: any, res: Response) {
         relOrder.payment_status = isAdvance ? 'advance_paid' : 'paid';
         relOrder.updated_at = new Date().toISOString();
       }
+    } else if (matchedReadyMadeOrder) {
+      matchedReadyMadeOrder.payment_status = 'paid';
+      matchedReadyMadeOrder.order_status = 'Confirmed';
+      matchedReadyMadeOrder.payment_method = valData.card_type || payload.card_type || 'sslcommerz';
+      matchedReadyMadeOrder.payment_trx_id = valData.bank_tran_id || valData.tran_id || tran_id;
+      matchedReadyMadeOrder.updated_at = new Date().toISOString();
+
+      if (!matchedReadyMadeOrder.status_history) matchedReadyMadeOrder.status_history = [];
+      matchedReadyMadeOrder.status_history.push({
+        status: 'Confirmed',
+        timestamp: new Date().toISOString(),
+        note: `Online payment of ৳${verifiedAmount} confirmed via SSLCommerz (${valData.card_type || 'Payment Gateway'}, TrxID: ${matchedReadyMadeOrder.payment_trx_id})`
+      });
+
+      // Insert payment record
+      const paymentRow: Payment = {
+        id: `pay-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
+        order_id: matchedReadyMadeOrder.id,
+        provider: 'sslcommerz',
+        provider_txn_id: valData.bank_tran_id || valData.tran_id || tran_id,
+        amount: verifiedAmount,
+        status: 'paid',
+        raw_response: valData,
+        created_at: new Date().toISOString(),
+      };
+      d.payments.unshift(paymentRow);
+
+      // Trigger SMS Notification
+      const smsTemplate = `পেমেন্ট সফল হয়েছে ৳${verifiedAmount}। অর্ডার নং: ${matchedReadyMadeOrder.order_number}। ডিজিটাল দর্জিতে আপনার রেডিমেড অর্ডারটি কনফার্ম করা হয়েছে।`;
+      const notification: Notification = {
+        id: `notif-${Date.now().toString(36)}`,
+        order_id: matchedReadyMadeOrder.id,
+        channel: 'sms',
+        recipient: matchedReadyMadeOrder.customer_phone || '01700000000',
+        template: smsTemplate,
+        status: 'sent',
+        sent_at: new Date().toISOString(),
+      };
+      d.notifications.unshift(notification);
     }
   });
 
-  const redirectOrderNumber = matchedOrder?.orderNumber || orderNumber || 'success';
+  const redirectOrderNumber = matchedReadyMadeOrder?.order_number || matchedOrder?.orderNumber || orderNumber || 'success';
   const trxId = valData.bank_tran_id || valData.tran_id || tran_id || '';
   return res.redirect(`/order/${redirectOrderNumber}/success?tran_id=${encodeURIComponent(trxId)}&amount=${verifiedAmount}`);
 }

@@ -75,19 +75,19 @@ export const AdminPickups: React.FC = () => {
             <div className="space-y-2 text-xs text-slate-600">
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                <span className="font-mono">{p.customerPhone}</span>
+                <span className="font-mono">{p.customerPhone || p.phone || '01700000000'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                <span>{p.address} ({p.area})</span>
+                <span>{p.address} ({p.area || 'Dhaka'})</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                <span>{p.scheduledDate} • {p.slot}</span>
+                <span>{p.scheduledDate || p.preferredDate || 'Today'} • {p.slot || p.preferredSlot || p.timeSlot || 'Daytime'}</span>
               </div>
               <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-slate-600">
                 <span className="text-[10px] text-slate-600 font-bold block uppercase">Fabric Note:</span>
-                <span className="text-slate-900 font-medium">{p.fabricNotes}</span>
+                <span className="text-slate-900 font-medium">{p.fabricNotes || p.notes || 'Customer providing fabric'}</span>
               </div>
             </div>
 

@@ -179,7 +179,31 @@ export const CheckoutModal: React.FC = () => {
         throw new Error(data.message || 'Failed to place ready-made order');
       }
 
-      // Order created!
+      // If online payment (bKash, Nagad, Rocket, Card, etc.), redirect through payment gateway
+      if (paymentMethod !== 'cod') {
+        const initRes = await fetch('/api/payment/initiate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order_id: data.data.id,
+            orderNumber: data.data.order_number,
+            payment_method: paymentMethod,
+            advance_type: 'full'
+          })
+        });
+
+        const initData = await initRes.json();
+
+        if (initData.status === 'SUCCESS' && initData.GatewayPageURL) {
+          clearCart();
+          window.location.href = initData.GatewayPageURL;
+          return;
+        } else {
+          throw new Error(initData.error || t('Failed to connect to payment gateway. Please retry.', 'পেমেন্ট গেটওয়েতে সংযোগ করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।'));
+        }
+      }
+
+      // Cash on Delivery flow: Order created and confirmed
       clearCart();
       setCompletedOrder(data.data);
     } catch (err: any) {

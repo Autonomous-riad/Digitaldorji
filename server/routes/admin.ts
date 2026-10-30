@@ -130,7 +130,7 @@ adminRouter.get('/dashboard', requirePermission('reports', 'view'), (req: Authen
   const todayNewOrdersCount = todayOrders.length;
   const todayRevenue = todayOrders.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
 
-  const pendingPickupsCount = (data.pickups || []).filter(p => p.status === 'pending').length;
+  const pendingPickupsCount = (data.pickups || []).filter(p => p.status === 'pending' || p.status === 'scheduled').length;
   
   const ordersInTailoringCount = orders.filter(o => {
     const st = normalizeStage(o.currentStage || o.status);
@@ -898,16 +898,29 @@ adminRouter.put('/settings', requirePermission('settings', 'edit'), (req: Authen
 adminRouter.get('/pickups', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const pickups = (data.pickups || []).map(p => {
-    const order = (data.orders || []).find(o => o.id === p.order_id || o.orderNumber === p.order_number);
+    const order = (data.orders || []).find(o => o.id === p.order_id || o.orderNumber === p.order_number || o.id === p.orderId || o.orderNumber === p.orderNumber);
+    const phone = p.customerPhone || p.phone || p.customer_phone || order?.customerPhone || order?.pickupAddress?.phone || '01700000000';
+    const scheduledDate = p.scheduledDate || p.preferred_date || p.preferredDate || order?.pickupAddress?.pickupDate || 'Today';
+    const slot = p.slot || p.timeSlot || p.preferred_slot || p.preferredSlot || order?.pickupAddress?.pickupSlot || 'morning';
+    const fabricNotes = p.fabricNotes || p.fabric_notes || p.notes || order?.fabricNotes || order?.notes || 'Customer providing fabric';
+    const address = p.address || p.pickup_address || (order?.pickupAddress ? `${order.pickupAddress.streetAddress}, ${order.pickupAddress.area}` : 'Dhaka');
+    const area = p.area || order?.pickupAddress?.area || 'Dhaka';
+
     return {
       ...p,
-      orderNumber: p.order_number || order?.orderNumber || p.order_id,
-      customerName: p.customer_name || order?.customerName || 'Customer',
-      phone: p.phone || order?.customerPhone || order?.pickupAddress?.phone,
-      address: p.pickup_address || (order?.pickupAddress ? `${order.pickupAddress.streetAddress}, ${order.pickupAddress.area}` : 'Dhaka'),
-      area: p.area || order?.pickupAddress?.area || 'Dhaka',
-      preferredSlot: p.preferred_slot || order?.pickupAddress?.pickupSlot || 'morning',
-      preferredDate: p.preferred_date || order?.pickupAddress?.pickupDate || 'Today'
+      orderNumber: p.orderNumber || p.order_number || order?.orderNumber || p.order_id || p.orderId,
+      customerName: p.customerName || p.customer_name || order?.customerName || 'Customer',
+      customerPhone: phone,
+      phone,
+      address,
+      pickup_address: address,
+      area,
+      slot,
+      preferredSlot: slot,
+      scheduledDate,
+      preferredDate: scheduledDate,
+      fabricNotes,
+      notes: fabricNotes
     };
   });
 
@@ -934,7 +947,7 @@ adminRouter.put('/pickups/:id/status', requirePermission('orders', 'edit'), (req
       // Also update linked order stage
       const order = data.orders.find(o => o.id === pickup.order_id || o.orderNumber === pickup.order_number);
       if (order) {
-        if (status === 'completed') {
+        if (status === 'completed' || status === 'collected') {
           order.currentStage = 'fabric_received_at_shop';
           order.status = 'fabric_received_at_shop';
         } else if (status === 'in_transit') {
@@ -1054,6 +1067,9 @@ adminRouter.get('/delivery', requirePermission('orders', 'view'), (req: Authenti
   const riders = (data.staff || []).filter(s => s.role === 'Delivery Rider');
 
   res.json({
+    enrouteDelivery: outForDelivery,
+    readyForDelivery: pendingDelivery,
+    deliveredOrders: deliveredToday,
     pendingDelivery,
     outForDelivery,
     deliveredToday,

@@ -438,8 +438,8 @@ router.post('/orders', (req: Request, res: Response) => {
       area: area || '',
       delivery_method: delivery_method || 'standard',
       payment_method: payment_method || 'cod',
-      payment_status: payment_method === 'cod' ? 'pending' : 'paid',
-      order_status: 'Confirmed',
+      payment_status: 'pending',
+      order_status: payment_method === 'cod' ? 'Confirmed' : 'Payment Pending',
       items: orderItems,
       subtotal,
       customization_total,
@@ -450,9 +450,11 @@ router.post('/orders', (req: Request, res: Response) => {
       notes: notes || '',
       status_history: [
         {
-          status: 'Confirmed',
+          status: payment_method === 'cod' ? 'Confirmed' : 'Payment Pending',
           timestamp: now.toISOString(),
-          note: 'Ready-made product order placed successfully and confirmed.'
+          note: payment_method === 'cod'
+            ? 'Ready-made product order placed successfully (Cash on Delivery).'
+            : 'Ready-made product order placed. Awaiting online payment confirmation.'
         }
       ],
       created_at: now.toISOString(),
@@ -499,8 +501,8 @@ router.post('/orders', (req: Request, res: Response) => {
   }
 });
 
-// 8. GET /api/ready-made/orders (All ready-made orders)
-router.get('/orders', (req: Request, res: Response) => {
+// 8. GET /api/ready-made/orders (All ready-made orders - protected by permission)
+router.get('/orders', requirePermission('readyMade', 'view'), (req: AuthenticatedRequest, res: Response) => {
   try {
     const orders = db.getReadyMadeOrders();
     res.json({ success: true, data: orders });
@@ -509,8 +511,8 @@ router.get('/orders', (req: Request, res: Response) => {
   }
 });
 
-// 9. POST /api/ready-made/seed (Catalog seeder/reset)
-router.post('/seed', (req: Request, res: Response) => {
+// 9. POST /api/ready-made/seed (Catalog seeder/reset - protected by permission)
+router.post('/seed', requirePermission('readyMade', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   try {
     db.mutate(data => {
       data.ready_made_categories = INITIAL_CATEGORIES;
@@ -534,10 +536,12 @@ router.post('/seed', (req: Request, res: Response) => {
   }
 });
 
-// 10. GET /api/ready-made/orders/:orderNumber (Tracking)
+// 10. GET /api/ready-made/orders/:orderNumber (Tracking with optional phone check)
 router.get('/orders/:orderNumber', (req: Request, res: Response) => {
   try {
     const { orderNumber } = req.params;
+    const phone = req.query.phone ? String(req.query.phone).trim() : null;
+
     const order = db.getReadyMadeOrders().find(o => 
       o.order_number.toUpperCase() === orderNumber.toUpperCase() ||
       o.id === orderNumber
@@ -545,6 +549,14 @@ router.get('/orders/:orderNumber', (req: Request, res: Response) => {
 
     if (!order) {
       return res.status(404).json({ success: false, message: 'Ready-made order not found' });
+    }
+
+    if (phone) {
+      const cleanPhone = phone.replace(/\D/g, '').slice(-11);
+      const orderPhone = (order.customer_phone || '').replace(/\D/g, '').slice(-11);
+      if (cleanPhone !== orderPhone) {
+        return res.status(403).json({ success: false, message: 'Phone number does not match this order.' });
+      }
     }
 
     res.json({ success: true, data: order });
