@@ -241,7 +241,7 @@ export const MeasurementForm: React.FC = () => {
         {/* Option 1: Use My Clothes (Photo + Dimensions) */}
         <button
           onClick={() => setMeasurementMethod('use_my_clothes')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'use_my_clothes'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
@@ -255,7 +255,7 @@ export const MeasurementForm: React.FC = () => {
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'use_my_clothes' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
               }`}>
-                {measurementMethod === 'use_my_clothes' && <Check className="w-3 h-3" />}
+                {measurementMethod === 'use_my_clothes' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
             <h3 className="text-sm font-bold text-purple-950 mb-1 flex items-center gap-1">
@@ -274,7 +274,7 @@ export const MeasurementForm: React.FC = () => {
         {/* Option 2: Custom Manual Tape Input */}
         <button
           onClick={() => setMeasurementMethod('custom_manual')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'custom_manual'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
@@ -288,7 +288,7 @@ export const MeasurementForm: React.FC = () => {
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'custom_manual' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
               }`}>
-                {measurementMethod === 'custom_manual' && <Check className="w-3 h-3" />}
+                {measurementMethod === 'custom_manual' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
             <h3 className="text-sm font-bold text-purple-950 mb-1">
@@ -306,7 +306,7 @@ export const MeasurementForm: React.FC = () => {
         {/* Option 3: Standard Size Presets */}
         <button
           onClick={() => setMeasurementMethod('preset_size')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'preset_size'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
@@ -320,7 +320,7 @@ export const MeasurementForm: React.FC = () => {
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'preset_size' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
               }`}>
-                {measurementMethod === 'preset_size' && <Check className="w-3 h-3" />}
+                {measurementMethod === 'preset_size' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
             <h3 className="text-sm font-bold text-purple-950 mb-1">
@@ -338,7 +338,7 @@ export const MeasurementForm: React.FC = () => {
         {/* Option 4: Send Sample Reference Clothing */}
         <button
           onClick={() => setMeasurementMethod('reference_sample')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'reference_sample'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
@@ -352,7 +352,7 @@ export const MeasurementForm: React.FC = () => {
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'reference_sample' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
               }`}>
-                {measurementMethod === 'reference_sample' && <Check className="w-3 h-3" />}
+                {measurementMethod === 'reference_sample' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
             <h3 className="text-sm font-bold text-purple-950 mb-1 flex items-center gap-1.5">

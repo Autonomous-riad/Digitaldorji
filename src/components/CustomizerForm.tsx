@@ -640,7 +640,7 @@ export const CustomizerForm: React.FC = () => {
                     <div
                       key={option.id}
                       onClick={() => updateCustomization(group.id, option.id)}
-                      className={`p-2.5 sm:p-3.5 rounded-xl text-left border transition-all flex flex-col justify-between gap-2.5 sm:gap-3 relative cursor-pointer group ${
+                      className={`p-2.5 sm:p-3.5 rounded-xl text-left border transition-all flex flex-col justify-between gap-2.5 sm:gap-3 relative cursor-pointer group active:scale-[0.98] transition-transform duration-100 ease-out ${
                         isSelected
                           ? 'border-amber-900 bg-amber-50/50 ring-2 ring-amber-900/20 shadow-xs'
                           : 'border-stone-200 bg-white hover:bg-stone-50 hover:border-stone-300 shadow-2xs'
@@ -710,7 +710,7 @@ export const CustomizerForm: React.FC = () => {
 
                         {/* Selection check indicator */}
                         {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 p-1 sm:px-2 sm:py-0.5 rounded-full sm:rounded bg-amber-900 text-white text-[9px] sm:text-[10px] font-bold tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 shadow-xs z-10">
+                          <div className="absolute top-1.5 right-1.5 p-1 sm:px-2 sm:py-0.5 rounded-full sm:rounded bg-amber-900 text-white text-[9px] sm:text-[10px] font-bold tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 shadow-xs z-10 animate-checkmarkPop">
                             <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                             <span className="hidden sm:inline">{t('Selected', 'নির্বাচিত')}</span>
                           </div>

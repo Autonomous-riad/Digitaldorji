@@ -97,7 +97,7 @@ export const MobileBottomActionBar: React.FC<MobileBottomActionBarProps> = ({
           type="button"
           disabled={isProcessing}
           onClick={handleNextClick}
-          className="flex-1 max-w-[210px] h-10 sm:h-11 bg-amber-900 active:bg-black hover:bg-stone-900 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-98 cursor-pointer disabled:opacity-50"
+          className="flex-1 max-w-[210px] h-10 sm:h-11 bg-amber-900 active:bg-black hover:bg-stone-900 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98] transition-transform duration-100 ease-out cursor-pointer disabled:opacity-50"
         >
           {step === 'measurements' && (
             <>

@@ -410,15 +410,17 @@ const AppRouterContent: React.FC = () => {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-28 md:pb-12">
         <MobileOrderStepBar />
-        {activeStep === 'catalog' && <GarmentCatalog />}
-        {activeStep === 'fabric_catalog' && <FabricCatalog />}
-        {activeStep === 'customize' && <CustomizerForm />}
-        {activeStep === 'measurements' && <MeasurementForm />}
-        {activeStep === 'pickup_details' && <FabricPickupForm />}
-        {activeStep === 'checkout' && <CheckoutReview />}
-        {activeStep === 'order_success' && <OrderSuccessModal />}
-        {activeStep === 'track_orders' && <OrderTracker />}
-        {activeStep === 'saved_measurements' && <SavedMeasurementsManager />}
+        <div key={activeStep} className="animate-stepFadeIn">
+          {activeStep === 'catalog' && <GarmentCatalog />}
+          {activeStep === 'fabric_catalog' && <FabricCatalog />}
+          {activeStep === 'customize' && <CustomizerForm />}
+          {activeStep === 'measurements' && <MeasurementForm />}
+          {activeStep === 'pickup_details' && <FabricPickupForm />}
+          {activeStep === 'checkout' && <CheckoutReview />}
+          {activeStep === 'order_success' && <OrderSuccessModal />}
+          {activeStep === 'track_orders' && <OrderTracker />}
+          {activeStep === 'saved_measurements' && <SavedMeasurementsManager />}
+        </div>
       </main>
 
       {/* Global Ready-Made Cart Drawer and Checkout Modal */}

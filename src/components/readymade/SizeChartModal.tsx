@@ -39,7 +39,7 @@ export const SizeChartModal: React.FC<SizeChartModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/60 backdrop-blur-sm animate-fadeIn">
       <div 
-        className="bg-cream-50 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-cream-300"
+        className="bg-cream-50 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-cream-300 animate-modalPop"
         role="dialog"
         aria-modal="true"
       >

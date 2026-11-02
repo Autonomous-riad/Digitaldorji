@@ -543,7 +543,7 @@ export const CheckoutReview: React.FC = () => {
               {/* SSLCommerz Online Payment (Unified Cards + MFS + Netbanking) */}
               <div
                 onClick={() => setPaymentMethod('sslcommerz')}
-                className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                className={`p-4 rounded-xl border text-left transition-all cursor-pointer active:scale-[0.99] transition-transform duration-100 ease-out ${
                   paymentMethod === 'sslcommerz' || paymentMethod === 'bkash' || paymentMethod === 'nagad'
                     ? 'border-orange-500 bg-orange-50/40 ring-2 ring-orange-500/20'
                     : 'border-slate-200 hover:bg-slate-50'
@@ -647,7 +647,7 @@ export const CheckoutReview: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setPaymentMethod('cod')}
-                className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                className={`p-4 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer active:scale-[0.99] transition-transform duration-100 ease-out ${
                   paymentMethod === 'cod'
                     ? 'border-indigo-600 bg-indigo-50/70 ring-2 ring-indigo-500/20'
                     : 'border-slate-200 hover:bg-slate-50'
@@ -878,7 +878,7 @@ export const CheckoutReview: React.FC = () => {
       {/* Post Add to Cart Choice Modal */}
       {showPostAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4 animate-in fade-in zoom-in-95">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4 animate-modalPop">
             <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
               <Check className="w-7 h-7" />
             </div>

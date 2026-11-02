@@ -173,7 +173,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               type="button"
               onClick={() => navigate(`/ready-made/${product.slug}`)}
               disabled={isOutOfStock}
-              className={`flex-1 sm:flex-none px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer active:scale-98 min-h-[34px] sm:min-h-[40px] whitespace-nowrap ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out min-h-[34px] sm:min-h-[40px] whitespace-nowrap ${
                 isOutOfStock
                   ? 'bg-cream-300 text-purple-950/40 cursor-not-allowed'
                   : 'bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50'

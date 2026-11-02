@@ -216,7 +216,7 @@ export const CheckoutModal: React.FC = () => {
   return (
     <div className="fixed inset-0 bottom-[56px] sm:bottom-0 z-40 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn overflow-y-auto">
       <div 
-        className="bg-white rounded-2xl max-w-2xl w-full my-auto max-h-[calc(100dvh-78px)] sm:max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden"
+        className="bg-white rounded-2xl max-w-2xl w-full my-auto max-h-[calc(100dvh-78px)] sm:max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-modalPop"
         role="dialog"
       >
         {/* Modal Header */}

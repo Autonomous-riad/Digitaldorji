@@ -132,7 +132,7 @@ export const ItemCard: React.FC<ItemCardProps> = (props) => {
                 type="button"
                 onClick={() => props.onAction(garment)}
                 aria-label={`${t(garment.nameEn, garment.nameBn)} সেলাই অর্ডার শুরু করুন`}
-                className="w-full sm:w-auto min-h-[34px] sm:min-h-[40px] px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50 text-[10px] sm:text-sm font-semibold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer active:scale-98 focus-visible:ring-2 focus-visible:ring-purple-950"
+                className="w-full sm:w-auto min-h-[34px] sm:min-h-[40px] px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50 text-[10px] sm:text-sm font-semibold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out focus-visible:ring-2 focus-visible:ring-purple-950"
               >
                 <Scissors className="w-3 h-3 text-cream-50" />
                 <span>{t('Tailor This', 'সেলাই করুন')}</span>
@@ -172,7 +172,7 @@ export const ItemCard: React.FC<ItemCardProps> = (props) => {
                   type="button"
                   onClick={() => props.onAction(fabric)}
                   aria-label={`${fabric.nameEn} কাপড় দিয়ে সেলাই শুরু করুন`}
-                  className="px-3 py-1.5 sm:py-2 rounded-xl bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50 text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-98 focus-visible:ring-2 focus-visible:ring-purple-950 min-h-[34px] sm:min-h-[40px]"
+                  className="px-3 py-1.5 sm:py-2 rounded-xl bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50 text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out focus-visible:ring-2 focus-visible:ring-purple-950 min-h-[34px] sm:min-h-[40px]"
                   title={t('Select Garment to Tailor', 'পোশাক বেছে নিয়ে সেলাই করুন')}
                 >
                   <Scissors className="w-3.5 h-3.5 text-cream-50 shrink-0" />
