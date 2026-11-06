@@ -1,54 +1,54 @@
 @import "tailwindcss";
 
 @theme {
-  /* Facebook App Theme Palette */
-  --color-cream: #f0f2f5;
-  --color-cream-50: #ffffff;
-  --color-cream-100: #f7f8fa;
-  --color-cream-200: #e4e6eb;
-  --color-cream-300: #ced0d4;
-  --color-cream-400: #b0b3b8;
-  --color-cream-500: #8a8d91;
+  /* Warm Paper & Ink Eye-Comfort Theme Palette */
+  --color-cream: #f3f4ef;
+  --color-cream-50: #fafaf7;
+  --color-cream-100: #f1f2ec;
+  --color-cream-200: #e4e6de;
+  --color-cream-300: #cfd2c8;
+  --color-cream-400: #9aa094;
+  --color-cream-500: #656b60;
 
-  /* Official Facebook Blue Tokens */
-  --color-fb-blue: #1877f2;
-  --color-fb-blue-hover: #166fe5;
-  --color-fb-blue-active: #0c63e4;
-  --color-fb-blue-light: #e7f3ff;
-  --color-fb-blue-border: #c3dcfd;
-  --color-fb-bg: #f0f2f5;
-  --color-fb-card: #ffffff;
-  --color-fb-gray: #e4e6eb;
-  --color-fb-gray-hover: #d8dadf;
-  --color-fb-border: #ced0d4;
-  --color-fb-text: #050505;
-  --color-fb-text-sub: #65676b;
-  --color-fb-red: #e41e3f;
-  --color-fb-green: #31a24c;
-  --color-fb-yellow: #f7b125;
+  /* Calibrated Restful Royal Atelier Blue Tokens */
+  --color-fb-blue: #1d5bd6;
+  --color-fb-blue-hover: #184cb8;
+  --color-fb-blue-active: #143f9b;
+  --color-fb-blue-light: #e8f0fe;
+  --color-fb-blue-border: #bfd3f8;
+  --color-fb-bg: #f3f4ef;
+  --color-fb-card: #fafaf7;
+  --color-fb-gray: #e4e6de;
+  --color-fb-gray-hover: #d6d9cf;
+  --color-fb-border: #cfd2c8;
+  --color-fb-text: #18202c;
+  --color-fb-text-sub: #3b4454;
+  --color-fb-red: #d92643;
+  --color-fb-green: #268e41;
+  --color-fb-yellow: #eab308;
 
   /* Mapped Brand Tokens */
-  --color-purple-950: #050505;
-  --color-purple-900: #1877f2;
-  --color-purple-800: #166fe5;
-  --color-purple-700: #0c63e4;
-  --color-purple-300: #8a8d91;
-  --color-purple-200: #c3dcfd;
-  --color-purple-100: #e7f3ff;
-  --color-purple-50: #f0f7ff;
+  --color-purple-950: #18202c;
+  --color-purple-900: #1d5bd6;
+  --color-purple-800: #184cb8;
+  --color-purple-700: #143f9b;
+  --color-purple-300: #656b60;
+  --color-purple-200: #bfd3f8;
+  --color-purple-100: #e8f0fe;
+  --color-purple-50: #f2f6fd;
 
-  /* Accent Mappings (Facebook Blue / Light Blue) */
-  --color-gold: #1877f2;
-  --color-gold-light: #e7f3ff;
-  --color-gold-border: #c3dcfd;
-  --color-gold-hover: #166fe5;
+  /* Accent Mappings */
+  --color-gold: #1d5bd6;
+  --color-gold-light: #e8f0fe;
+  --color-gold-border: #bfd3f8;
+  --color-gold-hover: #184cb8;
 
-  /* Typography Tokens */
-  --color-charcoal: #050505;
-  --color-charcoal-muted: #65676b;
-  --color-charcoal-light: #8a8d91;
+  /* Typography Tokens (Deep Warm Ink — High Clarity, Zero Halation) */
+  --color-charcoal: #18202c;
+  --color-charcoal-muted: #3b4454;
+  --color-charcoal-light: #525c6e;
 
-  /* Facebook Radii Tokens */
+  /* Radii Tokens */
   --radius-dorji-sm: 0.375rem;
   --radius-dorji-md: 0.5rem;
   --radius-dorji-lg: 0.75rem;
@@ -56,123 +56,135 @@
 }
 
 @layer components {
-  /* Facebook App Theme Class Overrides */
+  /* Eye-Comfort Surface & Ink Overrides */
+  .bg-white {
+    background-color: #fafaf7;
+  }
   .bg-purple-950 {
-    background-color: #1877f2 !important;
+    background-color: #1d5bd6 !important;
   }
   .hover\:bg-purple-900:hover,
   .hover\:bg-purple-950:hover,
   .active\:bg-purple-950:active {
-    background-color: #166fe5 !important;
+    background-color: #184cb8 !important;
   }
   .text-purple-950 {
-    color: #050505 !important;
+    color: #18202c !important;
+  }
+  /* Replace washed-out translucent text with crisp solid slate ink */
+  .text-purple-950\/80,
+  .text-purple-950\/70 {
+    color: #364050 !important;
+  }
+  .text-purple-950\/60,
+  .text-purple-950\/50 {
+    color: #4b5565 !important;
   }
   .text-purple-900,
   .text-purple-800,
   .text-purple-700 {
-    color: #1877f2 !important;
+    color: #1d5bd6 !important;
   }
   .border-purple-950,
   .border-purple-900,
   .border-purple-800 {
-    border-color: #1877f2 !important;
+    border-color: #1d5bd6 !important;
   }
   .border-purple-200,
   .border-purple-300 {
-    border-color: #c3dcfd !important;
+    border-color: #bfd3f8 !important;
   }
   .bg-purple-100 {
-    background-color: #e7f3ff !important;
+    background-color: #e8f0fe !important;
   }
   .bg-purple-50 {
-    background-color: #f0f7ff !important;
+    background-color: #f2f6fd !important;
   }
   .ring-purple-950,
   .ring-purple-900 {
-    --tw-ring-color: #1877f2 !important;
+    --tw-ring-color: #1d5bd6 !important;
   }
 
-  /* Facebook Standardized Component Cards & Controls */
+  /* Standardized Component Cards & Controls */
   .card-dorji {
-    background-color: #ffffff;
-    border: 1px solid #ced0d4;
+    background-color: #fafaf7;
+    border: 1px solid #cfd2c8;
     border-radius: 12px;
-    color: #050505;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    color: #18202c;
+    box-shadow: 0 1px 3px rgba(24, 32, 44, 0.06);
   }
 
   .card-dorji-subtle {
-    background-color: #ffffff;
-    border: 1px solid #e4e6eb;
+    background-color: #fafaf7;
+    border: 1px solid #e4e6de;
     border-radius: 8px;
-    color: #050505;
+    color: #18202c;
   }
 
   .btn-dorji-primary {
-    background-color: #1877f2;
+    background-color: #1d5bd6;
     color: #ffffff;
     border-radius: 8px;
     font-weight: 700;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(24, 32, 44, 0.1);
     transition: all 0.15s ease-in-out;
   }
   .btn-dorji-primary:hover {
-    background-color: #166fe5;
+    background-color: #184cb8;
   }
 
   .btn-dorji-secondary {
-    background-color: #e4e6eb;
-    color: #050505;
-    border: 1px solid #ced0d4;
+    background-color: #e4e6de;
+    color: #18202c;
+    border: 1px solid #cfd2c8;
     border-radius: 8px;
     font-weight: 600;
     transition: all 0.15s ease-in-out;
   }
   .btn-dorji-secondary:hover {
-    background-color: #d8dadf;
+    background-color: #d6d9cf;
   }
 
   .input-dorji {
-    background-color: #f0f2f5;
-    border: 1px solid #ced0d4;
+    background-color: #f1f2ec;
+    border: 1px solid #cfd2c8;
     border-radius: 8px;
-    color: #050505;
+    color: #18202c;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   }
   .input-dorji:focus {
     outline: none;
-    background-color: #ffffff;
-    border-color: #1877f2;
-    box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+    background-color: #fafaf7;
+    border-color: #1d5bd6;
+    box-shadow: 0 0 0 2px rgba(29, 91, 214, 0.2);
   }
 
   .modal-dorji {
-    background-color: #ffffff;
-    border: 1px solid #ced0d4;
+    background-color: #fafaf7;
+    border: 1px solid #cfd2c8;
     border-radius: 12px;
-    color: #050505;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #18202c;
+    box-shadow: 0 12px 28px rgba(24, 32, 44, 0.18), 0 2px 4px rgba(24, 32, 44, 0.08);
   }
 
   .badge-gold {
-    background-color: #e7f3ff;
-    border: 1px solid #c3dcfd;
-    color: #1877f2;
+    background-color: #e8f0fe;
+    border: 1px solid #bfd3f8;
+    color: #184cb8;
     font-weight: 700;
   }
 
   .badge-fb-red {
-    background-color: #e41e3f;
+    background-color: #d92643;
     color: #ffffff;
     font-weight: 700;
   }
 
   .hero-atelier {
-    background: linear-gradient(135deg, #1877f2 0%, #0866ff 50%, #0052cc 100%);
-    border: 1px solid rgba(24, 119, 242, 0.25);
+    background: linear-gradient(135deg, #173f8f 0%, #1d5bd6 55%, #1646a8 100%);
+    border: 1px solid rgba(29, 91, 214, 0.28);
     color: #ffffff;
-    box-shadow: 0 2px 8px rgba(24, 119, 242, 0.2);
+    box-shadow: 0 2px 10px rgba(23, 63, 143, 0.16);
   }
 
   /* Interactive Measurement Tape & Guide Animations */
@@ -316,9 +328,15 @@
     scroll-behavior: smooth;
     background-color: var(--color-cream);
     color: var(--color-purple-950);
+    font-size: 16px;
+    font-optical-sizing: auto;
+    font-kerning: normal;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Hind Siliguri';
+    font-family: 'Inter', 'Plus Jakarta Sans', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.62;
+    letter-spacing: -0.005em;
     touch-action: manipulation;
     background-color: var(--color-cream);
     color: var(--color-purple-950);
@@ -326,16 +344,44 @@
   button, input, select, textarea {
     touch-action: manipulation;
     font-family: inherit;
+    font-optical-sizing: auto;
+  }
+  p, li, label {
+    line-height: 1.62;
   }
 }
 
+/* Crisp Legibility Floor for Micro-Typography & Bilingual Script */
+.text-\[9px\],
+.text-\[10px\] {
+  font-size: 0.75rem !important; /* 12px minimum readable floor */
+  line-height: 1.5 !important;
+  letter-spacing: 0.01em;
+}
+
+.text-\[11px\] {
+  font-size: 0.8125rem !important; /* 13px comfortable secondary label */
+  line-height: 1.55 !important;
+}
+
+.text-xs {
+  font-size: 0.84375rem; /* 13.5px clear body/card text */
+  line-height: 1.58;
+}
+
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
 .font-bengali {
-  font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Hind Siliguri', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.72;
 }
 
 .font-serif-title {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: -0.015em;
+  line-height: 1.35;
   font-weight: 700;
 }
 

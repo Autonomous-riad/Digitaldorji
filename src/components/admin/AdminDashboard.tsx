@@ -86,18 +86,18 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-6 w-full min-w-0">
       {/* Top Greeting & Overview Banner */}
-      <div className="bg-purple-950 p-4 sm:p-6 rounded-2xl border border-purple-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-cream-50 shadow-md min-w-0">
+      <div className="bg-[#18202C] p-4 sm:p-6 rounded-2xl border border-[#2C374B] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-cream-50 shadow-sm min-w-0">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping shrink-0" />
-            <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-300 font-bold truncate">
+            <span className="text-xs font-mono uppercase tracking-wider text-emerald-300 font-bold truncate">
               {t('Atelier Operations: Active', 'কারখানা ফ্লোর: সক্রিয়')}
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-bold font-serif-title text-cream-50 truncate sm:whitespace-normal">
             {t('Master Tailoring Dashboard', 'ডিজিটাল দর্জি অ্যাডমিন ড্যাশবোর্ড')}
           </h1>
-          <p className="text-xs text-cream-200 mt-1">
+          <p className="text-[13px] sm:text-sm text-[#E2E6EE] mt-1">
             {t(
               'Real-time control over pickups, bespoke cutting, artisan tailoring, and delivery dispatches.',
               'কাপড় পিকআপ, কাট ছাঁট, সেলাই স্টেজ এবং হোম ডেলিভারি ট্র্যাকিং।'
@@ -108,14 +108,14 @@ export const AdminDashboard: React.FC = () => {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => navigate('/admin/orders')}
-            className="px-3.5 py-2 bg-cream-50 text-purple-950 hover:bg-cream-100 text-xs font-bold rounded-xl shadow-md flex items-center gap-1.5 cursor-pointer transition-colors"
+            className="px-3.5 py-2 bg-cream-50 text-[#18202C] hover:bg-cream-100 text-[13px] font-bold rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
           >
             <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
             <span>{t('Manage All Orders', 'সকল অর্ডার দেখুন')}</span>
           </button>
           <button
             onClick={fetchDashboard}
-            className="p-2 bg-purple-900/80 hover:bg-purple-900 text-cream-100 rounded-xl border border-purple-800 cursor-pointer"
+            className="p-2 bg-[#232D3F] hover:bg-[#2C374B] text-cream-100 rounded-xl border border-[#364050] cursor-pointer"
             title="Refresh"
           >
             <RefreshCw className="w-3.5 h-3.5" />

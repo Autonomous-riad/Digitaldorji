@@ -1227,12 +1227,27 @@ class Database {
     return INITIAL_DB;
   }
 
+  private isSaving = false;
+  private pendingSave = false;
+
   private saveData(data: DatabaseSchema) {
-    try {
-      fs.writeFileSync(DB_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
-    } catch (err) {
-      console.error('Failed to write DB file:', err);
+    if (this.isSaving) {
+      this.pendingSave = true;
+      return;
     }
+    this.isSaving = true;
+    const payload = JSON.stringify(data, null, 2);
+    fs.promises.writeFile(DB_FILE_PATH, payload, 'utf-8')
+      .catch(err => {
+        console.error('Failed to write DB file:', err);
+      })
+      .finally(() => {
+        this.isSaving = false;
+        if (this.pendingSave) {
+          this.pendingSave = false;
+          this.saveData(this.data);
+        }
+      });
   }
 
   public getData(): DatabaseSchema {

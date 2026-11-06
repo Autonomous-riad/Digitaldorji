@@ -187,7 +187,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
       <div className="flex-1 flex min-w-0 overflow-hidden">
         {/* Desktop Sidebar Navigation */}
         <aside className="hidden lg:flex flex-col w-64 bg-cream-50 border-r border-cream-300 p-4 space-y-1 shrink-0 overflow-y-auto">
-          <div className="px-3 py-2 text-[11px] font-bold text-purple-950/70 uppercase tracking-wider">
+          <div className="px-3 py-2 text-xs font-bold text-[#3B4454] uppercase tracking-wider">
             {t('Atelier Management', 'কারখানা ব্যবস্থাপনা')}
           </div>
           
@@ -199,10 +199,10 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-[13.5px] font-semibold transition-all cursor-pointer ${
                   isActive
                     ? 'bg-purple-950 text-cream-50 shadow-xs'
-                    : 'text-purple-950/80 hover:text-purple-950 hover:bg-cream-200'
+                    : 'text-[#18202C] hover:text-purple-950 hover:bg-cream-200'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
@@ -215,12 +215,12 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
           })}
 
           <div className="mt-auto pt-6 border-t border-cream-300 px-2 space-y-2">
-            <div className="p-2.5 bg-cream-200/60 rounded-xl border border-cream-300 text-[11px] text-purple-950/80">
+            <div className="p-2.5 bg-cream-200/60 rounded-xl border border-cream-300 text-xs text-[#18202C]">
               <div className="flex items-center gap-1.5 text-purple-950 font-bold mb-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
                 <span>{t('Strict RBAC Active', 'নিরাপদ আরব্যাক')}</span>
               </div>
-              <p className="text-[10px] text-purple-950/70 leading-tight">
+              <p className="text-[11.5px] text-[#364050] leading-snug">
                 {t('Server verifies Shop Master token on every API call.', 'প্রতিটি এপিআই কলে সার্ভার টোকেন ও রোল যাচাই করা হয়।')}
               </p>
             </div>

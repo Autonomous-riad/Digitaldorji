@@ -601,21 +601,21 @@ export const MeasurementForm: React.FC = () => {
 
                       <div className="space-y-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <h4 className="text-sm font-bold text-stone-900">
+                          <h4 className="text-sm sm:text-[15px] font-bold text-[#18202C]">
                             {t(field.label_en, field.label_bn)}
                           </h4>
                           {field.required !== false ? (
-                            <span className="text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+                            <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
                               {t('Required *', 'আবশ্যক *')}
                             </span>
                           ) : (
-                            <span className="text-[10px] font-medium text-stone-600 bg-stone-100 px-1.5 py-0.2 rounded">
+                            <span className="text-[11px] font-medium text-[#364050] bg-stone-100 px-1.5 py-0.2 rounded">
                               {t('Optional', 'ঐচ্ছিক')}
                             </span>
                           )}
 
                           {isHoveredOrActive && (
-                            <span className="text-[10px] font-bold text-amber-900 bg-amber-100/90 px-1.5 py-0.2 rounded border border-amber-300 flex items-center gap-1">
+                            <span className="text-[11px] font-bold text-amber-900 bg-amber-100/90 px-1.5 py-0.2 rounded border border-amber-300 flex items-center gap-1">
                               <Sparkles className="w-2.5 h-2.5 text-amber-700" />
                               {t('Live Guide', 'গাইড চালু')}
                             </span>
@@ -628,7 +628,7 @@ export const MeasurementForm: React.FC = () => {
                               e.stopPropagation();
                               setActiveInteractiveModalField(field);
                             }}
-                            className={`inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded cursor-pointer transition-colors font-medium shadow-2xs ${
+                            className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded cursor-pointer transition-colors font-medium shadow-2xs ${
                               isHoveredOrActive
                                 ? 'bg-purple-950 text-cream-50 hover:bg-purple-900'
                                 : 'text-amber-800 hover:text-amber-950 bg-amber-100/70 hover:bg-amber-200/80'
@@ -639,18 +639,18 @@ export const MeasurementForm: React.FC = () => {
                             <span>{t('Guide', 'গাইড')}</span>
                           </button>
                         </div>
-                        <p className="text-[11px] text-stone-500 line-clamp-1">
+                        <p className="text-xs text-[#364050] line-clamp-1">
                           {t(field.hint_en || '', field.hint_bn || '')}
                         </p>
                       </div>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-[11px] font-mono text-stone-700 bg-stone-100 px-2 py-0.5 rounded border border-stone-200 inline-block">
+                      <span className="text-xs font-mono text-[#364050] bg-stone-100 px-2 py-0.5 rounded border border-stone-200 inline-block">
                         {minDisplay} - {maxDisplay} {displayUnit}
                       </span>
                       {displayUnit === 'cm' && (
-                        <div className="text-[10px] text-stone-500 mt-0.5">
+                        <div className="text-[11px] text-[#4B5565] mt-0.5 font-mono">
                           ≈ {inchVal.toFixed(1)}" in
                         </div>
                       )}
@@ -658,7 +658,7 @@ export const MeasurementForm: React.FC = () => {
                   </div>
 
                   {!validation.valid && (
-                    <div className="flex items-center gap-1 text-[11px] font-semibold text-rose-700">
+                    <div className="flex items-center gap-1 text-xs font-semibold text-rose-700">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       <span>{t(validation.errorEn || 'Out of range', validation.errorBn || 'নির্ধারিত সীমার বাইরে')}</span>
                     </div>
@@ -678,7 +678,7 @@ export const MeasurementForm: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleStepChange(field, displayUnit === 'cm' ? -0.2 : -0.25)}
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-stone-300 hover:bg-amber-50 text-stone-800 text-[11px] sm:text-xs font-bold flex items-center justify-center transition-colors active:scale-95 shadow-xs cursor-pointer"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-stone-300 hover:bg-amber-50 text-stone-800 text-xs font-bold flex items-center justify-center transition-colors active:scale-95 shadow-xs cursor-pointer"
                         title={displayUnit === 'cm' ? '-0.5 cm' : '-0.25 inch'}
                       >
                         {displayUnit === 'cm' ? '-.5' : '-¼"'}
@@ -686,7 +686,7 @@ export const MeasurementForm: React.FC = () => {
                     </div>
 
                     {/* Central Display / Direct Input */}
-                    <div className="flex items-baseline justify-center gap-0.5 sm:gap-1 bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border-2 border-amber-600 shadow-xs min-w-[70px] sm:min-w-[90px]">
+                    <div className="flex items-baseline justify-center gap-0.5 sm:gap-1 bg-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border-2 border-amber-600 shadow-xs min-w-[75px] sm:min-w-[95px]">
                       <input
                         type="number"
                         inputMode="decimal"
@@ -700,16 +700,16 @@ export const MeasurementForm: React.FC = () => {
                             handleValueChange(field, val);
                           }
                         }}
-                        className="w-12 sm:w-16 text-center font-bold text-sm sm:text-lg text-stone-900 bg-transparent focus:outline-none font-mono"
+                        className="w-12 sm:w-16 text-center font-bold text-base sm:text-lg text-[#18202C] bg-transparent focus:outline-none font-mono"
                       />
-                      <span className="text-[10px] sm:text-xs font-bold text-amber-800">{displayUnit}</span>
+                      <span className="text-xs font-bold text-amber-800">{displayUnit}</span>
                     </div>
 
                     <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                       <button
                         type="button"
                         onClick={() => handleStepChange(field, displayUnit === 'cm' ? 0.2 : 0.25)}
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-stone-300 hover:bg-amber-50 text-stone-800 text-[11px] sm:text-xs font-bold flex items-center justify-center transition-colors active:scale-95 shadow-xs cursor-pointer"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white border border-stone-300 hover:bg-amber-50 text-stone-800 text-xs font-bold flex items-center justify-center transition-colors active:scale-95 shadow-xs cursor-pointer"
                         title={displayUnit === 'cm' ? '+0.5 cm' : '+0.25 inch'}
                       >
                         {displayUnit === 'cm' ? '+.5' : '+¼"'}

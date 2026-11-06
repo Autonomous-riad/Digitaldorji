@@ -547,11 +547,11 @@ export const CustomizerForm: React.FC = () => {
               {/* Group Header with "Compare Specs" and "Admin Picture Customizer" buttons */}
               <div className="flex items-start sm:items-center justify-between gap-3 mb-3 sm:mb-4 pb-2.5 border-b border-stone-200">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-stone-950 flex items-center gap-2 font-serif-title">
+                  <h3 className="text-[15px] sm:text-lg font-bold text-stone-950 flex items-center gap-2 font-serif-title">
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-900"></span>
                     {t(group.titleEn, group.titleBn)}
                   </h3>
-                  <p className="text-[11px] sm:text-xs text-stone-500 mt-0.5">
+                  <p className="text-xs sm:text-[13.5px] text-[#364050] mt-0.5">
                     {t('Choose how the master tailor should cut and assemble this component', 'টেইলার কীভাবে এই অংশটি নিখুঁতভাবে তৈরি করবে নির্বাচন করুন')}
                   </p>
                 </div>
@@ -702,7 +702,7 @@ export const CustomizerForm: React.FC = () => {
 
                         {/* Top-left Style Badge */}
                         {guide && (
-                          <div className="absolute top-1.5 left-1.5 px-1.5 sm:px-2 py-0.5 rounded bg-white backdrop-blur-xs text-amber-900 text-[9px] sm:text-[10px] font-semibold tracking-wide flex items-center gap-1 shadow-xs border border-amber-900/30 max-w-[48%] z-10">
+                          <div className="absolute top-1.5 left-1.5 px-1.5 sm:px-2 py-0.5 rounded bg-white backdrop-blur-xs text-amber-900 text-[10px] sm:text-xs font-semibold tracking-wide flex items-center gap-1 shadow-xs border border-amber-900/30 max-w-[48%] z-10">
                             <Award className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-800 shrink-0" />
                             <span className="truncate">{guide.badge}</span>
                           </div>
@@ -710,7 +710,7 @@ export const CustomizerForm: React.FC = () => {
 
                         {/* Selection check indicator */}
                         {isSelected && (
-                          <div className="absolute top-1.5 right-1.5 p-1 sm:px-2 sm:py-0.5 rounded-full sm:rounded bg-amber-900 text-white text-[9px] sm:text-[10px] font-bold tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 shadow-xs z-10 animate-checkmarkPop">
+                          <div className="absolute top-1.5 right-1.5 p-1 sm:px-2 sm:py-0.5 rounded-full sm:rounded bg-amber-900 text-white text-[10px] sm:text-xs font-bold tracking-wider uppercase flex items-center gap-0.5 sm:gap-1 shadow-xs z-10 animate-checkmarkPop">
                             <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                             <span className="hidden sm:inline">{t('Selected', 'নির্বাচিত')}</span>
                           </div>
@@ -740,11 +740,11 @@ export const CustomizerForm: React.FC = () => {
                       <div className="space-y-1">
                         <div className="flex items-start justify-between gap-1.5">
                           <div>
-                            <span className={`text-xs sm:text-sm font-bold block leading-tight ${isSelected ? 'text-amber-950 font-extrabold' : 'text-stone-900'}`}>
+                            <span className={`text-[13px] sm:text-[15px] font-bold block leading-snug ${isSelected ? 'text-amber-950 font-extrabold' : 'text-[#18202C]'}`}>
                               {t(option.labelEn, option.labelBn)}
                             </span>
                             {option.id === group.defaultOptionId && (
-                              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-amber-900 bg-amber-50 px-1.5 py-0.2 rounded mt-0.5 border border-amber-200">
+                              <span className="inline-flex items-center gap-0.5 text-[11px] font-bold text-amber-900 bg-amber-50 px-1.5 py-0.2 rounded mt-0.5 border border-amber-200">
                                 ★ {t('Tailor Pick', 'টেইলার্স চয়েস')}
                               </span>
                             )}
@@ -758,7 +758,7 @@ export const CustomizerForm: React.FC = () => {
 
                         {/* Non-Technical Clear Explanation */}
                         {guide && (
-                          <p className={`text-[10px] sm:text-[11px] text-stone-600 leading-relaxed ${viewMode === 'grid' ? 'line-clamp-1' : 'line-clamp-2'}`}>
+                          <p className={`text-xs text-[#364050] leading-relaxed ${viewMode === 'grid' ? 'line-clamp-2' : 'line-clamp-3'}`}>
                             {t(guide.simpleExplanation, guide.simpleExplanationBn)}
                           </p>
                         )}
@@ -767,8 +767,8 @@ export const CustomizerForm: React.FC = () => {
                         {viewMode === 'detailed' && guide && guide.visualHighlights && (
                           <div className="pt-1 space-y-1">
                             {guide.visualHighlights.slice(0, 2).map((highlight, hIdx) => (
-                              <div key={hIdx} className="flex items-center gap-1 text-[10px] text-stone-600">
-                                <Check className="w-2.5 h-2.5 text-amber-800 shrink-0" />
+                              <div key={hIdx} className="flex items-center gap-1 text-xs text-[#364050]">
+                                <Check className="w-3 h-3 text-amber-800 shrink-0" />
                                 <span className="truncate">{highlight}</span>
                               </div>
                             ))}
@@ -778,7 +778,7 @@ export const CustomizerForm: React.FC = () => {
                         {/* Best For Tag */}
                         {guide && (
                           <div className="pt-0.5 flex items-center gap-1 flex-wrap">
-                            <span className="text-[9px] sm:text-[10px] font-semibold text-stone-700 bg-stone-100 px-1.5 sm:px-2 py-0.5 rounded-md truncate max-w-full border border-stone-200">
+                            <span className="text-[11px] font-semibold text-[#364050] bg-stone-100 px-2 py-0.5 rounded-md truncate max-w-full border border-stone-200">
                               {t(`${guide.bestFor}`, `${guide.bestFor}`)}
                             </span>
                           </div>
@@ -787,10 +787,10 @@ export const CustomizerForm: React.FC = () => {
 
                       {/* Pricing Tag */}
                       <div className="flex items-center justify-between pt-1.5 sm:pt-2 border-t border-purple-100 text-xs">
-                        <span className="text-purple-950/60 text-[10px] sm:text-[11px]">
+                        <span className="text-[#4B5565] font-medium text-xs">
                           {option.priceDelta === 0 ? t('Included', 'অন্তর্ভুক্ত') : t('Charge', 'চার্জ')}
                         </span>
-                        <span className={`text-[11px] sm:text-xs font-bold ${option.priceDelta > 0 ? 'text-orange-800 font-extrabold' : 'text-orange-700 font-semibold'}`}>
+                        <span className={`text-xs sm:text-[13px] font-bold font-mono ${option.priceDelta > 0 ? 'text-orange-800 font-extrabold' : 'text-orange-700 font-semibold'}`}>
                           {option.priceDelta === 0 ? t('Free (৳০)', 'ফ্রি (৳০)') : `+ ৳${option.priceDelta}`}
                         </span>
                       </div>

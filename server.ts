@@ -110,11 +110,18 @@ async function startServer() {
 
   // Vite middleware in development or static serve in production
   if (!isProduction) {
-    const vite = await createViteServer({
+    const vitePromise = createViteServer({
       server: { middlewareMode: true, hmr: false },
       appType: 'spa',
     });
-    app.use(vite.middlewares);
+    app.use(async (req, res, next) => {
+      try {
+        const vite = await vitePromise;
+        vite.middlewares(req, res, next);
+      } catch (err) {
+        next(err);
+      }
+    });
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath, {
@@ -132,12 +139,24 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  // Start listening immediately so pre-warmer health checks on port 3000 never time out
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Digital Dorji server running on http://0.0.0.0:${PORT}`);
+  });
+
+  server.on('error', (err) => {
+    console.error('HTTP Server error:', err);
   });
 }
 
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception (kept server alive):', err);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled Rejection (kept server alive):', reason);
+});
+
 startServer().catch(err => {
   console.error('Failed to start server:', err);
-  process.exit(1);
 });

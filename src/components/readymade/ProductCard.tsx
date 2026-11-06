@@ -87,53 +87,53 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Body: flex-1 column with padding matching tailoring ItemCard */}
-      <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between space-y-2">
+      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2.5">
         <div className="space-y-1.5">
           {/* Category & Rating Subheader */}
-          <div className="flex items-center justify-between text-[9px] sm:text-xs font-mono font-medium text-purple-950/70 uppercase tracking-wider line-clamp-1">
+          <div className="flex items-center justify-between text-[11px] sm:text-xs font-mono font-semibold text-[#3B4454] uppercase tracking-wider line-clamp-1">
             <span className="truncate">{product.category}</span>
             <div className="flex items-center gap-1 text-purple-950 font-sans font-bold shrink-0 ml-1">
-              <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
               <span>{product.rating.toFixed(1)}</span>
-              <span className="text-[9px] text-purple-950/50">({product.review_count})</span>
+              <span className="text-[11px] text-[#4B5565]">({product.review_count})</span>
             </div>
           </div>
 
           {/* Bilingual Title Area: min-height identical to ItemCard */}
-          <div className="min-h-[2.4rem] sm:min-h-[3.25rem] flex flex-col justify-start">
+          <div className="min-h-[2.6rem] sm:min-h-[3.4rem] flex flex-col justify-start">
             <h3 
               onClick={() => navigate(`/ready-made/${product.slug}`)}
-              className="font-bold text-xs sm:text-base font-serif-title text-purple-950 leading-tight sm:leading-relaxed line-clamp-2 cursor-pointer group-hover:text-purple-800 transition-colors"
+              className="font-bold text-sm sm:text-[17px] font-serif-title text-purple-950 leading-snug sm:leading-normal line-clamp-2 cursor-pointer group-hover:text-purple-800 transition-colors"
             >
               {lang === 'bn' ? product.name_bn : product.name_en}
             </h3>
             {lang === 'en' && product.name_bn && (
-              <span className="text-[10px] sm:text-[11px] text-purple-950/70 font-normal line-clamp-1 leading-normal sm:leading-relaxed">
+              <span className="text-xs text-[#3B4454] font-medium line-clamp-1 leading-relaxed font-bengali">
                 {product.name_bn}
               </span>
             )}
             {lang === 'bn' && product.name_en && (
-              <span className="text-[10px] sm:text-[11px] text-purple-950/70 font-normal line-clamp-1 leading-normal sm:leading-relaxed">
+              <span className="text-xs text-[#3B4454] font-medium line-clamp-1 leading-relaxed">
                 {product.name_en}
               </span>
             )}
           </div>
 
           {/* Description */}
-          <p className="text-xs text-purple-950/80 line-clamp-2 leading-relaxed hidden sm:block">
+          <p className="text-[13px] text-[#364050] line-clamp-2 leading-relaxed hidden sm:block">
             {lang === 'bn' ? product.description_bn : product.description_en}
           </p>
 
           {/* Specs / Meta Pill Container: 2-column grid identical to ItemCard */}
-          <div className="grid grid-cols-1 gap-1 xs:grid-cols-2 sm:grid-cols-2 sm:gap-2 text-[9px] sm:text-xs">
-            <div className="flex items-center justify-between p-1 sm:p-2 rounded-lg bg-cream-200/80 border border-cream-300">
-              <span className="text-purple-950/70 truncate">{t('Sizes:', 'সাইজ:')}</span>
+          <div className="grid grid-cols-1 gap-1.5 xs:grid-cols-2 sm:grid-cols-2 sm:gap-2 text-xs">
+            <div className="flex items-center justify-between px-2 py-1.5 sm:p-2 rounded-lg bg-cream-200/90 border border-cream-300">
+              <span className="text-[#3B4454] font-medium truncate">{t('Sizes:', 'সাইজ:')}</span>
               <span className="font-bold text-purple-950 truncate ml-1">
                 {product.available_sizes?.slice(0, 3).join(', ') || 'S-XL'}
               </span>
             </div>
-            <div className="flex items-center justify-between p-1 sm:p-2 rounded-lg bg-cream-200/80 border border-cream-300">
-              <span className="text-purple-950/70 truncate">{t('Dispatch:', 'ডেলিভারি:')}</span>
+            <div className="flex items-center justify-between px-2 py-1.5 sm:p-2 rounded-lg bg-cream-200/90 border border-cream-300">
+              <span className="text-[#3B4454] font-medium truncate">{t('Dispatch:', 'ডেলিভারি:')}</span>
               <span className="font-bold text-purple-950 shrink-0 ml-1">
                 {lang === 'bn' ? '২৪-৪৮ঘ' : '24-48h'}
               </span>
@@ -142,17 +142,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Pricing and Actions: bottom aligned with mt-auto */}
-        <div className="mt-auto pt-2 border-t border-cream-300 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-1.5 sm:gap-2">
+        <div className="mt-auto pt-2.5 border-t border-cream-300 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
           <div className="flex items-baseline justify-between sm:block">
-            <span className="text-[9px] sm:text-[10px] text-purple-950/70 block leading-none">
+            <span className="text-[11px] font-medium text-[#3B4454] block leading-none mb-0.5">
               {isSale ? t('Special Price', 'অফার মূল্য') : t('Price', 'মূল্য')}
             </span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-sm sm:text-lg font-extrabold text-purple-950 font-mono leading-tight">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-base sm:text-lg font-extrabold text-purple-950 font-mono leading-tight">
                 {formatBDT(product.sale_price ?? product.base_price, { useBanglaNumerals: lang === 'bn' })}
               </span>
               {isSale && (
-                <span className="text-[10px] sm:text-xs text-purple-950/40 line-through font-mono">
+                <span className="text-xs text-[#656B60] line-through font-mono">
                   {formatBDT(product.base_price, { useBanglaNumerals: lang === 'bn' })}
                 </span>
               )}
