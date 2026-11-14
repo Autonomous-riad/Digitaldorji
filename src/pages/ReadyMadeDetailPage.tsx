@@ -47,6 +47,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
   const [activeImage, setActiveImage] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
+  const [selectedCustoms, setSelectedCustoms] = useState<Record<string, SelectedCustomization>>({});
   const [quantity, setQuantity] = useState(1);
   const [sizeChartOpen, setSizeChartOpen] = useState(false);
   const [addNotice, setAddNotice] = useState<string | null>(null);
@@ -79,6 +80,26 @@ export const ReadyMadeDetailPage: React.FC = () => {
           setSelectedSize(firstInStock.size);
           setSelectedColor(firstInStock.color);
         }
+
+        // Pre-select default options for customization groups
+        const defaultCustoms: Record<string, SelectedCustomization> = {};
+        if (prod.customization_groups && prod.customization_groups.length > 0) {
+          prod.customization_groups.forEach(group => {
+            const defOpt = group.options.find(o => o.is_default) || (group.required ? group.options[0] : undefined);
+            if (defOpt) {
+              defaultCustoms[group.id] = {
+                group_id: group.id,
+                group_name_en: group.name_en,
+                group_name_bn: group.name_bn,
+                option_id: defOpt.id,
+                label_en: defOpt.label_en,
+                label_bn: defOpt.label_bn,
+                price_adjustment: defOpt.price_adjustment
+              };
+            }
+          });
+        }
+        setSelectedCustoms(defaultCustoms);
 
         // Fetch related
         const relRes = await fetch(`/api/ready-made/products/${slug}/related`);
@@ -138,7 +159,9 @@ export const ReadyMadeDetailPage: React.FC = () => {
   // Price calculations
   const basePrice = product.sale_price ?? product.base_price;
   const variantAdjustment = activeVariant ? activeVariant.price_adjustment : 0;
-  const liveUnitPrice = basePrice + variantAdjustment;
+  const selectedCustomsList = Object.values(selectedCustoms);
+  const customizationAdjustment = selectedCustomsList.reduce((sum, c) => sum + (c.price_adjustment || 0), 0);
+  const liveUnitPrice = basePrice + variantAdjustment + customizationAdjustment;
   const liveTotalPrice = liveUnitPrice * quantity;
 
   const handleAddToCart = (openCheckout = false) => {
@@ -149,7 +172,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
       return;
     }
 
-    const res = addToCart(product, activeVariant, [], quantity);
+    const res = addToCart(product, activeVariant, selectedCustomsList, quantity);
     if (!res.success) {
       setAddNotice(res.message || 'Could not add to cart');
       setTimeout(() => setAddNotice(null), 3000);
@@ -377,6 +400,71 @@ export const ReadyMadeDetailPage: React.FC = () => {
                       );
                     })}
                   </div>
+                </div>
+              )}
+
+              {/* Ready-Made Product Customization Add-ons */}
+              {product.customization_groups && product.customization_groups.length > 0 && (
+                <div className="pt-3 border-t border-cream-300 space-y-4">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-purple-950 uppercase tracking-wider">
+                    <SlidersHorizontal className="w-3.5 h-3.5 text-purple-800" />
+                    <span>{t('Atelier Finishing & Add-ons', 'অতিরিক্ত কাস্টমাইজেশন')}</span>
+                  </div>
+
+                  {product.customization_groups.map((group) => {
+                    const activeOptId = selectedCustoms[group.id]?.option_id;
+                    return (
+                      <div key={group.id} className="space-y-1.5">
+                        <span className="text-xs font-semibold text-purple-950 block">
+                          {lang === 'bn' ? group.name_bn : group.name_en}
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {group.options.map((opt) => {
+                            const isSelected = activeOptId === opt.id;
+                            return (
+                              <button
+                                key={opt.id}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedCustoms(prev => {
+                                    if (isSelected && !group.required) {
+                                      const copy = { ...prev };
+                                      delete copy[group.id];
+                                      return copy;
+                                    }
+                                    return {
+                                      ...prev,
+                                      [group.id]: {
+                                        group_id: group.id,
+                                        group_name_en: group.name_en,
+                                        group_name_bn: group.name_bn,
+                                        option_id: opt.id,
+                                        label_en: opt.label_en,
+                                        label_bn: opt.label_bn,
+                                        price_adjustment: opt.price_adjustment
+                                      }
+                                    };
+                                  });
+                                }}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer flex items-center gap-1.5 ${
+                                  isSelected
+                                    ? 'bg-purple-950 text-cream-50 border-purple-950 shadow-2xs'
+                                    : 'bg-cream-100 text-purple-950 border-cream-300 hover:bg-cream-200'
+                                }`}
+                              >
+                                <span>{lang === 'bn' ? opt.label_bn : opt.label_en}</span>
+                                {opt.price_adjustment > 0 && (
+                                  <span className={`font-mono text-[11px] font-bold ${isSelected ? 'text-amber-300' : 'text-purple-800'}`}>
+                                    +৳{opt.price_adjustment}
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

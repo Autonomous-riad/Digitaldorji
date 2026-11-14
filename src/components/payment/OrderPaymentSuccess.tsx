@@ -25,15 +25,20 @@ interface OrderPaymentSuccessProps {
 
 export const OrderPaymentSuccess: React.FC<OrderPaymentSuccessProps> = ({ orderNumber }) => {
   const { navigate } = useRouter();
-  const { t, setActiveTrackingId, setActiveStep } = useTailor();
+  const { t, orders, latestCreatedOrder, setActiveTrackingId, setActiveStep } = useTailor();
 
   const query = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const tranId = query.get('tran_id') || '';
   const queryAmount = query.get('amount');
+  const queryPhone = query.get('phone') || '';
   const isCod = query.get('method') === 'cod';
 
-  const [order, setOrder] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
+  const localOrder = (latestCreatedOrder && (latestCreatedOrder.orderNumber === orderNumber || latestCreatedOrder.id === orderNumber))
+    ? latestCreatedOrder
+    : orders.find(o => o.orderNumber === orderNumber || o.id === orderNumber);
+
+  const [order, setOrder] = useState<any | null>(localOrder || null);
+  const [loading, setLoading] = useState(!localOrder);
 
   useEffect(() => {
     // Launch celebratory confetti
@@ -45,9 +50,8 @@ export const OrderPaymentSuccess: React.FC<OrderPaymentSuccessProps> = ({ orderN
 
     // Fetch order details from tracking API
     if (orderNumber && orderNumber !== 'success') {
-      // In guest tracking, phone number might not be known yet, but ordersApi.trackOrder
-      // or direct order fetch can be tried
-      fetch(`/api/orders/track?orderNumber=${encodeURIComponent(orderNumber)}&phone=all`)
+      const resolvedPhone = queryPhone || localOrder?.customerPhone || localOrder?.pickupAddress?.phone || 'all';
+      fetch(`/api/orders/track?orderNumber=${encodeURIComponent(orderNumber)}&phone=${encodeURIComponent(resolvedPhone)}`)
         .then(res => res.json())
         .then(data => {
           if (data.order) {
@@ -59,15 +63,15 @@ export const OrderPaymentSuccess: React.FC<OrderPaymentSuccessProps> = ({ orderN
     } else {
       setLoading(false);
     }
-  }, [orderNumber]);
+  }, [orderNumber, queryPhone]);
 
   const displayOrderNum = order?.orderNumber || orderNumber;
   const grandTotal = order?.grandTotal || (queryAmount ? Number(queryAmount) : 0);
   const advancePaid = order?.advancePaid || (queryAmount ? Number(queryAmount) : grandTotal);
-  const balanceDue = order?.balanceDue || Math.max(0, grandTotal - advancePaid);
-  const isAdvance = order?.paymentStatus === 'advance_paid' || (balanceDue > 0 && advancePaid > 0);
+  const balanceDue = order?.balanceDue ?? Math.max(0, grandTotal - advancePaid);
+  const isAdvance = order?.paymentStatus === 'advance_paid' || (!isCod && balanceDue > 0 && advancePaid > 0);
 
-  const customerPhone = order?.customerPhone || order?.pickupAddress?.phone || '017XXXXXXXX';
+  const customerPhone = order?.customerPhone || order?.pickupAddress?.phone || queryPhone || '017XXXXXXXX';
   const garmentName = order?.garment?.nameEn || 'Custom Tailored Garment';
   const pickupAddress = order?.pickupAddress ? `${order.pickupAddress.streetAddress}, ${order.pickupAddress.area}, ${order.pickupAddress.division}` : 'Dhaka, Bangladesh';
 

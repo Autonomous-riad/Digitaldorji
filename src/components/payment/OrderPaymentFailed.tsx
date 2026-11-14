@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from '../../context/RouterContext';
 import { useTailor } from '../../context/TailorContext';
 import { paymentApi } from '../../services/api';
+import { toast } from 'sonner';
 import { 
   AlertCircle, 
   RotateCcw, 
@@ -62,10 +63,10 @@ export const OrderPaymentFailed: React.FC<OrderPaymentFailedProps> = ({ orderNum
       if (res.GatewayPageURL) {
         window.location.href = res.GatewayPageURL;
       } else {
-        alert('Could not launch payment gateway. Please try Cash on Delivery.');
+        toast.error(t('Could not launch payment gateway. Please try Cash on Delivery.', 'পেমেন্ট গেটওয়ে চালু করা যায়নি। ক্যাশ অন ডেলিভারি চেষ্টা করুন।'));
       }
     } catch (err: any) {
-      alert(err.message || 'Error initializing payment gateway.');
+      toast.error(err.message || t('Error initializing payment gateway.', 'পেমেন্ট গেটওয়েতে ত্রুটি হয়েছে।'));
     } finally {
       setIsRetrying(false);
     }
@@ -157,7 +158,7 @@ export const OrderPaymentFailed: React.FC<OrderPaymentFailedProps> = ({ orderNum
           type="button"
           onClick={() => {
             setActiveStep('checkout');
-            navigate('/checkout');
+            navigate('/');
           }}
           className="text-xs text-indigo-700 hover:text-indigo-800 font-medium inline-flex items-center gap-1 cursor-pointer"
         >

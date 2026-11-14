@@ -147,16 +147,30 @@ paymentRouter.post('/initiate', async (req: Request, res: Response) => {
           noteEn: `Cash on Delivery selected. ৳${o.grandTotal} to be collected upon physical delivery.`,
           noteBn: `ক্যাশ অন ডেলিভারি নির্বাচিত। ডেলিভারির সময় ৳${o.grandTotal} সংগ্রহ করা হবে।`,
         });
+      } else if (d.ready_made_orders) {
+        const rmo = d.ready_made_orders.find(item => item.id === order.id || item.order_number === order.orderNumber);
+        if (rmo) {
+          rmo.payment_method = 'cod';
+          rmo.payment_status = 'pending';
+          rmo.order_status = 'Confirmed';
+          if (!rmo.status_history) rmo.status_history = [];
+          rmo.status_history.push({
+            status: 'Confirmed',
+            timestamp: new Date().toISOString(),
+            note: `Switched to Cash on Delivery (৳${rmo.total}).`
+          });
+        }
       }
     });
 
+    const codPhone = order.customerPhone || order.pickupAddress?.phone || '';
     return res.json({
       status: 'COD_SELECTED',
       message: 'Cash on delivery selected. Payment status set to cod_pending.',
       orderNumber: order.orderNumber,
       orderId: order.id,
       paymentStatus: 'cod_pending',
-      redirectUrl: `/order/${order.orderNumber}/success?method=cod`,
+      redirectUrl: `/order/${order.orderNumber}/success?method=cod${codPhone ? `&phone=${encodeURIComponent(codPhone)}` : ''}`,
     });
   }
 
@@ -286,7 +300,7 @@ async function processSuccessfulPayment(payload: any, res: Response) {
     }
 
     // 3. Fallback to most recent bespoke order ONLY if orderNumber is not for a ready-made order
-    if (!matchedOrder && !matchedReadyMadeOrder && (!orderNumber || !orderNumber.startsWith('RMO-')) && d.orders.length > 0) {
+    if (!matchedOrder && !matchedReadyMadeOrder && (!orderNumber || (!orderNumber.startsWith('RMO-') && !orderNumber.startsWith('RM-'))) && d.orders.length > 0) {
       matchedOrder = d.orders[0];
     }
 
@@ -393,7 +407,8 @@ async function processSuccessfulPayment(payload: any, res: Response) {
 
   const redirectOrderNumber = matchedReadyMadeOrder?.order_number || matchedOrder?.orderNumber || orderNumber || 'success';
   const trxId = valData.bank_tran_id || valData.tran_id || tran_id || '';
-  return res.redirect(`/order/${redirectOrderNumber}/success?tran_id=${encodeURIComponent(trxId)}&amount=${verifiedAmount}`);
+  const redirectPhone = matchedReadyMadeOrder?.customer_phone || matchedOrder?.customerPhone || matchedOrder?.pickupAddress?.phone || '';
+  return res.redirect(`/order/${redirectOrderNumber}/success?tran_id=${encodeURIComponent(trxId)}&amount=${verifiedAmount}${redirectPhone ? `&phone=${encodeURIComponent(redirectPhone)}` : ''}`);
 }
 
 /**

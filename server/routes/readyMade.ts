@@ -339,7 +339,8 @@ router.post('/orders', (req: Request, res: Response) => {
         item.item_type === 'tailored' || 
         item.category === 'fabric' || 
         String(item.variant_id || '').startsWith('fabric-') ||
-        String(item.variant_id || '').startsWith('tailored-')
+        String(item.variant_id || '').startsWith('tailored-') ||
+        String(item.variant_id || '').startsWith('tailor-')
       ) {
         continue;
       }

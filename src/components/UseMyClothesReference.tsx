@@ -43,19 +43,24 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
   // Default flat dimensions mapping based on activeGarment schema
   const dimensions = referenceClothDetails.approxDimensions || {};
 
-  const handleDimensionChange = (key: string, rawVal: number) => {
-    if (isNaN(rawVal)) return;
-    const inchVal = displayUnit === 'cm' ? cmToInch(rawVal) : rawVal;
-    const updated = { ...dimensions, [key]: inchVal };
+  const setInchDimension = (key: string, inchVal: number) => {
+    const cleanInch = Math.max(5, Math.min(80, Number(inchVal.toFixed(2))));
+    const updated = { ...dimensions, [key]: cleanInch };
     updateReferenceClothDetails({ approxDimensions: updated });
 
     // Also update main measurements state if corresponding field exists
-    updateMeasurement(key, inchVal);
-    if (key === 'chest') updateMeasurement('bust', inchVal);
+    updateMeasurement(key, cleanInch);
+    if (key === 'chest') updateMeasurement('bust', cleanInch);
     if (key === 'length') {
-      updateMeasurement('shirt_length', inchVal);
-      updateMeasurement('kameez_length', inchVal);
+      updateMeasurement('shirt_length', cleanInch);
+      updateMeasurement('kameez_length', cleanInch);
     }
+  };
+
+  const handleDimensionChange = (key: string, rawVal: number) => {
+    if (isNaN(rawVal)) return;
+    const inchVal = displayUnit === 'cm' ? cmToInch(rawVal) : rawVal;
+    setInchDimension(key, inchVal);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -393,7 +398,7 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
                 <div className="flex items-center gap-2 pt-1">
                   <button
                     type="button"
-                    onClick={() => handleDimensionChange(f.key, Math.max(10, currentInch - 0.5))}
+                    onClick={() => setInchDimension(f.key, Math.max(10, currentInch - 0.5))}
                     className="w-8 h-8 rounded-lg bg-cream-50 border border-cream-300 hover:bg-cream-200 text-purple-950 flex items-center justify-center cursor-pointer transition-colors shadow-2xs"
                   >
                     <Minus className="w-3.5 h-3.5" />
@@ -412,7 +417,7 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
 
                   <button
                     type="button"
-                    onClick={() => handleDimensionChange(f.key, Math.min(80, currentInch + 0.5))}
+                    onClick={() => setInchDimension(f.key, Math.min(80, currentInch + 0.5))}
                     className="w-8 h-8 rounded-lg bg-cream-50 border border-cream-300 hover:bg-cream-200 text-purple-950 flex items-center justify-center cursor-pointer transition-colors shadow-2xs"
                   >
                     <Plus className="w-3.5 h-3.5" />

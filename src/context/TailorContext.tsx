@@ -217,11 +217,27 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   };
 
+  const SESSION_DRAFT_KEY = 'digitaldorji_wizard_draft_v1';
+
+  const loadDraftFromSession = () => {
+    try {
+      const raw = sessionStorage.getItem(SESSION_DRAFT_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return null;
+  };
+
+  const initialDraft = loadDraftFromSession();
+
   const [garments, setGarments] = useState<GarmentItem[]>(() => applyCustomOptionImages(GARMENTS_DATA));
-  const [selectedShopFabric, setSelectedShopFabric] = useState<FabricProduct | null>(null);
+  const [selectedShopFabric, setSelectedShopFabric] = useState<FabricProduct | null>(
+    () => initialDraft?.selectedShopFabric ?? null
+  );
 
   // Catalog & Active item
-  const [activeGarment, setActiveGarment] = useState<GarmentItem | null>(null);
+  const [activeGarment, setActiveGarment] = useState<GarmentItem | null>(
+    () => initialDraft?.activeGarment ?? null
+  );
 
   // Unified dynamic database fetch
   useEffect(() => {
@@ -258,59 +274,115 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
     loadCatalogData();
   }, [activeStep]);
-  const [measurementMethod, setMeasurementMethod] = useState<MeasurementMethod>('custom_manual');
-  const [measurements, setMeasurements] = useState<Record<string, number>>({});
-  const [selectedSizePreset, setSelectedSizePreset] = useState<string>('M (38")');
-  const [referenceClothDetails, setReferenceClothDetails] = useState<ReferenceClothDetails>({
-    itemType: 'Sample Reference Clothing',
-    description: '',
-    pickupMode: 'runner_pickup',
-    pickupAddressNote: '',
-    adjustmentNotes: '',
-    fitPreference: 'exact_sample',
-    samplePhotoUrl: '',
-    tagNumber: `REF-${Math.floor(1000 + Math.random() * 9000)}`
-  });
+  const [measurementMethod, setMeasurementMethod] = useState<MeasurementMethod>(
+    () => initialDraft?.measurementMethod ?? 'custom_manual'
+  );
+  const [measurements, setMeasurements] = useState<Record<string, number>>(
+    () => initialDraft?.measurements ?? {}
+  );
+  const [selectedSizePreset, setSelectedSizePreset] = useState<string>(
+    () => initialDraft?.selectedSizePreset ?? 'M (38")'
+  );
+  const [referenceClothDetails, setReferenceClothDetails] = useState<ReferenceClothDetails>(
+    () => initialDraft?.referenceClothDetails ?? {
+      itemType: 'Sample Reference Clothing',
+      description: '',
+      pickupMode: 'runner_pickup',
+      pickupAddressNote: '',
+      adjustmentNotes: '',
+      fitPreference: 'exact_sample',
+      samplePhotoUrl: '',
+      tagNumber: `REF-${Math.floor(1000 + Math.random() * 9000)}`
+    }
+  );
 
   const updateReferenceClothDetails = (details: Partial<ReferenceClothDetails>) => {
     setReferenceClothDetails(prev => ({ ...prev, ...details }));
   };
-  const [selectedCustomizations, setSelectedCustomizations] = useState<Record<string, string>>({});
-  const [stitchingSpecs, setStitchingSpecs] = useState<StitchingSpecifications>(DEFAULT_STITCHING_SPECS);
+  const [selectedCustomizations, setSelectedCustomizations] = useState<Record<string, string>>(
+    () => initialDraft?.selectedCustomizations ?? {}
+  );
+  const [stitchingSpecs, setStitchingSpecs] = useState<StitchingSpecifications>(
+    () => initialDraft?.stitchingSpecs ?? DEFAULT_STITCHING_SPECS
+  );
   
-  // Fabric details chosen from shop catalog
-  const [fabricDetails, setFabricDetails] = useState<FabricDetails>({
-    fabricSource: 'shop_fabric',
-    hasFabricAtHome: false,
-    fabricType: DIGITAL_FABRICS_DATA[0]?.nameEn || 'Royal Egyptian Cotton',
-    colorName: DIGITAL_FABRICS_DATA[0]?.colorName || 'Pure White',
-    lengthGaz: 2.5,
-    needLiningAstra: false,
-    specialInstructions: '',
-    selectedShopFabricId: DIGITAL_FABRICS_DATA[0]?.id,
-    selectedShopFabric: DIGITAL_FABRICS_DATA[0],
-    fabricCost: DIGITAL_FABRICS_DATA[0] ? 2.5 * DIGITAL_FABRICS_DATA[0].pricePerGaz : 1200
-  });
+  // Fabric details: synchronized with selectedShopFabric (starts unselected/0 cost until chosen)
+  const [fabricDetails, setFabricDetails] = useState<FabricDetails>(
+    () => initialDraft?.fabricDetails ?? {
+      fabricSource: 'shop_fabric',
+      hasFabricAtHome: false,
+      fabricType: DIGITAL_FABRICS_DATA[0]?.nameEn || 'Royal Egyptian Cotton',
+      colorName: DIGITAL_FABRICS_DATA[0]?.colorName || 'Pure White',
+      lengthGaz: 2.5,
+      needLiningAstra: false,
+      specialInstructions: '',
+      selectedShopFabricId: undefined,
+      selectedShopFabric: undefined,
+      fabricCost: 0
+    }
+  );
 
   // Pickup Address in Bangladesh with division, district, thana
-  const [pickupAddress, setPickupAddress] = useState<PickupAddress>({
-    fullName: '',
-    phone: '',
-    division: 'Dhaka',
-    district: 'dhaka',
-    thana: 'dhanmondi',
-    area: 'Dhanmondi',
-    streetAddress: '',
-    apartmentFloor: '',
-    landmark: '',
-    pickupDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
-    pickupSlot: 'morning',
-  });
+  const [pickupAddress, setPickupAddress] = useState<PickupAddress>(
+    () => initialDraft?.pickupAddress ?? {
+      fullName: '',
+      phone: '',
+      division: 'Dhaka',
+      district: 'dhaka',
+      thana: 'dhanmondi',
+      area: 'Dhanmondi',
+      streetAddress: '',
+      apartmentFloor: '',
+      landmark: '',
+      pickupDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
+      pickupSlot: 'morning',
+    }
+  );
 
-  const [deliveryUrgency, setDeliveryUrgency] = useState<DeliveryUrgency>('standard');
+  const [deliveryUrgency, setDeliveryUrgency] = useState<DeliveryUrgency>(
+    () => initialDraft?.deliveryUrgency ?? 'standard'
+  );
   const [appliedPromoCode, setAppliedPromoCode] = useState<string>('');
   const [promoDiscount, setPromoDiscount] = useState<number>(0);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(
+    () => initialDraft?.paymentMethod ?? 'cod'
+  );
+
+  // Persist wizard draft state in sessionStorage so full-page payment redirects preserve user work
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(
+        SESSION_DRAFT_KEY,
+        JSON.stringify({
+          activeGarment,
+          selectedShopFabric,
+          measurementMethod,
+          measurements,
+          selectedSizePreset,
+          referenceClothDetails,
+          selectedCustomizations,
+          stitchingSpecs,
+          fabricDetails,
+          pickupAddress,
+          deliveryUrgency,
+          paymentMethod
+        })
+      );
+    } catch {}
+  }, [
+    activeGarment,
+    selectedShopFabric,
+    measurementMethod,
+    measurements,
+    selectedSizePreset,
+    referenceClothDetails,
+    selectedCustomizations,
+    stitchingSpecs,
+    fabricDetails,
+    pickupAddress,
+    deliveryUrgency,
+    paymentMethod
+  ]);
   
   // Orders & Saved Profiles
   // Privacy & Demo Isolation: Fresh guest sessions start with clean state (no prefilled profiles or orders)

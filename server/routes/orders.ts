@@ -101,22 +101,31 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     selectedSizePreset: orderData.selectedSizePreset,
     selectedCustomizations: orderData.selectedCustomizations || {},
     fabricDetails: orderData.fabricDetails || {
-      fabricSource: 'customer_own',
+      fabricSource: 'customer_provided',
       hasFabricAtHome: true,
       fabricType: 'Cotton',
       colorName: 'Standard',
       lengthGaz: 3.5
     },
-    pickupAddress: {
-      fullName,
-      phone,
-      division,
-      area,
-      streetAddress,
-      apartmentFloor: orderData.pickupAddress?.apartmentFloor || '',
-      pickupDate: orderData.pickupAddress?.pickupDate || new Date(Date.now() + 86400000).toISOString().split('T')[0],
-      pickupTimeSlot: orderData.pickupAddress?.pickupTimeSlot || 'morning_10_1'
-    },
+    pickupAddress: (() => {
+      const rawSlot = orderData.pickupAddress?.pickupSlot || orderData.pickupAddress?.pickupTimeSlot || 'morning';
+      const normalizedSlot = rawSlot === 'morning_10_1' || rawSlot === 'morning'
+        ? 'morning'
+        : rawSlot === 'evening'
+        ? 'evening'
+        : 'afternoon';
+      return {
+        fullName,
+        phone,
+        division,
+        area,
+        streetAddress,
+        apartmentFloor: orderData.pickupAddress?.apartmentFloor || '',
+        pickupDate: orderData.pickupAddress?.pickupDate || new Date(Date.now() + 86400000).toISOString().split('T')[0],
+        pickupSlot: normalizedSlot,
+        pickupTimeSlot: normalizedSlot
+      };
+    })(),
     deliveryUrgency: orderData.deliveryUrgency || 'standard',
     estimatedDeliveryDate,
     
@@ -160,6 +169,14 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     idempotencyKey: idempotencyKey || undefined
   };
 
+  const slotKey = newOrder.pickupAddress.pickupSlot;
+  const timeSlotMap: Record<string, { timeSlot: string; slotLabel: string }> = {
+    morning: { timeSlot: '10:00 AM - 01:00 PM', slotLabel: 'Morning (10 AM - 1 PM)' },
+    afternoon: { timeSlot: '02:00 PM - 05:00 PM', slotLabel: 'Afternoon (2 PM - 5 PM)' },
+    evening: { timeSlot: '06:00 PM - 09:00 PM', slotLabel: 'Evening (6 PM - 9 PM)' }
+  };
+  const resolvedSlot = timeSlotMap[slotKey] || timeSlotMap.morning;
+
   // Create pickup logistics record
   const newPickup = {
     id: `pic-${Date.now().toString(36)}`,
@@ -177,15 +194,15 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     pickup_address: `${streetAddress}, ${orderData.pickupAddress?.apartmentFloor || ''}`,
     scheduledDate: newOrder.pickupAddress.pickupDate,
     preferred_date: newOrder.pickupAddress.pickupDate,
-    timeSlot: newOrder.pickupAddress.pickupTimeSlot === 'morning_10_1' ? '10:00 AM - 01:00 PM' : '02:00 PM - 06:00 PM',
-    slot: newOrder.pickupAddress.pickupTimeSlot === 'morning_10_1' ? 'Morning (10 AM - 1 PM)' : 'Afternoon (2 PM - 6 PM)',
-    preferred_slot: newOrder.pickupAddress.pickupTimeSlot === 'morning_10_1' ? 'morning' : 'afternoon',
+    timeSlot: resolvedSlot.timeSlot,
+    slot: resolvedSlot.slotLabel,
+    preferred_slot: slotKey,
     status: 'scheduled',
     assignedRider: 'Md. Kamrul Hasan',
     fabricType: newOrder.fabricDetails.fabricType,
     colorName: newOrder.fabricDetails.colorName,
     lengthGaz: newOrder.fabricDetails.lengthGaz || 3.5,
-    sampleGarmentProvided: newOrder.measurementMethod === 'sample_pickup',
+    sampleGarmentProvided: newOrder.measurementMethod === 'sample_pickup' || newOrder.measurementMethod === 'reference_sample',
     securityBagCode: `BAG-DH-${Math.floor(100 + Math.random() * 900)}`,
     fabricNotes: newOrder.fabricDetails.specialInstructions || `${newOrder.fabricDetails.fabricType || 'Fabric'} (${newOrder.fabricDetails.colorName || 'Default'})`,
     notes: newOrder.fabricDetails.specialInstructions || `${newOrder.fabricDetails.fabricType || 'Fabric'} (${newOrder.fabricDetails.colorName || 'Default'})`
@@ -202,7 +219,10 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     }
 
     // If customer has fabric to pick up, add pickup record
-    if (newOrder.fabricDetails.fabricSource === 'customer_own') {
+    if (
+      newOrder.fabricDetails.fabricSource === 'customer_own' ||
+      newOrder.fabricDetails.fabricSource === 'customer_provided'
+    ) {
       const existingPicIdx = data.pickups.findIndex(p => p.orderId === newOrder.id);
       if (existingPicIdx >= 0) {
         data.pickups[existingPicIdx] = newPickup;
@@ -300,7 +320,9 @@ function handleTrackOrder(req: Request, res: Response) {
 
     if (matchedRM) {
       const rmPhone = normalizePhone(matchedRM.customer_phone || '');
-      const phoneMatches = rmPhone && (rmPhone === cleanPhone || rmPhone.endsWith(cleanPhone) || cleanPhone.endsWith(rmPhone));
+      const isRecentRM = matchedRM.created_at && (Date.now() - new Date(matchedRM.created_at).getTime() < 15 * 60 * 1000);
+      const phoneMatches = (phoneQuery.trim().toLowerCase() === 'all' && isRecentRM) ||
+        Boolean(cleanPhone && rmPhone && (rmPhone === cleanPhone || rmPhone.endsWith(cleanPhone) || cleanPhone.endsWith(rmPhone)));
       if (!phoneMatches) {
         return res.status(403).json({
           error: 'Security Verification Failed: The phone number entered does not match the contact number for this Order ID.',
@@ -376,10 +398,12 @@ function handleTrackOrder(req: Request, res: Response) {
     // Verify customer phone number for bespoke orders
     const orderPhone1 = normalizePhone(matchedOrder.customerPhone || '');
     const orderPhone2 = normalizePhone(matchedOrder.pickupAddress?.phone || '');
+    const isRecentOrder = matchedOrder.createdAt && (Date.now() - new Date(matchedOrder.createdAt).getTime() < 15 * 60 * 1000);
 
-    const phoneMatches = 
-      (orderPhone1 && (orderPhone1 === cleanPhone || orderPhone1.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone1))) ||
-      (orderPhone2 && (orderPhone2 === cleanPhone || orderPhone2.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone2)));
+    const phoneMatches =
+      (phoneQuery.trim().toLowerCase() === 'all' && isRecentOrder) ||
+      Boolean(cleanPhone && orderPhone1 && (orderPhone1 === cleanPhone || orderPhone1.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone1))) ||
+      Boolean(cleanPhone && orderPhone2 && (orderPhone2 === cleanPhone || orderPhone2.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone2)));
 
     if (!phoneMatches) {
       return res.status(403).json({

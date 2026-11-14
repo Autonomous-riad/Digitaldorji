@@ -34,6 +34,7 @@ import {
   formatMeasurementWithUnit, 
   validateMeasurementValue 
 } from '../utils/measurementConverter';
+import { toast } from 'sonner';
 
 export const MeasurementForm: React.FC = () => {
   const { 
@@ -138,7 +139,7 @@ export const MeasurementForm: React.FC = () => {
     if (measurementMethod === 'custom_manual' || measurementMethod === 'preset_size') {
       const invalidFields = schemaFields.filter(f => f.required !== false && !validateMeasurementValue(getInchValue(f), f).valid);
       if (invalidFields.length > 0) {
-        alert(t('Please ensure all required measurements are within valid range before continuing.', 'অনুগ্রহ করে পরবর্তী ধাপে যাওয়ার আগে সকল আবশ্যক মাপ সঠিক সীমার মধ্যে পূরণ করুন।'));
+        toast.error(t('Please ensure all required measurements are within valid range before continuing.', 'অনুগ্রহ করে পরবর্তী ধাপে যাওয়ার আগে সকল আবশ্যক মাপ সঠিক সীমার মধ্যে পূরণ করুন।'));
         return;
       }
     }
@@ -157,21 +158,25 @@ export const MeasurementForm: React.FC = () => {
     return field.default ?? field.min;
   };
 
-  // Helper to handle value change based on current display unit
-  const handleValueChange = (field: MeasurementSchemaField, rawValue: number) => {
-    if (isNaN(rawValue)) return;
-    const inchVal = displayUnit === 'cm' ? cmToInch(rawValue) : rawValue;
-    // Update both key and aliases for maximum backwards compatibility
+  // Helper to set raw inch value directly
+  const setInchMeasurement = (field: MeasurementSchemaField, inchVal: number) => {
     updateMeasurement(field.key, inchVal);
     if (field.key === 'shirt_length') updateMeasurement('length', inchVal);
     if (field.key === 'kameez_length') updateMeasurement('length', inchVal);
   };
 
-  // Increment / decrement handlers
+  // Helper to handle value change based on current display unit
+  const handleValueChange = (field: MeasurementSchemaField, rawValue: number) => {
+    if (isNaN(rawValue)) return;
+    const inchVal = displayUnit === 'cm' ? cmToInch(rawValue) : rawValue;
+    setInchMeasurement(field, inchVal);
+  };
+
+  // Increment / decrement handlers (deltaInch is already in inches)
   const handleStepChange = (field: MeasurementSchemaField, deltaInch: number) => {
     const currentInch = getInchValue(field);
     const newInch = Math.max(field.min, Math.min(field.max, parseFloat((currentInch + deltaInch).toFixed(2))));
-    handleValueChange(field, newInch);
+    setInchMeasurement(field, newInch);
   };
 
   return (

@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 export const OrderSuccessModal: React.FC = () => {
-  const { t, latestCreatedOrder, setActiveStep, setActiveTrackingId } = useTailor();
+  const { t, orders, latestCreatedOrder, setActiveStep, setActiveTrackingId } = useTailor();
   const { isLoggedInCustomer } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [loadedOrder, setLoadedOrder] = useState<any>(null);
@@ -34,11 +34,11 @@ export const OrderSuccessModal: React.FC = () => {
     // Try to load from URL /order/:orderNumber/success or query params
     const pathParts = window.location.pathname.split('/');
     const orderIdx = pathParts.indexOf('order');
+    const params = new URLSearchParams(window.location.search);
     let orderNum = '';
     if (orderIdx !== -1 && pathParts[orderIdx + 1] && pathParts[orderIdx + 1] !== 'error') {
       orderNum = pathParts[orderIdx + 1];
     } else {
-      const params = new URLSearchParams(window.location.search);
       orderNum = params.get('orderNumber') || params.get('orderId') || '';
     }
 
@@ -47,7 +47,15 @@ export const OrderSuccessModal: React.FC = () => {
       return;
     }
 
-    fetch(`/api/orders/${orderNum}`)
+    const localMatch = orders.find(o => o.orderNumber === orderNum || o.id === orderNum);
+    if (localMatch) {
+      setLoadedOrder(localMatch);
+    }
+
+    const phoneParam = params.get('phone') || localMatch?.customerPhone || localMatch?.pickupAddress?.phone || '';
+    const querySuffix = phoneParam ? `?phone=${encodeURIComponent(phoneParam)}` : '';
+
+    fetch(`/api/orders/${encodeURIComponent(orderNum)}${querySuffix}`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.order) {
@@ -60,7 +68,7 @@ export const OrderSuccessModal: React.FC = () => {
       .finally(() => {
         setIsLoadingOrder(false);
       });
-  }, [latestCreatedOrder]);
+  }, [latestCreatedOrder, orders]);
 
   const activeOrder = latestCreatedOrder || loadedOrder;
 
