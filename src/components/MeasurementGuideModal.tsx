@@ -104,38 +104,38 @@ export const MeasurementGuideModal: React.FC<Props> = ({ isOpen, onClose, garmen
   const guides = activeTab === 'men' ? menGuides : womenGuides;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-xl border border-slate-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 overflow-y-auto modal-backdrop-dorji flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+      <div className="bg-[#FCFBF8] rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-[#C5CBD4] overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 bg-slate-950 text-white flex items-center justify-between">
+        <div className="px-6 py-4 bg-[#EFECE6] border-b border-[#DCE0E6] text-[#1E2530] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-500/20 border border-orange-400/30 flex items-center justify-center text-orange-400">
+            <div className="w-10 h-10 rounded-xl bg-[#2C3A52] flex items-center justify-center text-[#FCFBF8] shadow-2xs">
               <Ruler className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white flex items-center gap-2 font-serif-title">
+              <h3 className="text-lg font-bold text-[#1E2530] flex items-center gap-2 font-serif-title">
                 {t('Tape Measurement Guide (ইঞ্চিতে সঠিক মাপ নেওয়ার নিয়ম)', 'ইঞ্চিতে সঠিক মাপ নেওয়ার নিয়মাবলী')}
               </h3>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-[#434C5E]">
                 {t('Illustrated guidelines for 100% bespoke atelier fitting', 'নিখুঁত ফিটিংয়ের জন্য সহজ ও সঠিক মাপের নির্দেশিকা')}
               </p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-[#434C5E] hover:text-[#1E2530] hover:bg-[#DCE0E6]/60 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab switch */}
-        <div className="px-6 pt-4 pb-2 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-          <div className="flex bg-slate-200/70 p-1 rounded-xl">
+        <div className="px-6 pt-3.5 pb-3 border-b border-[#DCE0E6] bg-[#F6F4EF] flex flex-wrap items-center justify-between gap-2">
+          <div className="flex bg-[#E8ECF2] p-1 rounded-xl border border-[#C5CBD4]">
             <button
               onClick={() => setActiveTab('men')}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'men' ? 'bg-orange-700 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                activeTab === 'men' ? 'bg-[#2C3A52] text-[#FCFBF8] shadow-xs' : 'text-[#434C5E] hover:text-[#1E2530]'
               }`}
             >
               {t("Men's Measuring Guide", 'পুরুষদের মাপের নির্দেশিকা')}
@@ -143,23 +143,23 @@ export const MeasurementGuideModal: React.FC<Props> = ({ isOpen, onClose, garmen
             <button
               onClick={() => setActiveTab('women')}
               className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                activeTab === 'women' ? 'bg-indigo-700 text-white shadow-xs' : 'text-slate-700 hover:text-slate-900'
+                activeTab === 'women' ? 'bg-[#2C3A52] text-[#FCFBF8] shadow-xs' : 'text-[#434C5E] hover:text-[#1E2530]'
               }`}
             >
               {t("Women's Boutique Guide", 'নারীদের মাপের নির্দেশিকা')}
             </button>
           </div>
 
-          <div className="text-xs text-slate-600 flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-orange-700" />
+          <div className="text-xs text-[#434C5E] font-medium flex items-center gap-1">
+            <Sparkles className="w-3.5 h-3.5 text-[#2C3A52]" />
             <span>{t('All measurements in Inches (ইঞ্চি)', 'সব মাপ ইঞ্চিতে')}</span>
           </div>
         </div>
 
         {/* Body Guide items */}
-        <div className="p-6 overflow-y-auto space-y-4 flex-1">
-          <div className="p-3 bg-orange-50 rounded-xl border border-orange-200 text-xs text-slate-900 flex items-start gap-2.5">
-            <CheckCircle2 className="w-4 h-4 text-orange-700 shrink-0 mt-0.5" />
+        <div className="p-6 overflow-y-auto space-y-4 flex-1 bg-[#FCFBF8]">
+          <div className="p-3.5 bg-[#EFECE6] rounded-xl border border-[#C5CBD4] text-xs text-[#1E2530] flex items-start gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-[#2C3A52] shrink-0 mt-0.5" />
             <div>
               <span className="font-bold">{t('Digital Dorji Atelier Guarantee: ', 'ডিজিটাল দর্জি নিশ্চয়তা: ')}</span>
               {t(
@@ -171,20 +171,20 @@ export const MeasurementGuideModal: React.FC<Props> = ({ isOpen, onClose, garmen
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {guides.map((item, idx) => (
-              <div key={idx} className="p-4 rounded-xl border border-slate-200 bg-white hover:border-orange-300 transition-colors shadow-xs">
+              <div key={idx} className="p-4 rounded-xl border border-[#DCE0E6] bg-[#FCFBF8] hover:border-[#9BA3B0] transition-colors shadow-2xs">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className="w-5 h-5 rounded-full bg-orange-100 text-orange-950 text-xs font-bold flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-full bg-[#E8ECF2] text-[#2C3A52] border border-[#C5CBD4] text-xs font-bold flex items-center justify-center">
                     {idx + 1}
                   </span>
-                  <h4 className="font-bold text-slate-950 text-sm">
+                  <h4 className="font-bold text-[#1E2530] text-sm">
                     {t(item.titleEn, item.titleBn)}
                   </h4>
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed mb-2.5">
+                <p className="text-xs text-[#434C5E] leading-relaxed mb-2.5">
                   {t(item.descEn, item.descBn)}
                 </p>
-                <div className="text-[11px] bg-slate-50 text-slate-700 p-2 rounded-lg font-medium flex items-center gap-1.5 border border-slate-200">
-                  <span className="font-bold text-orange-900">💡 {t('Pro Tip:', 'টিপস:')}</span>
+                <div className="text-[11px] bg-[#F6F4EF] text-[#434C5E] p-2 rounded-lg font-medium flex items-center gap-1.5 border border-[#DCE0E6]">
+                  <span className="font-bold text-[#2C3A52]">💡 {t('Pro Tip:', 'টিপস:')}</span>
                   <span>{t(item.tipEn, item.tipBn)}</span>
                 </div>
               </div>
@@ -193,10 +193,10 @@ export const MeasurementGuideModal: React.FC<Props> = ({ isOpen, onClose, garmen
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <div className="px-6 py-4 bg-[#EFECE6] border-t border-[#DCE0E6] flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 bg-orange-700 hover:bg-orange-800 active:bg-orange-900 text-white text-sm font-semibold rounded-xl transition-colors shadow-md shadow-orange-700/20 cursor-pointer"
+            className="px-6 py-2.5 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] text-sm font-semibold rounded-xl transition-colors shadow-xs cursor-pointer"
           >
             {t('Got It, Back to Customizing', 'বুঝেছি, অর্ডারে ফিরে যান')}
           </button>

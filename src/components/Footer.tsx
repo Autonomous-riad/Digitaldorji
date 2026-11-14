@@ -19,29 +19,29 @@ export const Footer: React.FC = () => {
   const { navigate } = useRouter();
 
   return (
-    <footer className="bg-cream-100 border-t border-cream-300 mt-auto pt-10 pb-8 text-purple-950 font-sans shadow-2xs">
+    <footer className="bg-[#EFECE6] border-t border-[#DCE0E6] mt-auto pt-10 pb-8 text-[#1E2530] font-sans shadow-2xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 text-xs text-purple-950/80">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 text-xs text-[#434C5E]">
           {/* Col 1: Business Identity & Overview */}
           <div className="space-y-3 lg:col-span-2">
             <button
               onClick={() => navigate('/')}
               className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none"
             >
-              <div className="w-10 h-10 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-xs group-hover:bg-[#166FE5] transition-all">
-                <Scissors className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-[#2C3A52] text-[#FCFBF8] border border-[#9BA3B0] flex items-center justify-center shadow-xs group-hover:bg-[#1F2A3D] transition-all">
+                <Scissors className="w-5 h-5 text-[#E8ECF2]" />
               </div>
               <div>
-                <span className="text-xl font-black tracking-tight text-[#1877F2]">
-                  Digital Dorji <span className="text-[#0866FF]">BD</span>
+                <span className="text-xl font-extrabold tracking-tight text-[#1E2530] font-serif-title">
+                  Digital Dorji <span className="text-[#2C3A52]">BD</span>
                 </span>
-                <span className="block text-[10px] text-[#65676B] font-medium">
+                <span className="block text-[11px] text-[#5C6677] font-medium">
                   {t('Doorstep Bespoke Tailoring Platform', 'ডোরস্টেপ কাস্টম সেলাই ও টেইলারিং')}
                 </span>
               </div>
             </button>
 
-            <p className="text-xs text-purple-950/70 leading-relaxed max-w-md">
+            <p className="text-xs text-[#434C5E] leading-relaxed max-w-md">
               {t(
                 "Bangladesh's premier doorstep bespoke tailoring platform. We collect your unstitched fabric from your doorstep across Dhaka, Chattogram & Sylhet, digitize your anatomical measurements, hand-cut with master dorjis, and deliver in 4 days with a 100% fit guarantee.",
                 'বাংলাদেশের শীর্ষস্থানীয় ডোরস্টেপ টেইলারিং সেবা। আপনার বাসা থেকে আনস্টিচ কাপড় সংগ্রহ, মাস্টার কারিগরের নিখুঁত কাটিং এবং ৪ দিনে পারফেক্ট ফিটিংসহ হোম ডেলিভারি নিশ্চিত করছি আমরা।'

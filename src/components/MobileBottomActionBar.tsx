@@ -65,17 +65,17 @@ export const MobileBottomActionBar: React.FC<MobileBottomActionBarProps> = ({
   };
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-stone-200 px-3 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#FCFBF8]/96 backdrop-blur-md border-t border-[#DCE0E6] px-3 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-4px_16px_rgba(30,37,48,0.06)]">
       <div className="flex items-center justify-between gap-2.5 max-w-md mx-auto">
         {/* Left Side: Summary / Price */}
         <div className="flex flex-col min-w-0 pr-1">
-          <span className="text-[10px] text-stone-600 uppercase tracking-wider font-bold truncate">
+          <span className="text-[10px] text-[#434C5E] uppercase tracking-wider font-bold truncate">
             {step === 'checkout' ? t('Total Payable', 'সর্বমোট বিল') : t('Tailoring Total', 'মোট চার্জ')}
           </span>
-          <span className="text-xl font-black text-stone-950 font-mono leading-none mt-0.5">
+          <span className="text-xl font-black text-[#1E2530] font-mono leading-none mt-0.5">
             ৳{pricing.grandTotal}
           </span>
-          <span className="text-[10px] text-amber-900 font-semibold truncate">
+          <span className="text-[10px] text-[#2C3A52] font-semibold truncate">
             {pricing.estimatedDays} {t('days delivery', 'দিনে ডেলিভারি')}
           </span>
         </div>
@@ -85,7 +85,7 @@ export const MobileBottomActionBar: React.FC<MobileBottomActionBarProps> = ({
           <button
             type="button"
             onClick={onOpenPreview}
-            className="h-10 px-3 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 border border-stone-200"
+            className="h-10 px-3 bg-[#EFECE6] hover:bg-[#E8ECF2] text-[#1E2530] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 border border-[#C5CBD4]"
             title={t('Live Preview', 'লাইভ প্রিভিউ')}
           >
             <span>{t('2D Live', 'প্রিভিউ')}</span>
@@ -97,7 +97,7 @@ export const MobileBottomActionBar: React.FC<MobileBottomActionBarProps> = ({
           type="button"
           disabled={isProcessing}
           onClick={handleNextClick}
-          className="flex-1 max-w-[210px] h-10 sm:h-11 bg-amber-900 active:bg-black hover:bg-stone-900 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98] transition-transform duration-100 ease-out cursor-pointer disabled:opacity-50"
+          className="flex-1 max-w-[210px] h-10 sm:h-11 bg-[#2C3A52] hover:bg-[#1F2A3D] active:bg-[#161F2E] text-[#FCFBF8] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98] transition-transform duration-100 ease-out cursor-pointer disabled:opacity-50 border border-[#243044]"
         >
           {step === 'measurements' && (
             <>

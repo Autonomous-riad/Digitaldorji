@@ -37,44 +37,44 @@ export const MobileOrderStepBar: React.FC = () => {
   };
 
   return (
-    <div className="sticky top-14 sm:top-16 z-30 bg-cream-50/95 backdrop-blur-md border border-cream-300 shadow-xs mb-3 sm:mb-4 rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 transition-all">
+    <div className="sticky top-14 sm:top-16 z-30 bg-[#FCFBF8]/95 backdrop-blur-md border border-[#DCE0E6] shadow-xs mb-3 sm:mb-4 rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 transition-all">
       {/* Top row: Back button, garment thumbnail & title, and step fraction */}
-      <div className="flex items-center justify-between gap-1.5 sm:gap-2 pb-1.5 sm:pb-2">
+      <div className="flex items-center justify-between gap-1.5 sm:gap-2 pb-1.5">
         <button
           type="button"
           onClick={() => setActiveStep(getPreviousStep())}
-          className="flex items-center gap-1 text-xs font-bold text-purple-950 hover:text-purple-900 active:scale-95 transition-all cursor-pointer py-1 px-2 sm:px-2.5 rounded-lg hover:bg-cream-200 shrink-0 border border-cream-300 sm:border-transparent"
+          className="flex items-center gap-1 text-xs font-bold text-[#1E2530] hover:text-[#2C3A52] active:scale-95 transition-all cursor-pointer py-1 px-2 sm:px-2.5 rounded-lg bg-[#EFECE6] hover:bg-[#E8ECF2] shrink-0 border border-[#C5CBD4]"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span className="hidden xs:inline">{t('Back', 'পেছনে')}</span>
         </button>
 
         {/* Selected Garment Miniature Badge */}
-        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 bg-cream-200 border border-cream-300 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex-1 max-w-[240px] justify-center mx-1">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 bg-[#EFECE6] border border-[#C5CBD4] px-2 sm:px-3 py-0.5 sm:py-1 rounded-full flex-1 max-w-[260px] justify-center mx-1">
           <img
             src={activeGarment.image}
             alt={activeGarment.nameEn}
-            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover border border-cream-400 shrink-0"
+            className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover border border-[#9BA3B0] shrink-0"
             referrerPolicy="no-referrer"
           />
-          <span className="text-xs font-bold text-purple-950 truncate">
+          <span className="text-xs font-bold text-[#1E2530] truncate">
             {t(activeGarment.nameEn, activeGarment.nameBn)}
           </span>
-          <span className="text-[10px] text-purple-900 font-bold hidden sm:inline shrink-0">
+          <span className="text-[11px] text-[#2C3A52] font-bold hidden sm:inline shrink-0 font-mono">
             • ৳{activeGarment.basePrice}
           </span>
         </div>
 
         {/* Step indicator fraction */}
-        <span className="text-[10px] sm:text-[11px] font-bold text-purple-950 bg-cream-200 border border-cream-300 px-2 py-0.5 rounded-full shrink-0">
+        <span className="text-[10px] sm:text-[11px] font-bold text-[#2C3A52] bg-[#E8ECF2] border border-[#C5CBD4] px-2.5 py-0.5 rounded-full shrink-0">
           {currentIdx + 1}/4
         </span>
       </div>
 
-      {/* Thin Animated Progress Bar */}
-      <div className="w-full h-1 sm:h-1.5 bg-cream-200 rounded-full overflow-hidden mb-1.5 sm:mb-2">
+      {/* Thin Animated Silver-Slate Progress Bar */}
+      <div className="w-full h-1 bg-[#E8ECF2] rounded-full overflow-hidden mb-1.5">
         <div 
-          className="h-full bg-purple-950 rounded-full transition-all duration-300 ease-out"
+          className="h-full bg-[#2C3A52] rounded-full transition-all duration-300 ease-out"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
@@ -95,20 +95,20 @@ export const MobileOrderStepBar: React.FC = () => {
                 }
               }}
               disabled={idx > currentIdx}
-              className={`flex items-center justify-center gap-0.5 sm:gap-1.5 py-1.5 sm:py-2 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all min-h-[30px] sm:min-h-[34px] ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 py-1.5 px-1 rounded-lg text-[10px] sm:text-xs font-semibold transition-all min-h-[30px] sm:min-h-[34px] ${
                 isActive
-                  ? 'bg-purple-950 text-cream-50 shadow-xs'
+                  ? 'bg-[#2C3A52] text-[#FCFBF8] shadow-xs border border-[#243044]'
                   : isCompleted
-                  ? 'bg-cream-200 text-purple-950 border border-cream-300 cursor-pointer hover:bg-cream-300'
-                  : 'text-purple-950/40 cursor-not-allowed bg-cream-100 border border-cream-200'
+                  ? 'bg-[#E8ECF2] text-[#1E2530] border border-[#C5CBD4] cursor-pointer hover:bg-[#DCE0E6]'
+                  : 'text-[#6E7787] cursor-not-allowed bg-[#F6F4EF] border border-[#DCE0E6]'
               }`}
             >
               <span className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full flex items-center justify-center text-[9px] sm:text-[10px] font-bold shrink-0 ${
                 isActive 
-                  ? 'bg-cream-50 text-purple-950' 
+                  ? 'bg-[#FCFBF8] text-[#2C3A52]' 
                   : isCompleted 
-                  ? 'bg-purple-950 text-cream-50' 
-                  : 'bg-cream-300 text-purple-950/70'
+                  ? 'bg-[#2C3A52] text-[#FCFBF8]' 
+                  : 'bg-[#DCE0E6] text-[#434C5E]'
               }`}>
                 {isCompleted ? '✓' : step.num}
               </span>

@@ -214,22 +214,22 @@ export const CheckoutModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bottom-[56px] sm:bottom-0 z-40 flex items-center justify-center p-2.5 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn overflow-y-auto">
+    <div className="fixed inset-0 bottom-[56px] sm:bottom-0 z-40 flex items-center justify-center p-2.5 sm:p-4 modal-backdrop-dorji animate-fadeIn overflow-y-auto">
       <div 
-        className="bg-white rounded-2xl max-w-2xl w-full my-auto max-h-[calc(100dvh-78px)] sm:max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden animate-modalPop"
+        className="bg-[#FCFBF8] rounded-2xl max-w-2xl w-full my-auto max-h-[calc(100dvh-78px)] sm:max-h-[92vh] flex flex-col shadow-2xl border border-[#C5CBD4] overflow-hidden animate-modalPop"
         role="dialog"
       >
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 sticky top-0 z-10 shrink-0">
+        <div className="p-4 sm:p-5 border-b border-[#DCE0E6] flex items-center justify-between bg-[#EFECE6] sticky top-0 z-10 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-indigo-700 text-white flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#2C3A52] text-[#FCFBF8] flex items-center justify-center shadow-xs">
               <Lock className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+              <h2 className="text-base sm:text-lg font-bold text-[#1E2530] leading-tight">
                 {t('Secure Checkout', 'নিরাপদ চেকআউট')}
               </h2>
-              <p className="text-xs text-slate-500 font-medium">
+              <p className="text-xs text-[#434C5E] font-medium">
                 {cart.length} {cart.length === 1 ? t('item', 'টি পণ্য') : t('items', 'টি পণ্য')} • {t('Fast doorstep delivery in Bangladesh', 'সারাদেশে দ্রুত হোম ডেলিভারি')}
               </p>
             </div>
@@ -237,7 +237,7 @@ export const CheckoutModal: React.FC = () => {
 
           <button
             onClick={() => setIsCheckoutOpen(false)}
-            className="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 transition-colors cursor-pointer"
+            className="p-2 text-[#434C5E] hover:text-[#1E2530] rounded-lg hover:bg-[#DCE0E6]/60 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

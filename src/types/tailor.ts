@@ -146,7 +146,7 @@ export interface StitchingSpecifications {
 }
 
 export interface FabricDetails {
-  fabricSource: 'shop_fabric';
+  fabricSource: 'shop_fabric' | 'customer_provided';
   hasFabricAtHome: boolean;
   fabricType: string;
   colorName: string;

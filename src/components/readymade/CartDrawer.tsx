@@ -71,25 +71,25 @@ export const CartDrawer: React.FC = () => {
     <div className="fixed inset-0 z-40 overflow-hidden">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity animate-fadeIn"
+        className="absolute inset-0 modal-backdrop-dorji transition-opacity animate-fadeIn"
         onClick={() => setIsCartOpen(false)}
       />
 
       {/* Mobile: full width & height above bottom nav; Desktop: right sliding drawer */}
       <div className="fixed inset-y-0 inset-x-0 md:left-auto md:right-0 max-w-full flex bottom-[56px] md:bottom-0 pb-1 md:pb-0">
-        <div className="w-full md:w-screen md:max-w-md bg-cream-50 text-purple-950 shadow-2xl flex flex-col animate-slideLeft border-l border-cream-300">
+        <div className="w-full md:w-screen md:max-w-md bg-[#FCFBF8] text-[#1E2530] shadow-2xl flex flex-col animate-slideLeft border-l border-[#C5CBD4]">
           
           {/* Header */}
-          <div className="p-4 sm:p-5 border-b border-cream-300 flex items-center justify-between bg-cream-100/90">
+          <div className="p-4 sm:p-5 border-b border-[#DCE0E6] flex items-center justify-between bg-[#EFECE6]">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center shadow-xs">
+              <div className="w-9 h-9 rounded-xl bg-[#2C3A52] text-[#FCFBF8] flex items-center justify-center shadow-xs">
                 <ShoppingBag className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-purple-950 leading-tight">
+                <h2 className="text-base sm:text-lg font-bold text-[#1E2530] leading-tight">
                   {t('Shopping Cart', 'শপিং কার্ট')}
                 </h2>
-                <p className="text-xs text-purple-950/70 font-medium">
+                <p className="text-xs text-[#434C5E] font-medium">
                   {t('Fabric Stitching & Clothes', 'দোকানের কাপড় সেলাই ও পোশাক')} • {cartCount} {cartCount === 1 ? t('item', 'টি পণ্য') : t('items', 'টি পণ্য')}
                 </p>
               </div>
@@ -100,7 +100,7 @@ export const CartDrawer: React.FC = () => {
                 <button
                   type="button"
                   onClick={clearCart}
-                  className="text-xs text-rose-600 hover:text-rose-700 font-semibold px-2 py-1 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+                  className="text-xs text-[#991B1B] hover:text-red-800 font-semibold px-2 py-1 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
                 >
                   {t('Clear', 'খালি করুন')}
                 </button>
@@ -108,7 +108,7 @@ export const CartDrawer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsCartOpen(false)}
-                className="p-2 text-purple-950/60 hover:text-purple-950 rounded-lg hover:bg-cream-200 transition-colors cursor-pointer"
+                className="p-2 text-[#434C5E] hover:text-[#1E2530] rounded-lg hover:bg-[#DCE0E6]/60 transition-colors cursor-pointer"
                 aria-label="Close cart"
               >
                 <X className="w-5 h-5" />
@@ -118,8 +118,8 @@ export const CartDrawer: React.FC = () => {
 
           {/* Stock Notification Banner */}
           {stockNotice && (
-            <div className="bg-amber-50 px-4 py-2 text-xs text-amber-800 border-b border-amber-200 flex items-center gap-2 animate-fadeIn">
-              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <div className="bg-[#FDF8EE] px-4 py-2 text-xs text-[#92400E] border-b border-[#E9D5A1] flex items-center gap-2 animate-fadeIn">
+              <AlertCircle className="w-4 h-4 text-[#92400E] shrink-0" />
               <span>{stockNotice}</span>
             </div>
           )}
@@ -127,14 +127,14 @@ export const CartDrawer: React.FC = () => {
           {/* Cart Items List */}
           <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
             {cart.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500">
-                <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-400 flex items-center justify-center mb-4">
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#434C5E]">
+                <div className="w-16 h-16 rounded-2xl bg-[#EFECE6] border border-[#C5CBD4] text-[#2C3A52] flex items-center justify-center mb-4">
                   <ShoppingBag className="w-8 h-8" />
                 </div>
-                <h3 className="text-base font-bold text-slate-800 mb-1">
+                <h3 className="text-base font-bold text-[#1E2530] mb-1">
                   {t('Your cart is empty', 'আপনার কার্ট খালি রয়েছে')}
                 </h3>
-                <p className="text-xs text-slate-500 max-w-xs mb-6">
+                <p className="text-xs text-[#434C5E] max-w-xs mb-6">
                   {t(
                     'Select store fabrics for custom stitching, or browse our ready-to-wear clothes.',
                     'আমাদের স্টোরের প্রিমিয়াম কাপড় দিয়ে সেলাই অর্ডার করুন অথবা রেডিমেড পোশাক বেছে নিন।'
@@ -146,7 +146,7 @@ export const CartDrawer: React.FC = () => {
                       setIsCartOpen(false);
                       navigate('/fabric-catalog');
                     }}
-                    className="flex-1 px-4 py-2 bg-orange-700 hover:bg-orange-800 text-white rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 px-4 py-2.5 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Layers className="w-3.5 h-3.5" />
                     <span>{t('Fabrics & Stitching', 'কাপড় ও সেলাই')}</span>
@@ -156,7 +156,7 @@ export const CartDrawer: React.FC = () => {
                       setIsCartOpen(false);
                       navigate('/ready-made');
                     }}
-                    className="flex-1 px-4 py-2 bg-indigo-700 hover:bg-indigo-800 text-white rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="flex-1 px-4 py-2.5 bg-[#EFECE6] hover:bg-[#E2DDD4] text-[#1E2530] border border-[#C5CBD4] rounded-xl text-xs font-bold transition-colors shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Shirt className="w-3.5 h-3.5" />
                     <span>{t('Browse Clothes', 'পোশাক দেখুন')}</span>

@@ -674,37 +674,37 @@ export const CheckoutReview: React.FC = () => {
             </div>
 
             {/* Sandbox Test Credentials Banner for Testing */}
-            <div className="mt-2 bg-slate-900 text-white rounded-xl p-4 text-xs space-y-2.5 shadow-sm border border-slate-800">
+            <div className="mt-2 bg-[#EFECE6] text-[#1E2530] rounded-xl p-4 text-xs space-y-2.5 shadow-2xs border border-[#C5CBD4]">
               <div 
                 className="flex items-center justify-between cursor-pointer"
                 onClick={() => setShowSandboxGuide(!showSandboxGuide)}
               >
                 <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span className="font-bold text-amber-200">
+                  <Sparkles className="w-4 h-4 text-[#2C3A52]" />
+                  <span className="font-bold text-[#1E2530]">
                     SSLCommerz Sandbox Test Credentials (টেস্টিং কার্ড ও বিকাশ তথ্য)
                   </span>
                 </div>
-                <button type="button" className="text-slate-300 hover:text-white">
+                <button type="button" className="text-[#434C5E] hover:text-[#1E2530]">
                   {showSandboxGuide ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                 </button>
               </div>
 
               {showSandboxGuide && (
-                <div className="pt-2 border-t border-slate-700/80 space-y-2 text-[11px] text-slate-300 font-mono">
-                  <p className="text-slate-400">
+                <div className="pt-2 border-t border-[#C5CBD4] space-y-2 text-[11px] text-[#434C5E] font-mono">
+                  <p className="text-[#434C5E]">
                     Use these official SSLCommerz sandbox credentials to test live payment processing:
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                    <div className="p-2 bg-slate-800/90 rounded border border-slate-700">
-                      <span className="text-amber-300 font-bold block">VISA / Mastercard:</span>
-                      <div>Card: <span className="text-white font-bold">4111 1111 1111 1111</span></div>
-                      <div>Expiry: <span className="text-white">12/28</span> • CVV: <span className="text-white">123</span> • OTP: <span className="text-white">1234</span></div>
+                    <div className="p-2.5 bg-[#FCFBF8] rounded-lg border border-[#DCE0E6]">
+                      <span className="text-[#2C3A52] font-bold block">VISA / Mastercard:</span>
+                      <div>Card: <span className="text-[#1E2530] font-bold">4111 1111 1111 1111</span></div>
+                      <div>Expiry: <span className="text-[#1E2530]">12/28</span> • CVV: <span className="text-[#1E2530]">123</span> • OTP: <span className="text-[#1E2530]">1234</span></div>
                     </div>
-                    <div className="p-2 bg-slate-800/90 rounded border border-slate-700">
-                      <span className="text-pink-300 font-bold block">bKash / Nagad Wallet:</span>
-                      <div>Wallet: <span className="text-white font-bold">01711111111</span></div>
-                      <div>bKash PIN: <span className="text-white">12345</span> • Nagad PIN: <span className="text-white">1234</span></div>
+                    <div className="p-2.5 bg-[#FCFBF8] rounded-lg border border-[#DCE0E6]">
+                      <span className="text-[#2C3A52] font-bold block">bKash / Nagad Wallet:</span>
+                      <div>Wallet: <span className="text-[#1E2530] font-bold">01711111111</span></div>
+                      <div>bKash PIN: <span className="text-[#1E2530]">12345</span> • Nagad PIN: <span className="text-[#1E2530]">1234</span></div>
                     </div>
                   </div>
                 </div>
@@ -716,50 +716,50 @@ export const CheckoutReview: React.FC = () => {
         {/* Right Col: Price Breakdown & Place Order CTA */}
         <div className="space-y-6">
           {/* Order Bill Summary */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
-            <h3 className="text-base font-bold text-slate-950 pb-3 border-b border-slate-100 font-serif-title">
+          <div className="bg-[#FCFBF8] rounded-xl border border-[#DCE0E6] p-6 shadow-xs space-y-4">
+            <h3 className="text-base font-bold text-[#1E2530] pb-3 border-b border-[#DCE0E6] font-serif-title">
               {t('Pricing Breakdown (বিল বিবরণ)', 'বিল বিবরণ')}
             </h3>
 
             <div className="space-y-2.5 text-xs">
-              <div className="flex items-center justify-between text-slate-600">
+              <div className="flex items-center justify-between text-[#434C5E]">
                 <span>{t('Base Stitching Fee', 'বেস সেলাই চার্জ')}:</span>
-                <span className="font-bold text-slate-900 font-mono">{formatBDT(pricing.basePrice, { useBanglaNumerals: lang === 'bn' })}</span>
+                <span className="font-bold text-[#1E2530] font-mono">{formatBDT(pricing.basePrice, { useBanglaNumerals: lang === 'bn' })}</span>
               </div>
 
               {pricing.customizationTotal > 0 && (
-                <div className="flex items-center justify-between text-slate-600">
+                <div className="flex items-center justify-between text-[#434C5E]">
                   <span>{t('Custom Styling & Monogram', 'স্টাইলিং ও মনোগ্রাম')}:</span>
-                  <span className="font-bold text-slate-900 font-mono">+ {formatBDT(pricing.customizationTotal, { useBanglaNumerals: lang === 'bn' })}</span>
+                  <span className="font-bold text-[#1E2530] font-mono">+ {formatBDT(pricing.customizationTotal, { useBanglaNumerals: lang === 'bn' })}</span>
                 </div>
               )}
 
               {pricing.fabricCost > 0 && (
-                <div className="flex items-center justify-between text-slate-700 font-semibold bg-slate-50/70 p-1.5 rounded">
+                <div className="flex items-center justify-between text-[#1E2530] font-semibold bg-[#EFECE6] p-1.5 rounded border border-[#DCE0E6]">
                   <span>{t('Shop Provided Fabric', 'শপের কাপড় মূল্য')}:</span>
-                  <span className="font-bold font-mono text-slate-900">+ {formatBDT(pricing.fabricCost, { useBanglaNumerals: lang === 'bn' })}</span>
+                  <span className="font-bold font-mono text-[#1E2530]">+ {formatBDT(pricing.fabricCost, { useBanglaNumerals: lang === 'bn' })}</span>
                 </div>
               )}
 
               {pricing.liningFee > 0 && (
-                <div className="flex items-center justify-between text-slate-600">
+                <div className="flex items-center justify-between text-[#434C5E]">
                   <span>{t('Inner Lining (Astra)', 'ভিতরের এস্টার')}:</span>
-                  <span className="font-bold text-slate-900 font-mono">+ {formatBDT(pricing.liningFee, { useBanglaNumerals: lang === 'bn' })}</span>
+                  <span className="font-bold text-[#1E2530] font-mono">+ {formatBDT(pricing.liningFee, { useBanglaNumerals: lang === 'bn' })}</span>
                 </div>
               )}
 
               {pricing.deliverySpeedFee > 0 && (
-                <div className="flex items-center justify-between text-slate-600">
+                <div className="flex items-center justify-between text-[#434C5E]">
                   <span>{t('Express Speed Surcharge', 'এক্সপ্রেস ডেলিভারি চার্জ')}:</span>
-                  <span className="font-bold text-slate-900 font-mono">+ {formatBDT(pricing.deliverySpeedFee, { useBanglaNumerals: lang === 'bn' })}</span>
+                  <span className="font-bold text-[#1E2530] font-mono">+ {formatBDT(pricing.deliverySpeedFee, { useBanglaNumerals: lang === 'bn' })}</span>
                 </div>
               )}
 
-              <div className="flex items-center justify-between text-slate-600">
+              <div className="flex items-center justify-between text-[#434C5E]">
                 <span>{t('Doorstep Pickup & Delivery', 'ডোরস্টেপ পিকআপ ও ডেলিভারি')}:</span>
-                <span className="font-bold text-slate-900 font-mono">
+                <span className="font-bold text-[#1E2530] font-mono">
                   {pricing.doorstepPickupFee === 0 ? (
-                    <span className="text-green-700 font-bold">{t('FREE (ফ্রি)', 'ফ্রি')}</span>
+                    <span className="text-[#166534] font-bold">{t('FREE (ফ্রি)', 'ফ্রি')}</span>
                   ) : (
                     formatBDT(pricing.doorstepPickupFee, { useBanglaNumerals: lang === 'bn' })
                   )}
@@ -767,42 +767,42 @@ export const CheckoutReview: React.FC = () => {
               </div>
 
               {pricing.discountAmount > 0 && (
-                <div className="flex items-center justify-between text-orange-900 font-bold bg-orange-50 p-2 rounded-lg">
+                <div className="flex items-center justify-between text-[#166534] font-bold bg-[#EDF7F0] p-2 rounded-lg border border-[#B8E1C6]">
                   <span>{t('Promo Discount (DORJI100)', 'প্রোমো ছাড়')}:</span>
                   <span className="font-mono">- {formatBDT(pricing.discountAmount, { useBanglaNumerals: lang === 'bn' })}</span>
                 </div>
               )}
 
               {/* Total Order Value */}
-              <div className="pt-3 border-t border-slate-100 flex items-baseline justify-between">
+              <div className="pt-3 border-t border-[#DCE0E6] flex items-baseline justify-between">
                 <div>
-                  <span className="text-xs font-bold text-slate-700 block">{t('Total Order Value', 'সর্বমোট অর্ডারের মূল্য')}</span>
-                  <span className="text-[10px] text-slate-600">{t('Includes 4-day delivery assurance', '৪ দিনে ডেলিভারি নিশ্চয়তা')}</span>
+                  <span className="text-xs font-bold text-[#1E2530] block">{t('Total Order Value', 'সর্বমোট অর্ডারের মূল্য')}</span>
+                  <span className="text-[10px] text-[#5C6677]">{t('Includes 4-day delivery assurance', '৪ দিনে ডেলিভারি নিশ্চয়তা')}</span>
                 </div>
-                <span className="text-2xl font-black text-slate-950 font-mono">
+                <span className="text-2xl font-black text-[#1E2530] font-mono">
                   {formatBDT(pricing.grandTotal, { useBanglaNumerals: lang === 'bn' })}
                 </span>
               </div>
 
               {/* If 50% advance selected, highlight payable now vs due on delivery */}
               {paymentMethod !== 'cod' && advanceOption === 'advance_50' && (
-                <div className="p-3 bg-orange-50 rounded-xl border border-orange-200 space-y-1 mt-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-orange-900">
+                <div className="p-3 bg-[#EFECE6] rounded-xl border border-[#C5CBD4] space-y-1 mt-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-[#1E2530]">
                     <span>{t('Payable Now (50% Advance)', 'এখন পরিশোধযোগ্য (৫০% অগ্রিম)')}:</span>
-                    <span className="text-base font-mono font-black text-orange-700">{formatBDT(payableNow, { useBanglaNumerals: lang === 'bn' })}</span>
+                    <span className="text-base font-mono font-black text-[#2C3A52]">{formatBDT(payableNow, { useBanglaNumerals: lang === 'bn' })}</span>
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-slate-700">
+                  <div className="flex items-center justify-between text-[11px] text-[#434C5E]">
                     <span>{t('Balance Due on Delivery', 'ডেলিভারিতে প্রদেয় বাকি টাকা')}:</span>
-                    <span className="font-mono font-bold text-slate-900">{formatBDT(balanceDue, { useBanglaNumerals: lang === 'bn' })}</span>
+                    <span className="font-mono font-bold text-[#1E2530]">{formatBDT(balanceDue, { useBanglaNumerals: lang === 'bn' })}</span>
                   </div>
                 </div>
               )}
             </div>
 
             {/* Promo Code Input */}
-            <form onSubmit={handleApplyPromo} className="pt-3 border-t border-slate-100 space-y-2">
-              <label className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                <Tag className="w-3.5 h-3.5 text-orange-700" />
+            <form onSubmit={handleApplyPromo} className="pt-3 border-t border-[#DCE0E6] space-y-2">
+              <label className="text-xs font-bold text-[#1E2530] flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5 text-[#2C3A52]" />
                 {t('Have a Coupon Code?', 'কুপন কোড আছে?')}
               </label>
               <div className="flex gap-2">
@@ -811,11 +811,11 @@ export const CheckoutReview: React.FC = () => {
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
                   placeholder="e.g. DORJI100"
-                  className="flex-1 p-2 text-xs uppercase rounded-lg border border-slate-300 placeholder:text-slate-500 text-slate-900 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                  className="flex-1 p-2 text-xs uppercase rounded-lg border border-[#C5CBD4] bg-[#FCFBF8] placeholder:text-[#5C6677] text-[#1E2530] focus:outline-none focus:ring-2 focus:ring-[#2C3A52]/20"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-2 bg-orange-700 text-white rounded-lg text-xs font-bold hover:bg-orange-800 transition-colors cursor-pointer shadow-xs"
+                  className="px-3.5 py-2 bg-[#EFECE6] hover:bg-[#E2DDD4] text-[#1E2530] border border-[#C5CBD4] rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-2xs"
                 >
                   {t('Apply', 'যুক্ত করুন')}
                 </button>
@@ -829,16 +829,16 @@ export const CheckoutReview: React.FC = () => {
             </form>
 
             {/* Action Buttons: Add to Cart (Only for store-chosen fabric stitching) & Direct Checkout */}
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2.5 pt-2">
               {fabricDetails.fabricSource === 'shop_fabric' && (
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="w-full py-3.5 px-4 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border-2 border-amber-300 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs hover:border-amber-400"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E2DDD4] text-[#1E2530] border border-[#C5CBD4] font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
                 >
-                  <ShoppingBag className="w-4 h-4 text-amber-800" />
+                  <ShoppingBag className="w-4 h-4 text-[#2C3A52]" />
                   <span>{t('Add Fabric Stitching to Cart & Shop More', 'নির্বাচিত কাপড়ে সেলাই কার্টে যোগ করুন')}</span>
-                  <Plus className="w-4 h-4 text-amber-800" />
+                  <Plus className="w-4 h-4 text-[#2C3A52]" />
                 </button>
               )}
 
@@ -847,7 +847,7 @@ export const CheckoutReview: React.FC = () => {
                 type="button"
                 disabled={isProcessing}
                 onClick={handlePlaceOrder}
-                className="hidden md:flex w-full py-4 rounded-xl bg-orange-700 hover:bg-orange-800 active:bg-orange-900 text-white font-bold text-sm sm:text-base items-center justify-center gap-2 transition-all shadow-md shadow-orange-700/20 cursor-pointer disabled:opacity-50"
+                className="hidden md:flex w-full py-4 rounded-xl bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] font-bold text-sm sm:text-base items-center justify-center gap-2 transition-all shadow-sm cursor-pointer disabled:opacity-50"
               >
                 <Lock className="w-4 h-4" />
                 <span>
@@ -861,7 +861,7 @@ export const CheckoutReview: React.FC = () => {
                     ? t(`Pay 50% Advance via SSLCommerz (৳${payableNow})`, `৫০% অগ্রিম পরিশোধ করুন (৳${payableNow})`)
                     : t(`Pay Online via SSLCommerz (৳${payableNow})`, `এসএসএলকমার্জে পরিশোধ করুন (৳${payableNow})`)}
                 </span>
-                {!isProcessing && <ArrowRight className="w-4 h-4 text-white" />}
+                {!isProcessing && <ArrowRight className="w-4 h-4 text-[#FCFBF8]" />}
               </button>
             </div>
           </div>
@@ -877,17 +877,17 @@ export const CheckoutReview: React.FC = () => {
 
       {/* Post Add to Cart Choice Modal */}
       {showPostAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4 animate-modalPop">
-            <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop-dorji animate-fadeIn">
+          <div className="bg-[#FCFBF8] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#C5CBD4] text-center space-y-4 animate-modalPop">
+            <div className="w-14 h-14 rounded-full bg-[#EDF7F0] text-[#166534] border border-[#B8E1C6] flex items-center justify-center mx-auto shadow-inner">
               <Check className="w-7 h-7" />
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-slate-900 font-serif-title">
+              <h3 className="text-lg font-bold text-[#1E2530] font-serif-title">
                 {t('Added to Shopping Cart!', 'কার্টে সফলভাবে যুক্ত হয়েছে!')}
               </h3>
-              <p className="text-xs text-slate-600 mt-1">
+              <p className="text-xs text-[#434C5E] mt-1">
                 {t(
                   `Your custom tailored ${activeGarment.nameEn} has been added to your cart with all selected fabric and measurement specifications.`,
                   `আপনার কাস্টমাইজড ${activeGarment.nameBn} সফলভাবে শপিং কার্টে যুক্ত হয়েছে।`
@@ -895,12 +895,12 @@ export const CheckoutReview: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-left text-xs space-y-1">
-              <div className="flex justify-between font-bold text-slate-900">
+            <div className="p-3 bg-[#F6F4EF] rounded-xl border border-[#DCE0E6] text-left text-xs space-y-1">
+              <div className="flex justify-between font-bold text-[#1E2530]">
                 <span>{t(activeGarment.nameEn, activeGarment.nameBn)}</span>
-                <span className="font-mono text-orange-700">{formatBDT(pricing.grandTotal)}</span>
+                <span className="font-mono text-[#2C3A52]">{formatBDT(pricing.grandTotal)}</span>
               </div>
-              <p className="text-slate-500 text-[11px]">
+              <p className="text-[#434C5E] text-[11px]">
                 {fabricDetails.fabricSource === 'shop_fabric' && selectedShopFabric 
                   ? `${t('Fabric:', 'কাপড়:')} ${selectedShopFabric.nameEn} (${fabricDetails.lengthGaz} Gaz)`
                   : t('Fabric: Customer Provided', 'কাপড়: গ্রাহকের নিজস্ব')}
@@ -914,7 +914,7 @@ export const CheckoutReview: React.FC = () => {
                   setShowPostAddModal(false);
                   setIsCartOpen(true);
                 }}
-                className="w-full py-3 bg-indigo-700 hover:bg-indigo-800 text-white rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
+                className="w-full py-3 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>{t('View Cart & Checkout All Items', 'কার্ট দেখুন ও সব আইটেম একসাথে অর্ডার করুন')}</span>
@@ -927,7 +927,7 @@ export const CheckoutReview: React.FC = () => {
                   setShowPostAddModal(false);
                   setActiveStep('catalog');
                 }}
-                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full py-2.5 bg-[#EFECE6] hover:bg-[#E2DDD4] text-[#1E2530] border border-[#C5CBD4] rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>{t('Customize Another Garment / Browse More', 'অন্য পোশাক সেলাই করুন / আরও দেখুন')}</span>

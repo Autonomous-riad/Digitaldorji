@@ -87,46 +87,46 @@ export const FabricCatalog: React.FC = () => {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-12">
-      {/* Hero Header - Facebook Blue Concept */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#1877F2] via-[#0866FF] to-[#0052CC] text-white p-4 sm:p-7 lg:p-8 border border-blue-600/30 shadow-sm">
+      {/* Hero Header - Brushed Silver & Slate-Atelier Eye-Comfort */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#232E42] via-[#2C3A52] to-[#354662] text-[#FCFBF8] p-4 sm:p-7 lg:p-8 border border-[#9BA3B0] shadow-sm">
         {/* Subtle decorative background light */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-blue-900/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-[#E8ECF2]/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#1E2530]/40 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-white/20 text-white text-[11px] sm:text-xs font-semibold border border-white/30 mb-2 sm:mb-3 backdrop-blur-xs shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-yellow-300 shrink-0" />
+          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-[#E8ECF2]/15 text-[#FCFBF8] text-[11px] sm:text-xs font-semibold border border-[#C5CBD4]/35 mb-2 sm:mb-3 backdrop-blur-xs shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#E8ECF2] shrink-0" />
             <span className="truncate">{t('Digital Dorji Sourced Atelier Fabrics', 'ডিজিটাল দর্জি প্রিমিয়াম ফেব্রিক শোরুম')}</span>
           </div>
 
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-snug mb-1.5 sm:mb-2 text-white">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight leading-snug mb-1.5 sm:mb-2 text-[#FCFBF8] font-serif-title">
             {t('Premium Men & Women Fabrics Directly at Our Atelier', 'আটেলিয়ার প্রিমিয়াম কাপড় বেছে নিয়ে সেলাই অর্ডার করুন')}
           </h1>
 
-          <p className="text-xs sm:text-sm text-blue-50 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
+          <p className="text-xs sm:text-sm text-[#E8ECF2]/95 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
             {t(
               'Don\'t have unstitched fabric at home? Browse our curated collection of Egyptian Giza Cotton, Irish Linen, Suiting Merino Wool, Pure Mulberry Silk, Georgette, Chiffon, and Zari Brocade Jamdani.',
               'আপনার বাসায় কাপড় কেনা না থাকলেও চিন্তা নেই! আমাদের সেরা মিশরীয় গিজা কটন, আইরিশ লিনেন, র সিল্ক, জর্জেট, স্যুট ক্লথ ও জামদানি ব্রাউজ করুন এবং ঘরে বসেই সেলাই অর্ডার দিন।'
             )}
           </p>
 
-          {/* 4-Step Visual Process - Facebook Workflow */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-white/20">
-            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
-              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fabric', 'কাপড় পছন্দ')}</span>
-              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Cotton, Linen, Silk & Suiting', 'সুতি, লিনেন ও সিল্ক থান')}</p>
+          {/* 4-Step Visual Process */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-[#C5CBD4]/25">
+            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
+              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fabric', 'কাপড় পছন্দ')}</span>
+              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Cotton, Linen, Silk & Suiting', 'সুতি, লিনেন ও সিল্ক থান')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
-              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Color & Yardage', 'রং ও গজ নির্বাচন')}</span>
-              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Accurate length for your fit', 'প্রয়োজনীয় মাপ অনুযায়ী গজ')}</p>
+            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
+              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Color & Yardage', 'রং ও গজ নির্বাচন')}</span>
+              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Accurate length for your fit', 'প্রয়োজনীয় মাপ অনুযায়ী গজ')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
-              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Bespoke Stitching', 'মাস্টার সেলাই')}</span>
-              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Direct tailored with custom sizing', 'মাপ অনুযায়ী নিখুঁত সেলাই')}</p>
+            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
+              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Bespoke Stitching', 'মাস্টার সেলাই')}</span>
+              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Direct tailored with custom sizing', 'মাপ অনুযায়ী নিখুঁত সেলাই')}</p>
             </div>
-            <div className="p-2 sm:p-2.5 bg-white/10 hover:bg-white/20 rounded-xl border border-white/15 transition-colors">
-              <span className="text-yellow-300 font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Doorstep Delivery', 'হোম ডেলিভারি')}</span>
-              <p className="text-[11px] sm:text-xs text-white font-medium leading-tight">{t('Delivered in 4 days with guarantee', '৪ দিনে ডেলিভারি + গ্যারান্টি')}</p>
+            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
+              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Doorstep Delivery', 'হোম ডেলিভারি')}</span>
+              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Delivered in 4 days with guarantee', '৪ দিনে ডেলিভারি + গ্যারান্টি')}</p>
             </div>
           </div>
         </div>
@@ -451,18 +451,18 @@ export const FabricCatalog: React.FC = () => {
 
       {/* Fabric Detail Modal (Quick View & Texture Zoom) */}
       {inspectFabric && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-cream-50 text-purple-950 rounded-2xl max-w-2xl w-full overflow-hidden border border-cream-300 shadow-xl my-8 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 modal-backdrop-dorji flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#FCFBF8] text-[#1E2530] rounded-2xl max-w-2xl w-full overflow-hidden border border-[#C5CBD4] shadow-xl my-8 animate-in fade-in zoom-in-95">
             {/* Modal Header */}
-            <div className="p-5 bg-purple-950 text-cream-50 flex items-center justify-between">
+            <div className="p-5 bg-[#EFECE6] text-[#1E2530] border-b border-[#DCE0E6] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#2C3A52]"></span>
                 <h3 className="font-bold text-base font-serif-title">{inspectFabric.nameEn}</h3>
               </div>
               <button 
                 onClick={() => setInspectFabric(null)}
                 aria-label="বিবরণ বন্ধ করুন"
-                className="p-1 rounded-lg text-cream-200 hover:text-white hover:bg-white/10 cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-300"
+                className="p-1.5 rounded-lg text-[#434C5E] hover:text-[#1E2530] hover:bg-[#DCE0E6] cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2C3A52]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -545,7 +545,7 @@ export const FabricCatalog: React.FC = () => {
                       setInspectFabric(null);
                       setShowGarmentSelectModal(fab);
                     }}
-                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
+                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
                   >
                     <Scissors className="w-4 h-4" />
                     <span>{t('Tailor with this Fabric', 'এই কাপড় দিয়ে সেলাই করুন')}</span>
@@ -560,11 +560,11 @@ export const FabricCatalog: React.FC = () => {
 
       {/* Garment Selection Modal (Choose which garment to tailor with this fabric) */}
       {showGarmentSelectModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-cream-50 text-purple-950 rounded-2xl max-w-xl w-full overflow-hidden border border-cream-300 shadow-xl my-8 animate-in fade-in zoom-in-95">
-            <div className="p-5 bg-purple-950 text-cream-50 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 modal-backdrop-dorji flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-[#FCFBF8] text-[#1E2530] rounded-2xl max-w-xl w-full overflow-hidden border border-[#C5CBD4] shadow-xl my-8 animate-in fade-in zoom-in-95">
+            <div className="p-5 bg-[#EFECE6] text-[#1E2530] border-b border-[#DCE0E6] flex items-center justify-between">
               <div>
-                <span className="text-amber-300 text-xs font-bold uppercase">{t('Step 2: Choose Garment to Tailor', 'ধাপ ২: পোশাক নির্বাচন করুন')}</span>
+                <span className="text-[#2C3A52] text-xs font-bold uppercase">{t('Step 2: Choose Garment to Tailor', 'ধাপ ২: পোশাক নির্বাচন করুন')}</span>
                 <h3 className="font-bold text-base font-serif-title">
                   {t('Tailoring with', 'বাছাইকৃত কাপড়:')} {showGarmentSelectModal.nameEn}
                 </h3>
@@ -572,7 +572,7 @@ export const FabricCatalog: React.FC = () => {
               <button 
                 onClick={() => setShowGarmentSelectModal(null)}
                 aria-label="মডাল বন্ধ করুন"
-                className="p-1 rounded-lg text-cream-200 hover:text-white hover:bg-white/10 cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-300"
+                className="p-1.5 rounded-lg text-[#434C5E] hover:text-[#1E2530] hover:bg-[#DCE0E6] cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2C3A52]"
               >
                 <X className="w-5 h-5" />
               </button>

@@ -37,7 +37,7 @@ export const Header: React.FC = () => {
   const activeNav = getActiveNav();
 
   const NavLinks = () => (
-    <div className="flex items-center gap-1 bg-[#F1F2EC] p-1 rounded-full border border-[#CFD2C8]/80 shadow-2xs">
+    <div className="flex items-center gap-1 bg-[#EFECE6] p-1 rounded-full border border-[#C5CBD4] shadow-2xs">
       <button
         onClick={() => {
           setActiveStep('catalog');
@@ -46,8 +46,8 @@ export const Header: React.FC = () => {
         }}
         className={`px-3.5 sm:px-4 py-1.5 rounded-full text-[13px] sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
           activeNav === 'tailoring'
-            ? 'bg-[#1D5BD6] text-white shadow-xs font-bold'
-            : 'text-[#3B4454] hover:text-[#18202C] hover:bg-[#E4E6DE] font-semibold'
+            ? 'bg-[#2C3A52] text-[#FCFBF8] shadow-xs font-bold'
+            : 'text-[#434C5E] hover:text-[#1E2530] hover:bg-[#DCE0E6]/70 font-semibold'
         }`}
       >
         <Scissors className="w-3.5 h-3.5 shrink-0" />
@@ -62,8 +62,8 @@ export const Header: React.FC = () => {
         }}
         className={`px-3.5 sm:px-4 py-1.5 rounded-full text-[13px] sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
           activeNav === 'fabrics'
-            ? 'bg-[#1D5BD6] text-white shadow-xs font-bold'
-            : 'text-[#3B4454] hover:text-[#18202C] hover:bg-[#E4E6DE] font-semibold'
+            ? 'bg-[#2C3A52] text-[#FCFBF8] shadow-xs font-bold'
+            : 'text-[#434C5E] hover:text-[#1E2530] hover:bg-[#DCE0E6]/70 font-semibold'
         }`}
       >
         <Layers className="w-3.5 h-3.5 shrink-0" />
@@ -77,8 +77,8 @@ export const Header: React.FC = () => {
         }}
         className={`px-3.5 sm:px-4 py-1.5 rounded-full text-[13px] sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
           activeNav === 'clothes'
-            ? 'bg-[#1D5BD6] text-white shadow-xs font-bold'
-            : 'text-[#3B4454] hover:text-[#18202C] hover:bg-[#E4E6DE] font-semibold'
+            ? 'bg-[#2C3A52] text-[#FCFBF8] shadow-xs font-bold'
+            : 'text-[#434C5E] hover:text-[#1E2530] hover:bg-[#DCE0E6]/70 font-semibold'
         }`}
       >
         <Shirt className="w-3.5 h-3.5 shrink-0" />
@@ -92,15 +92,15 @@ export const Header: React.FC = () => {
         }}
         className={`px-3.5 sm:px-4 py-1.5 rounded-full text-[13px] sm:text-sm transition-all flex items-center gap-1.5 cursor-pointer min-h-[36px] ${
           cartCount > 0 && activeNav === null
-            ? 'text-[#18202C] hover:bg-[#E4E6DE] font-semibold'
-            : 'text-[#3B4454] hover:text-[#18202C] hover:bg-[#E4E6DE] font-semibold'
+            ? 'text-[#1E2530] hover:bg-[#DCE0E6]/70 font-semibold'
+            : 'text-[#434C5E] hover:text-[#1E2530] hover:bg-[#DCE0E6]/70 font-semibold'
         }`}
         title={t('View Shopping Cart', 'শপিং কার্ট দেখুন')}
       >
         <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
         <span>{t('Cart', 'কার্ট')}</span>
         {cartCount > 0 && (
-          <span className="ml-0.5 px-1.5 py-0.2 text-[11px] font-bold bg-[#D92643] text-white rounded-full flex items-center justify-center min-w-[18px] h-[18px] shadow-xs">
+          <span className="ml-0.5 px-1.5 py-0.2 text-[11px] font-bold bg-[#2C3A52] text-[#FCFBF8] rounded-full flex items-center justify-center min-w-[18px] h-[18px] shadow-xs border border-[#9BA3B0]">
             {cartCount}
           </span>
         )}
@@ -110,14 +110,14 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#FAFAF7]/95 backdrop-blur-xl text-[#18202C] border-b border-[#CFD2C8] shadow-[0_1px_2px_rgba(24,32,44,0.05)]">
+      <header className="sticky top-0 z-40 bg-[#FCFBF8]/95 backdrop-blur-xl text-[#1E2530] border-b border-[#DCE0E6] shadow-[0_1px_3px_rgba(30,37,48,0.05)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 gap-3">
             {/* Mobile Menu Toggle */}
             <div className="lg:hidden flex items-center">
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 -ml-2 text-[#18202C] hover:text-[#1D5BD6] focus:outline-none rounded-lg hover:bg-[#E4E6DE] transition-colors cursor-pointer"
+                className="p-2 -ml-2 text-[#1E2530] hover:text-[#2C3A52] focus:outline-none rounded-lg hover:bg-[#EFECE6] transition-colors cursor-pointer"
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -132,12 +132,12 @@ export const Header: React.FC = () => {
               }}
               className="flex items-center gap-2 sm:gap-3 text-left focus:outline-none group cursor-pointer shrink-0"
             >
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#1D5BD6] text-white flex items-center justify-center shadow-xs group-hover:bg-[#184CB8] transition-all shrink-0">
-                <Scissors className="w-5 h-5 text-white" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#2C3A52] text-[#FCFBF8] border border-[#9BA3B0] flex items-center justify-center shadow-xs group-hover:bg-[#1F2A3D] transition-all shrink-0">
+                <Scissors className="w-4.5 h-4.5 text-[#E8ECF2]" />
               </div>
               <div className="hidden sm:block">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xl sm:text-2xl font-black tracking-tight text-[#1D5BD6] leading-none">
+                  <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#1E2530] leading-none font-serif-title">
                     Digital Dorji
                   </span>
                 </div>
@@ -154,10 +154,10 @@ export const Header: React.FC = () => {
               {/* Language Switcher */}
               <button
                 onClick={() => setLang(lang === 'en' ? 'bn' : 'en')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#18202C] hover:bg-[#D6D9CF] transition-colors cursor-pointer border border-[#CFD2C8] bg-[#E4E6DE] shadow-2xs"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#1E2530] hover:bg-[#E8ECF2] transition-colors cursor-pointer border border-[#C5CBD4] bg-[#EFECE6] shadow-2xs"
                 title={t('Switch Language', 'ভাষা পরিবর্তন করুন')}
               >
-                <Globe className="w-3.5 h-3.5 text-[#1D5BD6]" />
+                <Globe className="w-3.5 h-3.5 text-[#2C3A52]" />
                 <span>{lang === 'en' ? 'বাংলা' : 'EN'}</span>
               </button>
 
@@ -174,10 +174,10 @@ export const Header: React.FC = () => {
                       }
                     }}
                     id="header-user-name-button"
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E4E6EB] hover:bg-[#D8DADF] border border-[#CED0D4] text-[#050505] transition-colors cursor-pointer text-xs font-bold shadow-2xs"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#EFECE6] hover:bg-[#E8ECF2] border border-[#C5CBD4] text-[#1E2530] transition-colors cursor-pointer text-xs font-bold shadow-2xs"
                     title={user.role === 'admin' ? t('Admin Portal', 'অ্যাডমিন পোর্টাল') : t('My Account', 'আমার অ্যাকাউন্ট')}
                   >
-                    <div className="w-5 h-5 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                    <div className="w-5 h-5 rounded-full bg-[#2C3A52] text-[#FCFBF8] flex items-center justify-center text-[10px] font-bold shrink-0">
                       {user.name ? user.name[0].toUpperCase() : 'U'}
                     </div>
                     <span className="truncate max-w-[90px] sm:max-w-[140px]">{user.name}</span>
@@ -187,7 +187,7 @@ export const Header: React.FC = () => {
                   <button
                     onClick={logout}
                     id="header-logout-button"
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-rose-200 text-rose-700 hover:bg-rose-50 hover:border-rose-300 transition-colors shadow-2xs cursor-pointer"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#FCFBF8] border border-[#C5CBD4] text-[#434C5E] hover:text-rose-700 hover:bg-rose-50 hover:border-rose-300 transition-colors shadow-2xs cursor-pointer"
                     title={t('Sign out', 'লগআউট')}
                   >
                     <LogOut className="w-3.5 h-3.5" />
@@ -198,7 +198,7 @@ export const Header: React.FC = () => {
                 <button
                   onClick={() => navigate('/login')}
                   id="header-login-button"
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-[#1877F2] hover:bg-[#166FE5] text-white transition-colors shadow-xs cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] border border-[#243044] transition-colors shadow-xs cursor-pointer"
                 >
                   <User className="w-4 h-4" />
                   <span>{t('Login', 'লগইন')}</span>

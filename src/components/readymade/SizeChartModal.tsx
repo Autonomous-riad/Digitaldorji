@@ -37,28 +37,28 @@ export const SizeChartModal: React.FC<SizeChartModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/60 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop-dorji animate-fadeIn">
       <div 
-        className="bg-cream-50 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-cream-300 animate-modalPop"
+        className="bg-[#FCFBF8] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#C5CBD4] animate-modalPop"
         role="dialog"
         aria-modal="true"
       >
         {/* Header */}
-        <div className="sticky top-0 bg-cream-50/95 backdrop-blur px-6 py-4 border-b border-cream-300 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-[#EFECE6]/95 backdrop-blur px-6 py-4 border-b border-[#DCE0E6] flex items-center justify-between z-10">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-950 flex items-center justify-center">
-              <Ruler className="w-5 h-5 text-purple-950" />
+            <div className="w-9 h-9 rounded-xl bg-[#2C3A52] text-[#FCFBF8] flex items-center justify-center">
+              <Ruler className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-purple-950 leading-tight">
+              <h3 className="text-lg font-bold text-[#1E2530] leading-tight">
                 {t('Size & Fit Guide', 'সাইজ ও ফিটিং নির্দেশিকা')}
               </h3>
-              <p className="text-xs text-purple-950/70">{productName} ({category})</p>
+              <p className="text-xs text-[#434C5E]">{productName} ({category})</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-purple-950/60 hover:text-purple-950 rounded-lg hover:bg-cream-200 transition-colors"
+            className="p-2 text-[#434C5E] hover:text-[#1E2530] rounded-lg hover:bg-[#DCE0E6]/60 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>

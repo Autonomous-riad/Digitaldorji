@@ -146,7 +146,7 @@ export interface TailoredCartDetails {
   garmentNameEn: string;
   garmentNameBn: string;
   garmentCategory: string;
-  fabricSource: 'customer_own' | 'shop_fabric';
+  fabricSource: 'customer_own' | 'shop_fabric' | 'customer_provided';
   fabricId?: string;
   fabricName?: string;
   fabricNameBn?: string;

@@ -91,29 +91,29 @@ export const CustomerAuthModal: React.FC<CustomerAuthModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-purple-950/70 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop-dorji"
       role="dialog"
       aria-modal="true"
       aria-labelledby="auth-modal-title"
     >
-      <div className="bg-cream-50 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-cream-300 space-y-4 relative">
+      <div className="bg-[#FCFBF8] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-[#C5CBD4] space-y-4 relative">
         <button
           onClick={onClose}
           aria-label={t('Close modal', 'মডাল বন্ধ করুন')}
-          className="absolute right-4 top-4 p-1.5 text-purple-950/60 hover:text-purple-950 rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-purple-950 focus-visible:outline-none"
+          className="absolute right-4 top-4 p-1.5 text-[#434C5E] hover:text-[#1E2530] hover:bg-[#EFECE6] rounded-lg cursor-pointer focus-visible:ring-2 focus-visible:ring-[#2C3A52] focus-visible:outline-none"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-xl bg-[#2C3A52] text-[#FCFBF8] flex items-center justify-center">
             <Scissors className="w-5 h-5" />
           </div>
           <div>
-            <h3 id="auth-modal-title" className="text-base font-bold text-purple-950 font-serif-title">
+            <h3 id="auth-modal-title" className="text-base font-bold text-[#1E2530] font-serif-title">
               {mode === 'login' ? t('Customer Account Sign In', 'গ্রাহক একাউন্ট লগইন') : t('Create Customer Account', 'নতুন একাউন্ট খুলুন')}
             </h3>
-            <p className="text-xs text-purple-950/70">
+            <p className="text-xs text-[#434C5E]">
               {t('Manage tailoring orders, saved measurements & pickups', 'সেলাই অর্ডার ও মাপের প্রোফাইল সংরক্ষণ করুন')}
             </p>
           </div>

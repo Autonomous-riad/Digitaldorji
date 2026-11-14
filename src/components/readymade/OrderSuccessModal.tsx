@@ -37,14 +37,14 @@ export const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({ order, onC
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop-dorji animate-fadeIn">
       <div 
-        className="bg-white rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200"
+        className="bg-[#FCFBF8] rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-[#C5CBD4]"
         role="dialog"
       >
         {/* Header confirmation badge */}
-        <div className="p-6 bg-gradient-to-b from-emerald-50 to-white text-center border-b border-slate-100">
-          <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-3 shadow-inner">
+        <div className="p-6 bg-gradient-to-b from-[#EDF7F0] to-[#FCFBF8] text-center border-b border-[#DCE0E6]">
+          <div className="w-16 h-16 rounded-full bg-[#EDF7F0] text-[#166534] border border-[#B8E1C6] flex items-center justify-center mx-auto mb-3 shadow-inner">
             <CheckCircle2 className="w-9 h-9" />
           </div>
           <h3 className="text-xl sm:text-2xl font-bold text-slate-950 font-serif-title mb-1">

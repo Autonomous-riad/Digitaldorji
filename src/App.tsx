@@ -266,7 +266,7 @@ const AppRouterContent: React.FC = () => {
     }
 
     return (
-      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
         <SEOHead title="আমার একাউন্ট (Customer Portal) | Digital Dorji" />
         <Header />
         <main className="flex-1 w-full pb-20 md:pb-12">
@@ -299,7 +299,7 @@ const AppRouterContent: React.FC = () => {
     const pathParts = currentPath.split('/');
     const orderNum = pathParts[2] || 'success';
     return (
-      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
         <SEOHead title="অর্ডার কনফার্মেশন (Order Confirmed) | Digital Dorji" />
         <Header />
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
@@ -316,7 +316,7 @@ const AppRouterContent: React.FC = () => {
     const pathParts = currentPath.split('/');
     const orderNum = pathParts[2] || '';
     return (
-      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
         <SEOHead title="পেমেন্ট ব্যর্থ হয়েছে (Payment Failed) | Digital Dorji" />
         <Header />
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
@@ -345,7 +345,7 @@ const AppRouterContent: React.FC = () => {
     currentPath === '/contact'
   ) {
     return (
-      <div className="min-h-screen bg-cream-100 flex flex-col font-sans text-purple-950 selection:bg-orange-100 selection:text-orange-900">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
@@ -368,7 +368,7 @@ const AppRouterContent: React.FC = () => {
   // ==========================================
   if (currentPath === '/ready-made' || currentPath === '/ready-made/') {
     return (
-      <div className="min-h-screen bg-cream flex flex-col font-sans text-purple-950 selection:bg-purple-100 selection:text-purple-950">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 w-full">
@@ -385,7 +385,7 @@ const AppRouterContent: React.FC = () => {
 
   if (currentPath.startsWith('/ready-made/') && currentPath !== '/ready-made/') {
     return (
-      <div className="min-h-screen bg-cream flex flex-col font-sans text-purple-950 selection:bg-purple-100 selection:text-purple-950">
+      <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
         <SEOHead {...seo} />
         <Header />
         <main className="flex-1 w-full">
@@ -404,7 +404,7 @@ const AppRouterContent: React.FC = () => {
   // 6. PUBLIC STOREFRONT & BESPOKE ORDERING FLOW
   // ==========================================
   return (
-    <div className="min-h-screen bg-cream flex flex-col font-sans text-purple-950 selection:bg-purple-100 selection:text-purple-950">
+    <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
       <SEOHead {...seo} />
       <Header />
 
