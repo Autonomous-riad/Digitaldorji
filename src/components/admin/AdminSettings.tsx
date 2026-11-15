@@ -238,11 +238,103 @@ export const AdminSettings: React.FC = () => {
           </div>
         </div>
 
+        {/* Oxygen, Chattogram Geo-Radius & 3-Tier Delivery Charges */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-4 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+            <h2 className="text-sm font-bold text-slate-950 flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-indigo-700" />
+              <span>{t('Oxygen, Chattogram Pickup Service Radius & Geo-Coordinates', 'অক্সিজেন, চট্টগ্রাম পিকআপ সার্ভিস রেডিয়াস ও জিপিএস সেটিংস')}</span>
+            </h2>
+            <span className="text-[11px] font-mono font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-lg">
+              {t('Local Own-Fabric Pickup Radius: ', 'লোকাল পিকআপ রেডিয়াস: ')}{settings.pickupServiceRadiusKm ?? 3.0} km
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            <div>
+              <label className="block text-slate-900 font-semibold mb-1">Workshop Hub Area</label>
+              <input
+                type="text"
+                value={settings.shopArea || 'Oxygen, Chattogram'}
+                onChange={(e) => setSettings({ ...settings, shopArea: e.target.value })}
+                className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-900 font-semibold mb-1">Shop Latitude (Oxygen Mor)</label>
+              <input
+                type="number"
+                step="0.0001"
+                value={settings.shopLat ?? 22.3918}
+                onChange={(e) => setSettings({ ...settings, shopLat: Number(e.target.value) })}
+                className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-900 font-semibold mb-1">Shop Longitude (Oxygen Mor)</label>
+              <input
+                type="number"
+                step="0.0001"
+                value={settings.shopLng ?? 91.8215}
+                onChange={(e) => setSettings({ ...settings, shopLng: Number(e.target.value) })}
+                className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-900 font-semibold mb-1">Max Own-Fabric Pickup Radius (km)</label>
+              <input
+                type="number"
+                step="0.1"
+                min="0.5"
+                max="25"
+                value={settings.pickupServiceRadiusKm ?? 3.0}
+                onChange={(e) => setSettings({ ...settings, pickupServiceRadiusKm: Number(e.target.value) })}
+                className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono font-bold focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-100 text-xs">
+            <div>
+              <label className="block text-slate-900 font-semibold mb-1">Within {settings.pickupServiceRadiusKm ?? 3.0}km Local Pickup & Delivery Fee (৳)</label>
+              <input
+                type="number"
+                value={settings.localPickupFee ?? 60}
+                onChange={(e) => setSettings({ ...settings, localPickupFee: Number(e.target.value) })}
+                className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-900 font-semibold mb-1">Chattogram City Delivery Fee (৳)</label>
+              <input
+                type="number"
+                value={settings.chattogramCityDeliveryFee ?? 80}
+                onChange={(e) => setSettings({ ...settings, chattogramCityDeliveryFee: Number(e.target.value) })}
+                className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-slate-900 font-semibold mb-1">Nationwide Bangladesh Courier Fee (৳)</label>
+              <input
+                type="number"
+                value={settings.nationwideCourierFee ?? 120}
+                onChange={(e) => setSettings({ ...settings, nationwideCourierFee: Number(e.target.value) })}
+                className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Active Pickup Zones */}
         <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-3 shadow-xs">
           <h2 className="text-sm font-bold text-slate-950 flex items-center gap-2">
             <MapPin className="w-4 h-4 text-indigo-700" />
-            <span>{t('Active Doorstep Coverage Zones', 'ডোরস্টেপ পিকআপ কভারেজ এলাকা')}</span>
+            <span>{t('Active Doorstep Coverage Zones (Oxygen 3km Radius)', 'ডোরস্টেপ পিকআপ কভারেজ এলাকা (অক্সিজেন ৩ কি.মি.)')}</span>
           </h2>
           <div className="flex flex-wrap gap-2 text-xs">
             {(settings.activeZones || []).map((zone: string, i: number) => (

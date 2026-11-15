@@ -124,9 +124,13 @@ export interface FabricProduct {
   washCareBn: string;
   suitableGarmentIds: string[];
   inStock: boolean;
+  stockGaz?: number; // Available length in Gaz (yards)
+  lowStockThresholdGaz?: number;
   featured?: boolean;
   tags: string[];
 }
+
+export type OrderType = 'custom_own_fabric' | 'fabric_and_tailoring' | 'ready_made';
 
 export interface StitchingSpecifications {
   threadColor: string;
@@ -177,6 +181,10 @@ export interface PickupAddress {
   landmark?: string;
   pickupDate: string;
   pickupSlot: 'morning' | 'afternoon' | 'evening';
+  oxygenZoneId?: string;
+  customerLat?: number;
+  customerLng?: number;
+  distanceFromShopKm?: number;
 }
 
 export type DeliveryUrgency = 'standard' | 'express' | 'urgent';
@@ -212,6 +220,7 @@ export interface OrderStatusHistory {
 export interface TailorOrder {
   id: string;
   orderNumber: string;
+  orderType?: OrderType;
   userId?: string;
   customerName?: string;
   customerPhone?: string;
@@ -231,6 +240,10 @@ export interface TailorOrder {
   pickupAddress: PickupAddress;
   deliveryUrgency: DeliveryUrgency;
   estimatedDeliveryDate: string;
+  distanceFromShopKm?: number;
+  deliveryMode?: 'local_rider' | 'nationwide_courier';
+  courierName?: string;
+  courierTrackingNumber?: string;
   
   // Pricing breakdown (in BDT ৳)
   basePrice: number;

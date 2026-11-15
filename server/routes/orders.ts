@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { db, RelationalOrder } from '../db';
 import { optionalAuth, AuthenticatedRequest } from '../auth';
 import { orderPlacementRateLimiter } from '../lib/security';
+import { validatePickupEligibility } from '../../src/utils/geoDistance';
 
 export const ordersRouter = Router();
 
@@ -34,6 +35,8 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
   const fullName = orderData.pickupAddress?.fullName || orderData.customerName;
   const phone = orderData.pickupAddress?.phone || orderData.customerPhone;
   const division = orderData.pickupAddress?.division;
+  const district = orderData.pickupAddress?.district || division;
+  const thana = orderData.pickupAddress?.thana || '';
   const area = orderData.pickupAddress?.area;
   const streetAddress = orderData.pickupAddress?.streetAddress;
 
@@ -53,6 +56,65 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     return res.status(400).json({
       error: 'Garment specifications are required.'
     });
+  }
+
+  const isShopFabric = orderData.fabricDetails?.fabricSource === 'shop_fabric';
+  const orderType = isShopFabric ? 'fabric_and_tailoring' : 'custom_own_fabric';
+  const settings = db.getData().settings;
+
+  // Enforce 3-km Oxygen, Chattogram Service Radius when customer provides their own fabric
+  let calculatedDistanceKm: number | undefined = orderData.pickupAddress?.distanceFromShopKm;
+  if (orderType === 'custom_own_fabric' && !orderData.isDemo) {
+    const hasExplicitGeoOrDistrict = Boolean(
+      orderData.pickupAddress?.district ||
+      orderData.pickupAddress?.oxygenZoneId ||
+      typeof orderData.pickupAddress?.customerLat === 'number'
+    );
+    if (hasExplicitGeoOrDistrict) {
+      const eligibility = validatePickupEligibility({
+        division,
+        district: orderData.pickupAddress?.district,
+        thana,
+        customerLat: orderData.pickupAddress?.customerLat,
+        customerLng: orderData.pickupAddress?.customerLng,
+        zoneId: orderData.pickupAddress?.oxygenZoneId,
+        shopLat: settings.shopLat,
+        shopLng: settings.shopLng,
+        maxRadiusKm: settings.pickupServiceRadiusKm
+      });
+
+      if (!eligibility.eligible) {
+        return res.status(400).json({
+          error: eligibility.reasonEn,
+          errorBn: eligibility.reasonBn,
+          code: 'OUTSIDE_SERVICE_RADIUS',
+          distanceKm: eligibility.distanceKm,
+          maxRadiusKm: eligibility.maxRadiusKm
+        });
+      }
+      if (typeof eligibility.distanceKm === 'number') {
+        calculatedDistanceKm = eligibility.distanceKm;
+      }
+    }
+  }
+
+  // Validate fabric yardage inventory when ordering Website Fabric + Tailoring
+  const selectedFabricId =
+    orderData.fabricDetails?.selectedShopFabricId ||
+    orderData.fabricDetails?.selectedShopFabric?.id;
+  const requiredGaz = Number(orderData.fabricDetails?.lengthGaz) || Number(orderData.garment?.recommendedFabricGaz) || 2.5;
+
+  if (isShopFabric && selectedFabricId) {
+    const catalogFabric = db.getFabricsCatalog().find((f: any) => f.id === selectedFabricId);
+    if (catalogFabric) {
+      const availableGaz = typeof catalogFabric.stockGaz === 'number' ? catalogFabric.stockGaz : 85;
+      if (!catalogFabric.inStock || availableGaz < requiredGaz) {
+        return res.status(400).json({
+          error: `Insufficient fabric stock for "${catalogFabric.nameEn}". Available: ${availableGaz} Gaz, Required: ${requiredGaz} Gaz.`,
+          code: 'INSUFFICIENT_FABRIC_STOCK'
+        });
+      }
+    }
   }
 
   // Generate unique Order ID / Number
@@ -84,10 +146,16 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     }
   }
 
+  const isChattogram =
+    (district || '').toLowerCase().includes('chattogram') ||
+    (district || '').toLowerCase().includes('chittagong') ||
+    (division || '').toLowerCase().includes('chattogram');
+
   // Create unified order record
   const newOrder = {
     id: orderId,
     orderNumber,
+    orderType,
     userId,
     isGuest,
     customerName: fullName,
@@ -99,6 +167,7 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     measurementMethod: orderData.measurementMethod || 'custom_manual',
     measurements: orderData.measurements || {},
     selectedSizePreset: orderData.selectedSizePreset,
+    referenceClothDetails: orderData.referenceClothDetails,
     selectedCustomizations: orderData.selectedCustomizations || {},
     fabricDetails: orderData.fabricDetails || {
       fabricSource: 'customer_provided',
@@ -118,14 +187,23 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
         fullName,
         phone,
         division,
+        district: orderData.pickupAddress?.district || division,
+        thana,
         area,
         streetAddress,
         apartmentFloor: orderData.pickupAddress?.apartmentFloor || '',
+        landmark: orderData.pickupAddress?.landmark || '',
         pickupDate: orderData.pickupAddress?.pickupDate || new Date(Date.now() + 86400000).toISOString().split('T')[0],
         pickupSlot: normalizedSlot,
-        pickupTimeSlot: normalizedSlot
+        pickupTimeSlot: normalizedSlot,
+        oxygenZoneId: orderData.pickupAddress?.oxygenZoneId,
+        customerLat: orderData.pickupAddress?.customerLat,
+        customerLng: orderData.pickupAddress?.customerLng,
+        distanceFromShopKm: calculatedDistanceKm
       };
     })(),
+    distanceFromShopKm: calculatedDistanceKm,
+    deliveryMode: isChattogram ? 'local_rider' : 'nationwide_courier',
     deliveryUrgency: orderData.deliveryUrgency || 'standard',
     estimatedDeliveryDate,
     
@@ -146,25 +224,25 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     paymentTrxId: orderData.paymentTrxId,
 
     // Workshop status
-    currentStage: orderData.fabricDetails?.fabricSource === 'shop_fabric' ? 'cutting_in_progress' : 'pickup_scheduled',
+    currentStage: isShopFabric ? 'cutting_in_progress' : 'pickup_scheduled',
     statusHistory: orderData.statusHistory || [
       {
-        stage: orderData.fabricDetails?.fabricSource === 'shop_fabric' ? 'cutting_in_progress' : 'pickup_scheduled',
+        stage: isShopFabric ? 'cutting_in_progress' : 'pickup_scheduled',
         timestamp: new Date().toISOString(),
-        noteEn: orderData.fabricDetails?.fabricSource === 'shop_fabric'
-          ? 'Shop fabric allocated & dispatched to Master Cutting table.'
-          : `Doorstep fabric pickup scheduled at ${area}, ${division}.`,
-        noteBn: orderData.fabricDetails?.fabricSource === 'shop_fabric'
-          ? 'শপের কাপড় বরাদ্দ করা হয়েছে এবং মাস্টার কাটিং টেবিলে পাঠানো হয়েছে।'
+        noteEn: isShopFabric
+          ? `Website fabric (${requiredGaz} Gaz) allocated from inventory & dispatched to Oxygen Master Cutting table.`
+          : `Doorstep fabric pickup scheduled at ${area}, ${division} (${calculatedDistanceKm ? `${calculatedDistanceKm} km from Oxygen Atelier` : 'Within 3 km local service zone'}).`,
+        noteBn: isShopFabric
+          ? `ওয়েবসাইটের ফেব্রিক (${requiredGaz} গজ) স্টক থেকে বরাদ্দ করা হয়েছে এবং অক্সিজেন মাস্টার কাটিং টেবিলে পাঠানো হয়েছে।`
           : `${area}, ${division}-এ বাসার ঠিকানা থেকে কাপড় সংগ্রহের শিডিউল সম্পন্ন।`
       }
     ],
     assignedDeliveryMan: orderData.assignedDeliveryMan || {
-      name: 'Md. Kamrul Hasan',
-      phone: '01712-889900',
-      vehicleNumber: 'DHAKA METRO-HA-5921'
+      name: 'Rashedul Karim',
+      phone: '01799-112233',
+      vehicleNumber: 'CHATTOGRAM METRO-HA-4821'
     },
-    masterTailorName: orderData.masterTailorName || 'Ustad Jalal Master',
+    masterTailorName: orderData.masterTailorName || 'Ustad Moinul Islam',
     tailorNotes: orderData.tailorNotes || (orderData.fabricDetails?.specialInstructions || 'Standard precision tailoring.'),
     idempotencyKey: idempotencyKey || undefined
   };
@@ -190,6 +268,7 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     phone,
     division,
     area,
+    distanceFromShopKm: calculatedDistanceKm,
     address: `${streetAddress}, ${orderData.pickupAddress?.apartmentFloor || ''}`,
     pickup_address: `${streetAddress}, ${orderData.pickupAddress?.apartmentFloor || ''}`,
     scheduledDate: newOrder.pickupAddress.pickupDate,
@@ -198,12 +277,12 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
     slot: resolvedSlot.slotLabel,
     preferred_slot: slotKey,
     status: 'scheduled',
-    assignedRider: 'Md. Kamrul Hasan',
+    assignedRider: 'Rashedul Karim',
     fabricType: newOrder.fabricDetails.fabricType,
     colorName: newOrder.fabricDetails.colorName,
     lengthGaz: newOrder.fabricDetails.lengthGaz || 3.5,
     sampleGarmentProvided: newOrder.measurementMethod === 'sample_pickup' || newOrder.measurementMethod === 'reference_sample',
-    securityBagCode: `BAG-DH-${Math.floor(100 + Math.random() * 900)}`,
+    securityBagCode: `BAG-CTG-${Math.floor(100 + Math.random() * 900)}`,
     fabricNotes: newOrder.fabricDetails.specialInstructions || `${newOrder.fabricDetails.fabricType || 'Fabric'} (${newOrder.fabricDetails.colorName || 'Default'})`,
     notes: newOrder.fabricDetails.specialInstructions || `${newOrder.fabricDetails.fabricType || 'Fabric'} (${newOrder.fabricDetails.colorName || 'Default'})`
   };
@@ -216,6 +295,31 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
       data.orders[existingIdx] = newOrder;
     } else {
       data.orders.unshift(newOrder);
+    }
+
+    // Deduct fabric yardage stock when customer selected website fabric
+    if (isShopFabric && selectedFabricId && Array.isArray(data.fabrics_catalog)) {
+      const fab = data.fabrics_catalog.find((f: any) => f.id === selectedFabricId);
+      if (fab) {
+        const prevGaz = typeof fab.stockGaz === 'number' ? fab.stockGaz : 85;
+        const nextGaz = Math.max(0, Number((prevGaz - requiredGaz).toFixed(2)));
+        fab.stockGaz = nextGaz;
+        fab.inStock = nextGaz > 0;
+        if (!data.inventory_transactions) data.inventory_transactions = [];
+        data.inventory_transactions.unshift({
+          id: `inv-fab-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          variant_id: fab.id,
+          product_id: fab.id,
+          sku: fab.sku || fab.id,
+          product_name: `${fab.nameEn} (Gaz)`,
+          transaction_type: 'order_placed',
+          quantity_change: -requiredGaz,
+          previous_stock: prevGaz,
+          new_stock: nextGaz,
+          reason: `Tailoring Order ${newOrder.orderNumber} (${requiredGaz} Gaz)`,
+          created_at: new Date().toISOString()
+        });
+      }
     }
 
     // If customer has fabric to pick up, add pickup record
@@ -331,9 +435,10 @@ function handleTrackOrder(req: Request, res: Response) {
       }
 
       const stageMap: Record<string, string> = {
-        'Pending': 'pickup_scheduled',
+        'Payment Pending': 'fabric_received_at_shop',
+        'Pending': 'fabric_received_at_shop',
         'Confirmed': 'fabric_received_at_shop',
-        'Processing': 'cutting_in_progress',
+        'Processing': 'quality_and_ironing',
         'Dispatched': 'out_for_delivery',
         'Shipped': 'out_for_delivery',
         'Delivered': 'delivered',
@@ -343,6 +448,7 @@ function handleTrackOrder(req: Request, res: Response) {
       matchedOrder = {
         id: matchedRM.id,
         orderNumber: matchedRM.order_number,
+        orderType: 'ready_made',
         customerName: matchedRM.customer_name,
         customerPhone: matchedRM.customer_phone,
         customerEmail: matchedRM.customer_email,
@@ -364,6 +470,7 @@ function handleTrackOrder(req: Request, res: Response) {
           streetAddress: matchedRM.delivery_address
         },
         deliveryUrgency: matchedRM.delivery_method,
+        deliveryMode: 'nationwide_courier',
         estimatedDeliveryDate: new Date(new Date(matchedRM.created_at).getTime() + 3 * 86400000).toISOString(),
         grandTotal: matchedRM.total,
         paymentMethod: matchedRM.payment_method,
@@ -392,6 +499,14 @@ function handleTrackOrder(req: Request, res: Response) {
       error: `No order found matching Order ID "${orderIdQuery}". Please verify your order number from your confirmation receipt or SMS.`,
       code: 'ORDER_NOT_FOUND'
     });
+  }
+
+  if (!matchedOrder.orderType) {
+    matchedOrder.orderType = matchedOrder.isReadyMade
+      ? 'ready_made'
+      : matchedOrder.fabricDetails?.fabricSource === 'shop_fabric'
+      ? 'fabric_and_tailoring'
+      : 'custom_own_fabric';
   }
 
   if (!matchedOrder.isReadyMade) {

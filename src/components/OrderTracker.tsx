@@ -217,75 +217,113 @@ export const OrderTracker: React.FC = () => {
     }
   };
 
-  const stagesMeta: { stage: OrderStage; labelEn: string; labelBn: string; descEn: string; descBn: string; icon: any }[] = [
+  const resolvedOrderType = currentOrder?.orderType || (
+    (currentOrder as any)?.isReadyMade
+      ? 'ready_made'
+      : currentOrder?.fabricDetails?.fabricSource === 'shop_fabric'
+        ? 'fabric_and_tailoring'
+        : 'custom_own_fabric'
+  );
+
+  const allStagesMeta: { stage: OrderStage; labelEn: string; labelBn: string; descEn: string; descBn: string; icon: any }[] = [
     {
       stage: 'pickup_scheduled',
-      labelEn: 'Pickup Scheduled',
-      labelBn: 'পিকআপ নির্ধারিত',
-      descEn: 'Representative assigned to collect fabric from your home',
-      descBn: 'বাসা থেকে কাপড় সংগ্রহের জন্য প্রতিনিধি নির্ধারিত হয়েছে',
+      labelEn: 'Fabric Pickup Scheduled (Within 3km Oxygen Zone)',
+      labelBn: 'কাপড় পিকআপ নির্ধারিত (অক্সিজেন ৩ কি.মি. জোন)',
+      descEn: 'Atelier rider assigned to collect your own fabric from your doorstep in Oxygen, Chattogram',
+      descBn: 'অক্সিজেন, চট্টগ্রাম এলাকায় আপনার বাসা থেকে কাপড় সংগ্রহের জন্য রাইডার নির্ধারিত হয়েছে',
       icon: Clock,
     },
     {
       stage: 'deliveryman_enroute_pickup',
-      labelEn: 'Rider En Route to Collect',
-      labelBn: 'কাপড় আনতে আসছে',
-      descEn: 'Delivery rider is heading to your doorstep with bag & tape',
+      labelEn: 'Rider En Route to Collect Fabric',
+      labelBn: 'রাইডার কাপড় আনতে আসছে',
+      descEn: 'Delivery rider is heading to your doorstep with security seal bag & measurement tape',
       descBn: 'রাইডার সিকিউরিটি ব্যাগ নিয়ে আপনার বাসার উদ্দেশ্যে রওনা দিয়েছে',
       icon: Truck,
     },
     {
       stage: 'fabric_received_at_shop',
-      labelEn: 'Fabric Received at Atelier',
-      labelBn: 'কাপড় কারখানায় পৌঁছেছে',
-      descEn: 'Fabric cataloged, inspected, and tagged with order number',
-      descBn: 'কাপড় যাচাই করে অর্ডার ট্যাগ লাগানো হয়েছে',
+      labelEn: resolvedOrderType === 'ready_made' ? 'Order Confirmed & Stock Reserved' : 'Fabric Received at Oxygen Atelier',
+      labelBn: resolvedOrderType === 'ready_made' ? 'অর্ডার নিশ্চিত ও স্টক সংরক্ষিত' : 'কাপড় অক্সিজেন কারখানায় পৌঁছেছে',
+      descEn: resolvedOrderType === 'ready_made'
+        ? 'Ready-made garment verified from stock and queued for final inspection'
+        : 'Customer fabric inspected, cataloged, and tagged with order number at our Oxygen workshop',
+      descBn: resolvedOrderType === 'ready_made'
+        ? 'রেডিমেড পোশাক স্টক থেকে যাচাই করে প্যাকিংয়ের জন্য প্রস্তুত করা হয়েছে'
+        : 'কাপড় যাচাই করে আমাদের অক্সিজেন কারখানায় অর্ডার ট্যাগ লাগানো হয়েছে',
       icon: Package,
     },
     {
       stage: 'cutting_in_progress',
-      labelEn: 'Master Tailor Pattern Cutting',
-      labelBn: 'প্যাটার্ন কাটিং চলছে',
-      descEn: 'Master tailor marked chalk measurements & cut fabric pieces',
-      descBn: 'মাস্টার টেইলার নিখুঁত ইঞ্চিতে কাপড় কাটিং সম্পন্ন করছেন',
+      labelEn: resolvedOrderType === 'fabric_and_tailoring'
+        ? 'Website Fabric Allocated & Master Cutting'
+        : 'Master Tailor Pattern Cutting',
+      labelBn: resolvedOrderType === 'fabric_and_tailoring'
+        ? 'ওয়েবসাইটের কাপড় বরাদ্দ ও মাস্টার কাটিং'
+        : 'মাস্টার টেইলার প্যাটার্ন কাটিং চলছে',
+      descEn: resolvedOrderType === 'fabric_and_tailoring'
+        ? 'Selected website fabric roll cut to exact Gaz yardage and pattern marked by Master Tailor'
+        : 'Master tailor marked chalk measurements & cut fabric pieces',
+      descBn: resolvedOrderType === 'fabric_and_tailoring'
+        ? 'আপনার বাছাইকৃত ওয়েবসাইটের কাপড়ের রোল থেকে গজ কেটে মাস্টার কাটিং চলছে'
+        : 'মাস্টার টেইলার নিখুঁত ইঞ্চিতে কাপড় কাটিং সম্পন্ন করছেন',
       icon: Scissors,
     },
     {
       stage: 'stitching_in_progress',
-      labelEn: 'Artisan Stitching & Sewing',
-      labelBn: 'সেলাই ও কারুকার্য চলছে',
-      descEn: 'Senior artisan stitching neckline, sleeves, body seams & embellishments',
+      labelEn: 'Artisan Stitching & Bespoke Sewing',
+      labelBn: 'সেলাই ও নিখুঁত কারুকার্য চলছে',
+      descEn: 'Senior artisan stitching neckline, sleeves, body seams & custom options',
       descBn: 'কারিগর কলার, হাতা, বডি ও নকশা নিখুঁতভাবে সেলাই করছেন',
       icon: Sparkles,
     },
     {
       stage: 'quality_and_ironing',
-      labelEn: 'Quality Check & Steam Press',
-      labelBn: 'কোয়ালিটি চেক ও স্টিম আয়রন',
-      descEn: 'Inspecting measurements, finishing threads, steam iron & luxury packing',
-      descBn: 'মাপের সাথে মিলিয়ে চেক, সুতা কাটা ও স্টিম আয়রন সম্পন্ন',
+      labelEn: resolvedOrderType === 'ready_made' ? 'Quality Inspection & Luxury Packaging' : 'Quality Check & Steam Press',
+      labelBn: resolvedOrderType === 'ready_made' ? 'কোয়ালিটি চেক ও প্রিমিয়াম প্যাকিং' : 'কোয়ালিটি চেক ও স্টিম আয়রন',
+      descEn: resolvedOrderType === 'ready_made'
+        ? 'Final garment inspection, barcode tagging, and protective courier packaging'
+        : 'Inspecting measurements, finishing threads, steam iron & luxury packing',
+      descBn: resolvedOrderType === 'ready_made'
+        ? 'চূড়ান্ত কোয়ালিটি চেক এবং কুরিয়ার প্যাকিং সম্পন্ন'
+        : 'মাপের সাথে মিলিয়ে চেক, সুতা কাটা ও স্টিম আয়রন সম্পন্ন',
       icon: CheckCircle2,
     },
     {
       stage: 'out_for_delivery',
-      labelEn: 'Out for Doorstep Delivery',
-      labelBn: 'ডেলিভারির জন্য বের হয়েছে',
-      descEn: 'Delivery concierge is on the way to hand over your ready garment',
-      descBn: 'সেলাই করা তৈরি পোশাক নিয়ে রাইডার আপনার ঠিকানায় আসছে',
+      labelEn: resolvedOrderType === 'custom_own_fabric'
+        ? 'Out for Local Delivery (Oxygen 3km Zone)'
+        : 'Dispatched via Courier / Delivery Rider',
+      labelBn: resolvedOrderType === 'custom_own_fabric'
+        ? 'লোকাল ডেলিভারির জন্য বের হয়েছে'
+        : 'কুরিয়ার / রাইডারের মাধ্যমে ডেলিভারিতে পাঠানো হয়েছে',
+      descEn: currentOrder?.courierName
+        ? `Dispatched via ${currentOrder.courierName}${currentOrder.courierTrackingNumber ? ` (Tracking: ${currentOrder.courierTrackingNumber})` : ''}`
+        : 'Delivery concierge or nationwide courier is on the way to hand over your garment',
+      descBn: currentOrder?.courierName
+        ? `${currentOrder.courierName} কুরিয়ারের মাধ্যমে পাঠানো হয়েছে${currentOrder.courierTrackingNumber ? ` (ট্র্যাকিং: ${currentOrder.courierTrackingNumber})` : ''}`
+        : 'সেলাই করা তৈরি পোশাক নিয়ে রাইডার বা কুরিয়ার আপনার ঠিকানায় আসছে',
       icon: Truck,
     },
     {
       stage: 'delivered',
       labelEn: 'Delivered & Fit Guaranteed',
       labelBn: 'ডেলিভারি সম্পন্ন',
-      descEn: 'Garment delivered to customer! 7-day free alteration active',
-      descBn: 'পোশাক হস্তান্তর সম্পন্ন! ৭ দিনের ফ্রি অলটারেশন সুবিধা চালু',
+      descEn: 'Order delivered to customer! 7-day alteration & support guarantee active',
+      descBn: 'পোশাক হস্তান্তর সম্পন্ন! ৭ দিনের অলটারেশন সুবিধা চালু',
       icon: ShieldCheck,
     },
   ];
 
+  const stagesMeta = resolvedOrderType === 'ready_made'
+    ? allStagesMeta.filter(s => ['fabric_received_at_shop', 'quality_and_ironing', 'out_for_delivery', 'delivered'].includes(s.stage))
+    : resolvedOrderType === 'fabric_and_tailoring'
+      ? allStagesMeta.filter(s => ['cutting_in_progress', 'stitching_in_progress', 'quality_and_ironing', 'out_for_delivery', 'delivered'].includes(s.stage))
+      : allStagesMeta;
+
   const stageKeys = stagesMeta.map(s => s.stage);
-  const currentStageIndex = currentOrder ? stageKeys.indexOf(currentOrder.currentStage) : -1;
+  const currentStageIndex = currentOrder ? Math.max(0, stageKeys.indexOf(currentOrder.currentStage)) : -1;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12">

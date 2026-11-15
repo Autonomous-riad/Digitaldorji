@@ -525,7 +525,13 @@ export const FabricCatalog: React.FC = () => {
                   <span className="text-purple-950/70">{t('Season & Transparency', 'মৌসুম ও স্বচ্ছতা:')}</span>
                   <span className="font-bold text-purple-950">{inspectFabric.season} • {inspectFabric.opacity}</span>
                 </div>
-                <div className="grid grid-cols-2 p-2.5 bg-cream-200/60">
+                <div className="grid grid-cols-2 p-2.5 bg-cream-200/60 border-b border-cream-300">
+                  <span className="text-purple-950/70">{t('Available Roll Stock', 'স্টকে মজুত থান কাপড়:')}</span>
+                  <span className="font-bold text-emerald-800 font-mono">
+                    {inspectFabric.stockGaz !== undefined ? `${inspectFabric.stockGaz} Gaz (গজ)` : 'In Stock'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 p-2.5">
                   <span className="text-purple-950/70">{t('Wash & Care', 'পরিচর্যা ও ওয়াশ:')}</span>
                   <span className="font-bold text-purple-950">{t(inspectFabric.washCareEn, inspectFabric.washCareBn)}</span>
                 </div>
@@ -540,12 +546,13 @@ export const FabricCatalog: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   <button
+                    disabled={inspectFabric.inStock === false || (inspectFabric.stockGaz !== undefined && inspectFabric.stockGaz <= 0)}
                     onClick={() => {
                       const fab = inspectFabric;
                       setInspectFabric(null);
                       setShowGarmentSelectModal(fab);
                     }}
-                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
+                    className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#2C3A52] hover:bg-[#1F2A3D] disabled:opacity-50 text-[#FCFBF8] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs"
                   >
                     <Scissors className="w-4 h-4" />
                     <span>{t('Tailor with this Fabric', 'এই কাপড় দিয়ে সেলাই করুন')}</span>

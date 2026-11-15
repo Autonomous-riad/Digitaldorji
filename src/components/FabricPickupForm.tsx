@@ -7,6 +7,13 @@ import {
   getDeliveryChargeForDistrict 
 } from '../data/bangladeshGeo';
 import { DIGITAL_FABRICS_DATA } from '../data/fabrics';
+import { 
+  OXYGEN_CHATTOGRAM_ZONES, 
+  validatePickupEligibility, 
+  calculateHaversineDistanceKm,
+  DEFAULT_SHOP_LAT,
+  DEFAULT_SHOP_LNG
+} from '../utils/geoDistance';
 import { FabricProduct } from '../types/tailor';
 import { MobileBottomActionBar } from './MobileBottomActionBar';
 import { PickupAddressSchema, formatZodErrors, formatBDPhoneInput, normalizeBDPhone } from '../utils/validation';
@@ -25,13 +32,17 @@ import {
   Phone, 
   User,
   Calendar,
-  Clock
+  Clock,
+  Navigation,
+  AlertTriangle
 } from 'lucide-react';
 
 export const FabricPickupForm: React.FC = () => {
   const { 
     t, 
     activeGarment, 
+    fabrics,
+    shopSettings,
     fabricDetails, 
     updateFabricDetails, 
     selectedShopFabric,
@@ -44,6 +55,9 @@ export const FabricPickupForm: React.FC = () => {
 
   const [showFabricPicker, setShowFabricPicker] = useState(!selectedShopFabric);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [isDetectingGps, setIsDetectingGps] = useState(false);
+
+  const catalogFabrics = fabrics && fabrics.length > 0 ? fabrics : DIGITAL_FABRICS_DATA;
 
   if (!activeGarment) {
     return (
@@ -61,9 +75,9 @@ export const FabricPickupForm: React.FC = () => {
 
   // Filter districts by selected division
   const availableDistricts = useMemo(() => {
-    const div = (pickupAddress.division || 'Dhaka').toLowerCase();
+    const div = (pickupAddress.division || 'Chattogram').toLowerCase();
     const filtered = BANGLADESH_64_DISTRICTS.filter(d => d.divisionEn.toLowerCase() === div);
-    return filtered.length > 0 ? filtered : BANGLADESH_64_DISTRICTS.filter(d => d.divisionEn === 'Dhaka');
+    return filtered.length > 0 ? filtered : BANGLADESH_64_DISTRICTS.filter(d => d.divisionEn === 'Chattogram');
   }, [pickupAddress.division]);
 
   // Current district object
@@ -76,7 +90,27 @@ export const FabricPickupForm: React.FC = () => {
     return getThanasForDistrict(currentDistrict.id);
   }, [currentDistrict]);
 
-  const deliveryCharge = getDeliveryChargeForDistrict(currentDistrict.id);
+  const pickupEligibility = useMemo(() => {
+    return validatePickupEligibility({
+      division: pickupAddress.division,
+      district: pickupAddress.district,
+      thana: pickupAddress.thana,
+      area: pickupAddress.area,
+      streetAddress: pickupAddress.streetAddress,
+      customerLat: pickupAddress.customerLat,
+      customerLng: pickupAddress.customerLng,
+      zoneId: pickupAddress.oxygenZoneId,
+      shopLat: shopSettings?.shopLat ?? DEFAULT_SHOP_LAT,
+      shopLng: shopSettings?.shopLng ?? DEFAULT_SHOP_LNG,
+      maxRadiusKm: shopSettings?.pickupServiceRadiusKm ?? 3.0
+    });
+  }, [pickupAddress, shopSettings]);
+
+  const deliveryCharge = getDeliveryChargeForDistrict(
+    currentDistrict.id,
+    pickupEligibility.distanceKm,
+    shopSettings?.pickupServiceRadiusKm ?? 3.0
+  );
 
   const handleDivisionChange = (newDiv: string) => {
     const districtsInDiv = BANGLADESH_64_DISTRICTS.filter(d => d.divisionEn.toLowerCase() === newDiv.toLowerCase());
@@ -88,7 +122,11 @@ export const FabricPickupForm: React.FC = () => {
       division: newDiv,
       district: firstDistrict.id,
       thana: firstThana.id,
-      area: firstThana.nameEn
+      area: firstThana.nameEn,
+      oxygenZoneId: firstDistrict.id === 'chattogram' ? 'oxygen_mor' : undefined,
+      customerLat: firstDistrict.id === 'chattogram' ? DEFAULT_SHOP_LAT : undefined,
+      customerLng: firstDistrict.id === 'chattogram' ? DEFAULT_SHOP_LNG : undefined,
+      distanceFromShopKm: firstDistrict.id === 'chattogram' ? 0.2 : 12.0
     });
     if (fieldErrors.division || fieldErrors.district || fieldErrors.thana) {
       setFieldErrors(prev => ({ ...prev, division: '', district: '', thana: '' }));
@@ -102,7 +140,11 @@ export const FabricPickupForm: React.FC = () => {
     updatePickupAddress({
       district: newDistrictId,
       thana: firstThana.id,
-      area: firstThana.nameEn
+      area: firstThana.nameEn,
+      oxygenZoneId: newDistrictId === 'chattogram' ? 'oxygen_mor' : undefined,
+      customerLat: newDistrictId === 'chattogram' ? DEFAULT_SHOP_LAT : undefined,
+      customerLng: newDistrictId === 'chattogram' ? DEFAULT_SHOP_LNG : undefined,
+      distanceFromShopKm: newDistrictId === 'chattogram' ? 0.2 : 12.0
     });
     if (fieldErrors.district || fieldErrors.thana) {
       setFieldErrors(prev => ({ ...prev, district: '', thana: '' }));
@@ -111,12 +153,94 @@ export const FabricPickupForm: React.FC = () => {
 
   const handleThanaChange = (newThanaId: string) => {
     const thanaObj = availableThanas.find(t => t.id === newThanaId);
+    const matchedZone = OXYGEN_CHATTOGRAM_ZONES.find(z => z.thanaId === newThanaId);
     updatePickupAddress({
       thana: newThanaId,
-      area: thanaObj ? thanaObj.nameEn : newThanaId
+      area: thanaObj ? thanaObj.nameEn : newThanaId,
+      ...(matchedZone ? {
+        oxygenZoneId: matchedZone.id,
+        customerLat: matchedZone.lat,
+        customerLng: matchedZone.lng,
+        distanceFromShopKm: matchedZone.approxDistanceKm
+      } : {})
     });
     if (fieldErrors.thana) {
       setFieldErrors(prev => ({ ...prev, thana: '' }));
+    }
+  };
+
+  const handleZoneChange = (zoneId: string) => {
+    const zone = OXYGEN_CHATTOGRAM_ZONES.find(z => z.id === zoneId);
+    if (!zone) return;
+    const distKm = calculateHaversineDistanceKm(
+      shopSettings?.shopLat ?? DEFAULT_SHOP_LAT,
+      shopSettings?.shopLng ?? DEFAULT_SHOP_LNG,
+      zone.lat,
+      zone.lng
+    );
+    updatePickupAddress({
+      division: 'Chattogram',
+      district: 'chattogram',
+      thana: zone.thanaId,
+      area: zone.nameEn,
+      oxygenZoneId: zone.id,
+      customerLat: zone.lat,
+      customerLng: zone.lng,
+      distanceFromShopKm: distKm
+    });
+  };
+
+  const handleDetectGpsLocation = () => {
+    setIsDetectingGps(true);
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = Number(pos.coords.latitude.toFixed(5));
+          const lng = Number(pos.coords.longitude.toFixed(5));
+          const distKm = calculateHaversineDistanceKm(
+            shopSettings?.shopLat ?? DEFAULT_SHOP_LAT,
+            shopSettings?.shopLng ?? DEFAULT_SHOP_LNG,
+            lat,
+            lng
+          );
+          updatePickupAddress({
+            customerLat: lat,
+            customerLng: lng,
+            distanceFromShopKm: distKm
+          });
+          setIsDetectingGps(false);
+          toast.success(
+            t(
+              `GPS Location set (${distKm.toFixed(2)} km from Oxygen Workshop)`,
+              `জিপিএস অবস্থান শনাক্ত হয়েছে (অক্সিজেন শপ থেকে ${distKm.toFixed(2)} কি.মি.)`
+            )
+          );
+        },
+        () => {
+          // Graceful fallback to Oxygen Mor in preview iframe when browser blocks geolocation
+          const fallbackZone = OXYGEN_CHATTOGRAM_ZONES[0];
+          updatePickupAddress({
+            division: 'Chattogram',
+            district: 'chattogram',
+            thana: fallbackZone.thanaId,
+            area: fallbackZone.nameEn,
+            oxygenZoneId: fallbackZone.id,
+            customerLat: fallbackZone.lat,
+            customerLng: fallbackZone.lng,
+            distanceFromShopKm: fallbackZone.approxDistanceKm
+          });
+          setIsDetectingGps(false);
+          toast.info(
+            t(
+              'Set to Oxygen Mor, Chattogram (0.2 km from Atelier). You can also pick any neighborhood from the list.',
+              'অক্সিজেন মোড়, চট্টগ্রাম (০.২ কি.মি.) সেট করা হয়েছে। তালিকা থেকেও এলাকা বেছে নিতে পারেন।'
+            )
+          );
+        },
+        { timeout: 5000 }
+      );
+    } else {
+      setIsDetectingGps(false);
     }
   };
 
@@ -140,7 +264,7 @@ export const FabricPickupForm: React.FC = () => {
         lengthGaz: fabricDetails.lengthGaz || activeGarment.recommendedFabricGaz
       });
     } else {
-      const defaultFab = selectedShopFabric || DIGITAL_FABRICS_DATA.find(f => f.suitableGarmentIds.includes(activeGarment.id)) || DIGITAL_FABRICS_DATA[0];
+      const defaultFab = selectedShopFabric || catalogFabrics.find(f => f.inStock !== false && (f.stockGaz === undefined || f.stockGaz > 0) && f.suitableGarmentIds.includes(activeGarment.id)) || catalogFabrics[0];
       if (!selectedShopFabric && defaultFab) {
         selectShopFabric(defaultFab);
       }
@@ -163,7 +287,7 @@ export const FabricPickupForm: React.FC = () => {
     const validationData = {
       fullName: pickupAddress.fullName || '',
       phone: normalizedPhone,
-      division: pickupAddress.division || 'Dhaka',
+      division: pickupAddress.division || 'Chattogram',
       district: pickupAddress.district || currentDistrict.id,
       thana: pickupAddress.thana || (availableThanas[0]?.id || ''),
       area: pickupAddress.area || pickupAddress.streetAddress || '',
@@ -181,12 +305,32 @@ export const FabricPickupForm: React.FC = () => {
       return false;
     }
 
+    if (isOwnFabric && !pickupEligibility.eligible) {
+      toast.error(t(pickupEligibility.reasonEn, pickupEligibility.reasonBn));
+      return false;
+    }
+
     if (fabricDetails.fabricSource === 'shop_fabric' && !selectedShopFabric) {
       toast.error(t('Please select an Atelier fabric from the catalog or switch to "I Have My Own Fabric"', 'ক্যাটালগ থেকে কাপড় নির্বাচন করুন অথবা "নিজস্ব কাপড়" অপশন বেছে নিন'));
       setShowFabricPicker(true);
       return false;
     }
 
+    if (fabricDetails.fabricSource === 'shop_fabric' && selectedShopFabric) {
+      const neededGaz = Number(fabricDetails.lengthGaz || activeGarment.recommendedFabricGaz || 2.5);
+      const availGaz = selectedShopFabric.stockGaz !== undefined ? Number(selectedShopFabric.stockGaz) : 85;
+      if (availGaz < neededGaz || selectedShopFabric.inStock === false) {
+        toast.error(
+          t(
+            `Insufficient yardage for ${selectedShopFabric.nameEn}. Available: ${availGaz} Gaz, Required: ${neededGaz} Gaz.`,
+            `${selectedShopFabric.nameBn}-এর পর্যাপ্ত গজ স্টকে নেই। স্টকে আছে: ${availGaz} গজ, প্রয়োজন: ${neededGaz} গজ।`
+          )
+        );
+        return false;
+      }
+    }
+
+    updatePickupAddress({ distanceFromShopKm: pickupEligibility.distanceKm });
     setActiveStep('checkout');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return true;
@@ -370,16 +514,19 @@ export const FabricPickupForm: React.FC = () => {
                 </h5>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-h-72 overflow-y-auto p-1">
-                  {DIGITAL_FABRICS_DATA.map((fab) => {
+                  {catalogFabrics.map((fab) => {
                     const isCurrent = selectedShopFabric?.id === fab.id;
                     const isSuitable = fab.suitableGarmentIds.includes(activeGarment.id);
+                    const availGaz = fab.stockGaz !== undefined ? fab.stockGaz : 85;
+                    const outOfStock = fab.inStock === false || availGaz <= 0;
 
                     return (
                       <button
                         key={fab.id}
                         type="button"
+                        disabled={outOfStock}
                         onClick={() => handleSwitchToShopFabric(fab)}
-                        className={`p-3 rounded-xl border text-left flex items-start gap-2.5 transition-all cursor-pointer ${
+                        className={`p-3 rounded-xl border text-left flex items-start gap-2.5 transition-all cursor-pointer disabled:opacity-50 ${
                           isCurrent
                             ? 'border-[#2C3A52] bg-[#FCFBF8] ring-2 ring-[#2C3A52]/20 shadow-xs'
                             : 'border-[#DCE0E6] bg-[#FCFBF8] hover:border-[#9BA3B0]'
@@ -402,7 +549,12 @@ export const FabricPickupForm: React.FC = () => {
                             )}
                           </div>
                           <span className="text-[10px] text-[#434C5E] block truncate">{fab.colorName} • {fab.materialCategory}</span>
-                          <span className="text-xs font-black text-[#1E2530] mt-1 block font-mono">৳{fab.pricePerGaz}/Gaz</span>
+                          <div className="flex items-center justify-between mt-1">
+                            <span className="text-xs font-black text-[#1E2530] font-mono">৳{fab.pricePerGaz}/Gaz</span>
+                            <span className={`text-[10px] font-mono font-bold ${outOfStock ? 'text-red-700' : 'text-[#166534]'}`}>
+                              {outOfStock ? t('Out', 'স্টক শেষ') : `${availGaz} Gaz`}
+                            </span>
+                          </div>
                         </div>
                       </button>
                     );
@@ -491,7 +643,7 @@ export const FabricPickupForm: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 2: DELIVERY ADDRESS IN BANGLADESH */}
+      {/* SECTION 2: DELIVERY ADDRESS & OXYGEN, CHATTOGRAM 3KM RADIUS VALIDATION */}
       <div className="bg-[#FCFBF8] rounded-2xl border border-[#DCE0E6] p-5 sm:p-6 shadow-xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#DCE0E6]">
           <h3 className="text-base font-bold text-[#1E2530] flex items-center gap-2 font-serif-title">
@@ -503,23 +655,101 @@ export const FabricPickupForm: React.FC = () => {
             </span>
           </h3>
           <span className="text-xs text-[#2C3A52] font-bold bg-[#E8ECF2] px-3 py-1 rounded-lg border border-[#C5CBD4] self-start sm:self-auto">
-            {currentDistrict.nameEn}: ৳{deliveryCharge} {t('Courier Fee', 'ডেলিভারি চার্জ')}
+            {currentDistrict.nameEn}: ৳{deliveryCharge} {t('Delivery Fee', 'ডেলিভারি চার্জ')}
           </span>
         </div>
 
-        <div className="bg-[#EFECE6] border border-[#C5CBD4] p-3.5 rounded-xl text-xs text-[#1E2530] flex items-center gap-2.5">
-          <ShieldCheck className="w-5 h-5 text-[#2C3A52] shrink-0" />
-          <span>
-            {isOwnFabric
-              ? t(
-                  'Our rider will collect your fabric from this address in a sealed security bag and deliver the tailored garment back to you.',
-                  'আমাদের রাইডার এই ঠিকানা থেকে আপনার কাপড় সিকিউরিটি ব্যাগে সংগ্রহ করবেন এবং সেলাই শেষে একই ঠিকানায় পৌঁছে দেবেন।'
-                )
-              : t(
-                  'No fabric pickup is needed. We will stitch your garment with the selected atelier fabric and deliver it directly to your address.',
-                  'কোনো কাপড় সংগ্রহ বা পাঠানোর প্রয়োজন নেই। আমরা অ্যাটেলিয়ার কাপড় দিয়ে পোশাক সেলাই করে সরাসরি আপনার ঠিকানায় পৌঁছে দেব।'
-                )}
-          </span>
+        {/* Oxygen, Chattogram 3-km Service Radius & Location Selector Card */}
+        <div className={`p-4 rounded-xl border space-y-3 ${
+          isOwnFabric && !pickupEligibility.eligible
+            ? 'bg-red-50/80 border-red-300'
+            : pickupEligibility.eligible
+              ? 'bg-[#EDF7F0] border-[#B8E1C6]'
+              : 'bg-[#EFECE6] border-[#C5CBD4]'
+        }`}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-2.5">
+              {isOwnFabric && !pickupEligibility.eligible ? (
+                <AlertTriangle className="w-5 h-5 text-[#991B1B] shrink-0 mt-0.5" />
+              ) : (
+                <ShieldCheck className="w-5 h-5 text-[#166534] shrink-0 mt-0.5" />
+              )}
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-bold text-[#1E2530]">
+                    {t(
+                      `Atelier Location: ${shopSettings?.shopArea || 'Oxygen, Chattogram'} (${shopSettings?.pickupServiceRadiusKm ?? 3.0} km Local Pickup Zone)`,
+                      `শপের অবস্থান: অক্সিজেন, চট্টগ্রাম (${shopSettings?.pickupServiceRadiusKm ?? 3.0} কি.মি. লোকাল পিকআপ জোন)`
+                    )}
+                  </span>
+                  <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded border ${
+                    pickupEligibility.eligible
+                      ? 'bg-white text-[#166534] border-[#B8E1C6]'
+                      : 'bg-white text-[#991B1B] border-red-300'
+                  }`}>
+                    {pickupEligibility.distanceKm.toFixed(2)} km {t('from Oxygen Shop', 'দূরত্ব')}
+                  </span>
+                </div>
+                <p className="text-xs text-[#434C5E] mt-1">
+                  {t(pickupEligibility.reasonEn, pickupEligibility.reasonBn)}
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleDetectGpsLocation}
+              disabled={isDetectingGps}
+              className="px-3.5 py-2 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] text-xs font-bold rounded-xl flex items-center gap-1.5 shrink-0 cursor-pointer shadow-xs"
+            >
+              <Navigation className="w-3.5 h-3.5" />
+              <span>{isDetectingGps ? t('Locating...', 'শনাক্ত হচ্ছে...') : t('Verify GPS Distance', 'জিপিএস দূরত্ব যাচাই')}</span>
+            </button>
+          </div>
+
+          {/* Chattogram / Oxygen Neighborhood & Landmark Selector */}
+          {(currentDistrict.id === 'chattogram' || isOwnFabric) && (
+            <div className="pt-2 border-t border-[#C5CBD4]/60 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-bold text-[#1E2530] block mb-1">
+                  {t('Select Oxygen / Chattogram Landmark (এলাকা ও দূরত্ব যাচাই)', 'অক্সিজেন / চট্টগ্রাম ল্যান্ডমার্ক নির্বাচন করুন')}
+                </label>
+                <select
+                  value={pickupAddress.oxygenZoneId || 'oxygen_mor'}
+                  onChange={(e) => handleZoneChange(e.target.value)}
+                  className="w-full p-2 text-xs rounded-xl border border-[#C5CBD4] bg-[#FCFBF8] text-[#1E2530] font-semibold cursor-pointer"
+                >
+                  <optgroup label={t('✅ Within 3 km of Oxygen (Eligible for Own-Fabric Pickup)', '✅ অক্সিজেনের ৩ কি.মি. এর ভেতরে (পিকআপ যোগ্য)')}>
+                    {OXYGEN_CHATTOGRAM_ZONES.filter(z => z.approxDistanceKm <= (shopSettings?.pickupServiceRadiusKm ?? 3.0)).map(zone => (
+                      <option key={zone.id} value={zone.id}>
+                        {t(zone.nameEn, zone.nameBn)} (~{zone.approxDistanceKm} km)
+                      </option>
+                    ))}
+                  </optgroup>
+                  <optgroup label={t('⚠️ Outside 3 km Radius (Website Fabric / Ready-Made Only)', '⚠️ ৩ কি.মি. এর বাইরে (শুধু ওয়েবসাইটের কাপড় / রেডিমেড)')}>
+                    {OXYGEN_CHATTOGRAM_ZONES.filter(z => z.approxDistanceKm > (shopSettings?.pickupServiceRadiusKm ?? 3.0)).map(zone => (
+                      <option key={zone.id} value={zone.id}>
+                        {t(zone.nameEn, zone.nameBn)} (~{zone.approxDistanceKm} km)
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
+              </div>
+
+              {isOwnFabric && !pickupEligibility.eligible && (
+                <div className="flex flex-col justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectFabricSource('shop_fabric')}
+                    className="w-full py-2 px-3 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Store className="w-3.5 h-3.5" />
+                    <span>{t('Switch to Website Fabric + Tailoring (Nationwide Delivery)', 'ওয়েবসাইটের কাপড় + সেলাই বেছে নিন (সারাদেশে ডেলিভারি)')}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">

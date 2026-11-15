@@ -72,6 +72,11 @@ export interface ShopSettings {
   hotline: string;
   email: string;
   address: string;
+  shopCity?: string;
+  shopArea?: string;
+  shopLat?: number;
+  shopLng?: number;
+  pickupServiceRadiusKm?: number;
   standardDays: number;
   expressDays: number;
   urgentDays: number;
@@ -79,6 +84,9 @@ export interface ShopSettings {
   urgentFee: number;
   freePickupMinAmount: number;
   standardPickupFee: number;
+  localPickupFee?: number;
+  chattogramCityDeliveryFee?: number;
+  nationwideCourierFee?: number;
   activeZones: string[];
 }
 
@@ -238,6 +246,7 @@ export interface DatabaseSchema {
   pickups: any[];
   garments_catalog: any[];
   fabrics_catalog: any[];
+  sessions?: any[];
 
   // 12 Core Relational Tables
   customers: Customer[];
@@ -507,28 +516,35 @@ const INITIAL_DB: DatabaseSchema = {
     }
   ],
   settings: {
-    shopName: 'Digital Dorji BD - Bespoke Doorstep Tailor Atelier',
+    shopName: 'Digital Dorji BD - Bespoke Tailoring & Clothing Atelier',
     hotline: '01700-TAILOR (01700-824567)',
     email: 'atelier@digitaldorji.com',
-    address: 'Digital Dorji Master Atelier, Elephant Road & Dhanmondi, Dhaka-1205',
+    address: 'Oxygen Mor, Bayazid Bostami Road, Chattogram-4211, Bangladesh',
+    shopCity: 'Chattogram',
+    shopArea: 'Oxygen, Chattogram',
+    shopLat: 22.3918,
+    shopLng: 91.8215,
+    pickupServiceRadiusKm: 3.0,
     standardDays: 4,
     expressDays: 2,
     urgentDays: 1,
     expressFee: 250,
     urgentFee: 500,
     freePickupMinAmount: 1500,
-    standardPickupFee: 80,
+    standardPickupFee: 60,
+    localPickupFee: 60,
+    chattogramCityDeliveryFee: 80,
+    nationwideCourierFee: 120,
     activeZones: [
-      'Dhanmondi & Lalmatia',
-      'Gulshan & Banani',
-      'Uttara (All Sectors)',
-      'Mirpur & Pallabi',
-      'Mohammadpur & Adabor',
-      'Bashundhara R/A & Baridhara',
-      'Badda & Rampura',
-      'Motijheel & Wari',
-      'Chattogram (GEC & Agrabad)',
-      'Sylhet (Zindabazar)'
+      'Oxygen Mor & Bayazid Bostami (0–1.5 km)',
+      'Shershah Colony & Journalist Housing (0.6 km)',
+      'Kulgaon & Baluchara R/A (1.2 km)',
+      'Wazedia & Amin Jute Mills (1.0 km)',
+      'Jalalabad & Cantonment Gate (1.5 km)',
+      'Chattogram Polytechnic & Nasirabad Housing (1.8 km)',
+      'Ruby Gate & 2 No. Gate North (2.3 km)',
+      'Aturar Depot & Hamjarbag (2.3 km)',
+      'Chandranagar & Hillview R/A (2.2 km)'
     ]
   },
   orders: [
@@ -1218,6 +1234,39 @@ class Database {
           }
         }
 
+        // Backfill Oxygen, Chattogram geo settings and 3-tier delivery pricing
+        if (!merged.settings) {
+          merged.settings = { ...INITIAL_DB.settings };
+        } else {
+          if (merged.settings.address?.includes('Elephant Road & Dhanmondi')) {
+            merged.settings.address = INITIAL_DB.settings.address;
+            merged.settings.activeZones = INITIAL_DB.settings.activeZones;
+          }
+          if (!merged.settings.shopCity) merged.settings.shopCity = 'Chattogram';
+          if (!merged.settings.shopArea) merged.settings.shopArea = 'Oxygen, Chattogram';
+          if (typeof merged.settings.shopLat !== 'number') merged.settings.shopLat = 22.3918;
+          if (typeof merged.settings.shopLng !== 'number') merged.settings.shopLng = 91.8215;
+          if (typeof merged.settings.pickupServiceRadiusKm !== 'number') merged.settings.pickupServiceRadiusKm = 3.0;
+          if (typeof merged.settings.localPickupFee !== 'number') merged.settings.localPickupFee = 60;
+          if (typeof merged.settings.chattogramCityDeliveryFee !== 'number') merged.settings.chattogramCityDeliveryFee = 80;
+          if (typeof merged.settings.nationwideCourierFee !== 'number') merged.settings.nationwideCourierFee = 120;
+        }
+
+        // Backfill numeric stockGaz and lowStockThresholdGaz on fabrics_catalog
+        if (Array.isArray(merged.fabrics_catalog)) {
+          merged.fabrics_catalog = merged.fabrics_catalog.map((f: any) => {
+            const seedMatch = INITIAL_DB.fabrics_catalog.find((sf: any) => sf.id === f.id);
+            const stockGaz = typeof f.stockGaz === 'number' ? f.stockGaz : (seedMatch?.stockGaz ?? 85);
+            const lowStockThresholdGaz = typeof f.lowStockThresholdGaz === 'number' ? f.lowStockThresholdGaz : (seedMatch?.lowStockThresholdGaz ?? 15);
+            return {
+              ...f,
+              stockGaz,
+              lowStockThresholdGaz,
+              inStock: typeof f.inStock === 'boolean' ? f.inStock && stockGaz > 0 : stockGaz > 0
+            };
+          });
+        }
+
         return merged;
       }
     } catch (err) {
@@ -1256,6 +1305,10 @@ class Database {
 
   public mutate(callback: (db: DatabaseSchema) => void) {
     callback(this.data);
+    this.saveData(this.data);
+  }
+
+  public save() {
     this.saveData(this.data);
   }
 

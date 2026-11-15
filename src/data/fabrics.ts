@@ -30,6 +30,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'হালকা ঠান্ডা পানিতে ধৌত করুন, হালকা ভেজা অবস্থায় স্টিম আয়রন করুন।',
     suitableGarmentIds: ['men-formal-shirt', 'men-panjabi-kurta', 'women-three-piece', 'men-pajama-aligarhi'],
     inStock: true,
+    stockGaz: 120,
+    lowStockThresholdGaz: 15,
     featured: true,
     tags: ['Giza Cotton', 'Royal White', 'Breathable', 'Formal & Eid']
   },
@@ -62,6 +64,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'হালকা হাতে ধৌত করুন, ছায়ায় শুকান, মাঝারি তাপে ইস্ত্রি করুন।',
     suitableGarmentIds: ['men-formal-shirt', 'men-panjabi-kurta', 'women-three-piece'],
     inStock: true,
+    stockGaz: 85,
+    lowStockThresholdGaz: 15,
     featured: true,
     tags: ['Pure Linen', 'Summer Cool', 'Slub Texture', 'Luxury']
   },
@@ -94,6 +98,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'স্বাভাবিক ওয়াশ, ছায়ায় শুকান এবং হালকা তাপে আয়রন করুন।',
     suitableGarmentIds: ['men-formal-shirt', 'women-three-piece'],
     inStock: true,
+    stockGaz: 95,
+    lowStockThresholdGaz: 15,
     tags: ['Striped', 'Oxford Weave', 'Business Formal']
   },
   {
@@ -125,6 +131,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'ড্রাই ক্লিন করা সবচেয়ে ভালো। প্রয়োজনে মাইল্ড শ্যাম্পু দিয়ে আলতো হাতে ধুয়ে স্টিম আয়রন করুন।',
     suitableGarmentIds: ['men-formal-pant'],
     inStock: true,
+    stockGaz: 70,
+    lowStockThresholdGaz: 12,
     featured: true,
     tags: ['Suiting', 'Merino Wool', 'Wrinkle Free', 'Executive']
   },
@@ -157,6 +165,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'শুধুমাত্র ড্রাই ক্লিন করুন। সরাসরি রোদ থেকে দূরে কাপড়ের ব্যাগে সংরক্ষণ করুন।',
     suitableGarmentIds: ['women-saree-blouse', 'men-panjabi-kurta', 'women-three-piece'],
     inStock: true,
+    stockGaz: 55,
+    lowStockThresholdGaz: 10,
     featured: true,
     tags: ['Pure Silk', 'Bridal & Festive', 'Royal Shimmer']
   },
@@ -189,6 +199,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'স্বাভাবিক ওয়াশ ও মাঝারি তাপে আয়রন করুন।',
     suitableGarmentIds: ['men-formal-shirt', 'women-three-piece'],
     inStock: true,
+    stockGaz: 110,
+    lowStockThresholdGaz: 15,
     tags: ['Gingham Check', 'Poplin', 'Smart Casual']
   },
   {
@@ -220,6 +232,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'আলতো ওয়াশ করুন, হ্যাঙ্গারে ঝুলিয়ে শুকান এবং কম তাপে আয়রন করুন।',
     suitableGarmentIds: ['women-three-piece', 'women-saree-blouse'],
     inStock: true,
+    stockGaz: 90,
+    lowStockThresholdGaz: 15,
     featured: true,
     tags: ['Georgette', 'Floating Drape', 'Ladies Special']
   },
@@ -252,6 +266,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'ঠান্ডা পানিতে মৃদু সাবান দিয়ে ধুয়ে ছায়ায় শুকান।',
     suitableGarmentIds: ['men-panjabi-kurta', 'women-three-piece'],
     inStock: true,
+    stockGaz: 80,
+    lowStockThresholdGaz: 15,
     tags: ['Handloom', 'Khadi Heritage', 'Eco-Friendly', 'Panjabi Special']
   },
   {
@@ -283,6 +299,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'শুধুমাত্র ড্রাই ক্লিন করুন। পেছনের দিক থেকে কাপড় দিয়ে হালকা তাপে ইস্ত্রি করুন।',
     suitableGarmentIds: ['women-saree-blouse', 'men-panjabi-kurta'],
     inStock: true,
+    stockGaz: 45,
+    lowStockThresholdGaz: 10,
     featured: true,
     tags: ['Zari Work', 'Wedding Royalty', 'Brocade', 'Festive']
   },
@@ -315,6 +333,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'ড্রাই ক্লিন করুন এবং হালকা স্টিম প্রেস করুন।',
     suitableGarmentIds: ['men-formal-pant'],
     inStock: true,
+    stockGaz: 65,
+    lowStockThresholdGaz: 12,
     tags: ['Houndstooth', 'Italian Style', 'Blazer & Pant']
   },
   {
@@ -346,6 +366,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'ঠান্ডা পানিতে ওয়াশ করুন ও মাঝারি তাপে আয়রন করুন।',
     suitableGarmentIds: ['men-formal-shirt', 'men-panjabi-kurta', 'women-three-piece'],
     inStock: true,
+    stockGaz: 105,
+    lowStockThresholdGaz: 15,
     tags: ['Chambray', 'Denim Feel', 'Casual Cool']
   },
   {
@@ -377,6 +399,8 @@ export const DIGITAL_FABRICS_DATA: FabricProduct[] = [
     washCareBn: 'উল্টো করে ছায়ায় শুকান, মাঝারি তাপে ইস্ত্রি করুন।',
     suitableGarmentIds: ['men-formal-shirt', 'men-panjabi-kurta', 'men-pajama-aligarhi'],
     inStock: true,
+    stockGaz: 130,
+    lowStockThresholdGaz: 15,
     featured: true,
     tags: ['Jet Black', 'Fade Resistant', 'Twill', 'Signature']
   }

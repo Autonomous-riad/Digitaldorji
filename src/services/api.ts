@@ -194,10 +194,16 @@ export const adminApi = {
       body: JSON.stringify({ assignedTailor, currentStage, tailorNotes })
     }),
   getDelivery: () => apiRequest('/api/admin/delivery'),
-  dispatchDelivery: (id: string, currentStage: string, assignedRider?: string, trackingNumber?: string) =>
+  dispatchDelivery: (
+    id: string,
+    currentStage: string,
+    assignedRider?: string,
+    trackingNumber?: string,
+    extra?: { deliveryMode?: 'local_rider' | 'nationwide_courier'; courierName?: string; courierTrackingNumber?: string }
+  ) =>
     apiRequest(`/api/admin/delivery/${id}/dispatch`, {
       method: 'PUT',
-      body: JSON.stringify({ currentStage, assignedRider, trackingNumber })
+      body: JSON.stringify({ currentStage, assignedRider, trackingNumber, ...(extra || {}) })
     }),
   getPayments: () => apiRequest<{ payments: any[] }>('/api/admin/payments'),
   verifyPayment: (id: string, status: string, trxId?: string) =>
@@ -216,10 +222,19 @@ export const adminApi = {
       method: 'PUT',
       body: JSON.stringify({ image })
     }),
-  updateFabric: (id: string, data: { pricePerGaz?: number; inStock?: boolean; featured?: boolean; image?: string; swatchImage?: string; nameEn?: string; nameBn?: string; colorName?: string; materialCategory?: string; pattern?: string }) =>
+  createFabric: (data: any) =>
+    apiRequest<{ message: string; fabric: any }>('/api/admin/catalog/fabrics', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+  updateFabric: (id: string, data: { pricePerGaz?: number; stockGaz?: number; lowStockThresholdGaz?: number; inStock?: boolean; featured?: boolean; image?: string; swatchImage?: string; nameEn?: string; nameBn?: string; colorName?: string; materialCategory?: string; pattern?: string }) =>
     apiRequest(`/api/admin/catalog/fabrics/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data)
+    }),
+  deleteFabric: (id: string) =>
+    apiRequest<{ message: string }>(`/api/admin/catalog/fabrics/${id}`, {
+      method: 'DELETE'
     }),
   updateReadyMadeProductImages: (id: string, data: { primary_image?: string; images?: any[] }) =>
     apiRequest<{ success: boolean; data: any }>(`/api/ready-made/admin/products/${id}/images`, {

@@ -113,12 +113,15 @@ export const AdminCatalog: React.FC = () => {
 
   // Fabric details modal state
   const [editingFabric, setEditingFabric] = useState<any | null>(null);
+  const [showAddFabricModal, setShowAddFabricModal] = useState(false);
   const [fabricFormData, setFabricFormData] = useState({
     nameEn: '',
     nameBn: '',
     pricePerGaz: 450,
     colorName: '',
     materialCategory: 'cotton',
+    stockGaz: 80,
+    lowStockThresholdGaz: 15,
     inStock: true,
     image: ''
   });
@@ -308,9 +311,37 @@ export const AdminCatalog: React.FC = () => {
       pricePerGaz: f.pricePerGaz || 450,
       colorName: f.colorName || '',
       materialCategory: f.materialCategory || 'cotton',
+      stockGaz: f.stockGaz !== undefined ? Number(f.stockGaz) : 85,
+      lowStockThresholdGaz: f.lowStockThresholdGaz !== undefined ? Number(f.lowStockThresholdGaz) : 15,
       inStock: f.inStock !== false,
       image: f.image || ''
     });
+  };
+
+  const handleCreateNewFabric = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const res = await adminApi.createFabric({
+        nameEn: fabricFormData.nameEn,
+        nameBn: fabricFormData.nameBn || fabricFormData.nameEn,
+        pricePerGaz: Number(fabricFormData.pricePerGaz) || 450,
+        colorName: fabricFormData.colorName || 'Ivory Cream',
+        materialCategory: fabricFormData.materialCategory || 'cotton',
+        stockGaz: Number(fabricFormData.stockGaz) || 80,
+        lowStockThresholdGaz: Number(fabricFormData.lowStockThresholdGaz) || 15,
+        image: fabricFormData.image || '/images/fabrics/giza-egyptian-cotton.jpg'
+      });
+      if (res.fabric) {
+        setFabricsList(prev => [res.fabric, ...prev]);
+      }
+      setShowAddFabricModal(false);
+      triggerToast('New fabric roll added to inventory!', 'success');
+    } catch (err: any) {
+      triggerToast(err.message || 'Failed to add fabric', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Save Fabric Details
@@ -319,6 +350,7 @@ export const AdminCatalog: React.FC = () => {
     if (!editingFabric) return;
 
     const price = Number(fabricFormData.pricePerGaz);
+    const stockGazNum = Number(fabricFormData.stockGaz);
     if (isNaN(price) || price < 0) {
       triggerToast('Price per gaz must be a positive number', 'error');
       return;
@@ -332,7 +364,9 @@ export const AdminCatalog: React.FC = () => {
         pricePerGaz: price,
         colorName: fabricFormData.colorName,
         materialCategory: fabricFormData.materialCategory,
-        inStock: fabricFormData.inStock,
+        stockGaz: stockGazNum,
+        lowStockThresholdGaz: Number(fabricFormData.lowStockThresholdGaz) || 15,
+        inStock: stockGazNum > 0 ? fabricFormData.inStock : false,
         image: fabricFormData.image
       });
 
@@ -340,10 +374,12 @@ export const AdminCatalog: React.FC = () => {
         ...f,
         ...fabricFormData,
         pricePerGaz: price,
+        stockGaz: stockGazNum,
+        inStock: stockGazNum > 0 ? fabricFormData.inStock : false,
         pricePerMeter: Math.round(price * 1.0936)
       } : f));
 
-      triggerToast('Fabric details updated successfully!', 'success');
+      triggerToast('Fabric details & yardage stock updated!', 'success');
       setEditingFabric(null);
     } catch (err: any) {
       triggerToast(err.message || 'Failed to update fabric', 'error');
@@ -701,6 +737,26 @@ export const AdminCatalog: React.FC = () => {
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
           <button
+            onClick={() => {
+              setFabricFormData({
+                nameEn: '',
+                nameBn: '',
+                pricePerGaz: 480,
+                colorName: 'Ivory Cream',
+                materialCategory: 'cotton',
+                stockGaz: 80,
+                lowStockThresholdGaz: 15,
+                inStock: true,
+                image: '/images/fabrics/giza-egyptian-cotton.jpg'
+              });
+              setShowAddFabricModal(true);
+            }}
+            className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>{t('Add Fabric Roll', 'নতুন কাপড় যোগ করুন')}</span>
+          </button>
+          <button
             onClick={handleOpenAdd}
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl shadow-xs flex items-center gap-1.5 cursor-pointer"
           >
@@ -862,6 +918,15 @@ export const AdminCatalog: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold font-mono text-green-700">৳{f.pricePerGaz} / গজ</span>
                     <span className="text-[10px] font-mono text-slate-600 font-semibold truncate">({f.colorName})</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 pt-0.5">
+                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                      (f.stockGaz ?? 85) <= (f.lowStockThresholdGaz ?? 15)
+                        ? 'bg-amber-50 text-amber-800 border-amber-200'
+                        : 'bg-slate-100 text-slate-800 border-slate-200'
+                    }`}>
+                      Roll Stock: {f.stockGaz ?? 85} Gaz
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1369,6 +1434,31 @@ export const AdminCatalog: React.FC = () => {
                 </div>
               </div>
 
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-slate-600 font-semibold block mb-1">Available Stock (Gaz / গজ):</label>
+                  <input
+                    type="number"
+                    step="0.5"
+                    min={0}
+                    required
+                    value={fabricFormData.stockGaz}
+                    onChange={(e) => setFabricFormData({ ...fabricFormData, stockGaz: Number(e.target.value) })}
+                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold text-emerald-800 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-600 font-semibold block mb-1">Low Stock Alert (Gaz):</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={fabricFormData.lowStockThresholdGaz}
+                    onChange={(e) => setFabricFormData({ ...fabricFormData, lowStockThresholdGaz: Number(e.target.value) })}
+                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  />
+                </div>
+              </div>
+
               <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
@@ -1396,7 +1486,104 @@ export const AdminCatalog: React.FC = () => {
                 disabled={isSubmitting}
                 className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-xs disabled:opacity-50"
               >
-                Save Details
+                Save Details & Stock
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Add New Fabric Roll Modal */}
+      {showAddFabricModal && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+          <form onSubmit={handleCreateNewFabric} className="bg-white border border-slate-200 rounded-3xl p-6 max-w-md w-full space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h2 className="text-sm font-bold text-slate-950">{t('Add New Fabric Roll to Inventory', 'নতুন কাপড়ের রোল যোগ করুন')}</h2>
+              <button type="button" onClick={() => setShowAddFabricModal(false)} className="text-slate-400 hover:text-slate-700">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="text-slate-600 font-semibold block mb-1">Fabric Name (English):</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Royal Giza Cotton"
+                  value={fabricFormData.nameEn}
+                  onChange={(e) => setFabricFormData({ ...fabricFormData, nameEn: e.target.value })}
+                  className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-slate-600 font-semibold block mb-1">Price per Gaz (BDT):</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={fabricFormData.pricePerGaz}
+                    onChange={(e) => setFabricFormData({ ...fabricFormData, pricePerGaz: Number(e.target.value) })}
+                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-950"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-600 font-semibold block mb-1">Initial Roll Stock (Gaz):</label>
+                  <input
+                    type="number"
+                    required
+                    min={1}
+                    value={fabricFormData.stockGaz}
+                    onChange={(e) => setFabricFormData({ ...fabricFormData, stockGaz: Number(e.target.value) })}
+                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono font-bold text-emerald-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-slate-600 font-semibold block mb-1">Color Name:</label>
+                  <input
+                    type="text"
+                    value={fabricFormData.colorName}
+                    onChange={(e) => setFabricFormData({ ...fabricFormData, colorName: e.target.value })}
+                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-600 font-semibold block mb-1">Category:</label>
+                  <select
+                    value={fabricFormData.materialCategory}
+                    onChange={(e) => setFabricFormData({ ...fabricFormData, materialCategory: e.target.value })}
+                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900"
+                  >
+                    <option value="cotton">Cotton</option>
+                    <option value="linen">Linen</option>
+                    <option value="silk">Silk</option>
+                    <option value="wool_blend">Suiting Wool</option>
+                    <option value="khadi">Khadi</option>
+                    <option value="brocade_jamdani">Jamdani Brocade</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 text-xs font-semibold pt-2 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setShowAddFabricModal(false)}
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="px-4 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl shadow-xs"
+              >
+                Create Fabric Roll
               </button>
             </div>
           </form>

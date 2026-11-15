@@ -10,13 +10,41 @@ export interface Session {
   expiresAt: number;
 }
 
-// In-memory active sessions store
+// In-memory active sessions store backed by persistent JSON database
 const sessions = new Map<string, Session>();
 
 // 7 days expiration in milliseconds
 const SESSION_TTL = 7 * 24 * 60 * 60 * 1000;
 
+function syncSessionsFromDb() {
+  try {
+    const data = db.getData();
+    if (Array.isArray(data.sessions)) {
+      const now = Date.now();
+      for (const s of data.sessions) {
+        if (s && s.token && s.expiresAt > now && !sessions.has(s.token)) {
+          sessions.set(s.token, s);
+        }
+      }
+    }
+  } catch {
+    // ignore initialization error
+  }
+}
+
+function saveSessionsToDb() {
+  try {
+    const data = db.getData();
+    const now = Date.now();
+    data.sessions = Array.from(sessions.values()).filter((s) => s.expiresAt > now);
+    db.save();
+  } catch {
+    // ignore write error
+  }
+}
+
 export function createSession(user: User): string {
+  syncSessionsFromDb();
   const token = 'db_sess_' + crypto.randomBytes(32).toString('hex');
   const session: Session = {
     token,
@@ -26,15 +54,20 @@ export function createSession(user: User): string {
     expiresAt: Date.now() + SESSION_TTL
   };
   sessions.set(token, session);
+  saveSessionsToDb();
   return token;
 }
 
 export function getSession(token: string): Session | null {
   if (!token) return null;
+  if (!sessions.has(token)) {
+    syncSessionsFromDb();
+  }
   const session = sessions.get(token);
   if (!session) return null;
   if (Date.now() > session.expiresAt) {
     sessions.delete(token);
+    saveSessionsToDb();
     return null;
   }
   return session;
@@ -42,6 +75,7 @@ export function getSession(token: string): Session | null {
 
 export function revokeSession(token: string) {
   sessions.delete(token);
+  saveSessionsToDb();
 }
 
 export interface AuthenticatedRequest extends Request {

@@ -49,6 +49,18 @@ interface TailorContextType {
   // Fabric Catalog Data & Selection
   fabrics: FabricProduct[];
   garments: GarmentItem[];
+  shopSettings: {
+    shopName?: string;
+    address?: string;
+    shopCity?: string;
+    shopArea?: string;
+    shopLat: number;
+    shopLng: number;
+    pickupServiceRadiusKm: number;
+    localPickupFee: number;
+    chattogramCityDeliveryFee: number;
+    nationwideCourierFee: number;
+  };
   selectedShopFabric: FabricProduct | null;
   selectShopFabric: (fabric: FabricProduct | null) => void;
   startOrderWithFabric: (fabric: FabricProduct, targetGarment?: GarmentItem) => void;
@@ -239,13 +251,27 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     () => initialDraft?.activeGarment ?? null
   );
 
+  const [shopSettings, setShopSettings] = useState({
+    shopName: 'Digital Dorji BD - Bespoke Tailoring & Clothing Atelier',
+    address: 'Oxygen Mor, Bayazid Bostami Road, Chattogram-4211, Bangladesh',
+    shopCity: 'Chattogram',
+    shopArea: 'Oxygen, Chattogram',
+    shopLat: 22.3918,
+    shopLng: 91.8215,
+    pickupServiceRadiusKm: 3.0,
+    localPickupFee: 60,
+    chattogramCityDeliveryFee: 80,
+    nationwideCourierFee: 120
+  });
+
   // Unified dynamic database fetch
   useEffect(() => {
     async function loadCatalogData() {
       try {
-        const [gRes, fRes] = await Promise.all([
+        const [gRes, fRes, sRes] = await Promise.all([
           fetch('/api/catalog/garments'),
-          fetch('/api/catalog/fabrics')
+          fetch('/api/catalog/fabrics'),
+          fetch('/api/catalog/settings')
         ]);
         if (gRes.ok) {
           const gData = await gRes.json();
@@ -266,6 +292,21 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
           const fData = await fRes.json();
           if (fData.fabrics && fData.fabrics.length > 0) {
             setFabrics(fData.fabrics);
+          }
+        }
+        if (sRes.ok) {
+          const sData = await sRes.json();
+          if (sData.settings) {
+            setShopSettings(prev => ({
+              ...prev,
+              ...sData.settings,
+              shopLat: typeof sData.settings.shopLat === 'number' ? sData.settings.shopLat : prev.shopLat,
+              shopLng: typeof sData.settings.shopLng === 'number' ? sData.settings.shopLng : prev.shopLng,
+              pickupServiceRadiusKm: typeof sData.settings.pickupServiceRadiusKm === 'number' ? sData.settings.pickupServiceRadiusKm : prev.pickupServiceRadiusKm,
+              localPickupFee: typeof sData.settings.localPickupFee === 'number' ? sData.settings.localPickupFee : prev.localPickupFee,
+              chattogramCityDeliveryFee: typeof sData.settings.chattogramCityDeliveryFee === 'number' ? sData.settings.chattogramCityDeliveryFee : prev.chattogramCityDeliveryFee,
+              nationwideCourierFee: typeof sData.settings.nationwideCourierFee === 'number' ? sData.settings.nationwideCourierFee : prev.nationwideCourierFee
+            }));
           }
         }
       } catch (err) {
@@ -322,20 +363,24 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   );
 
-  // Pickup Address in Bangladesh with division, district, thana
+  // Pickup Address in Bangladesh with division, district, thana (defaults to Oxygen, Chattogram service area)
   const [pickupAddress, setPickupAddress] = useState<PickupAddress>(
     () => initialDraft?.pickupAddress ?? {
       fullName: '',
       phone: '',
-      division: 'Dhaka',
-      district: 'dhaka',
-      thana: 'dhanmondi',
-      area: 'Dhanmondi',
+      division: 'Chattogram',
+      district: 'chattogram',
+      thana: 'oxygen_bayazid',
+      area: 'Oxygen Mor & Bayazid Bostami',
       streetAddress: '',
       apartmentFloor: '',
       landmark: '',
       pickupDate: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
       pickupSlot: 'morning',
+      oxygenZoneId: 'oxygen_mor',
+      customerLat: 22.3918,
+      customerLng: 91.8215,
+      distanceFromShopKm: 0.2
     }
   );
 
@@ -812,8 +857,12 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const estimatedDays = speedOpt ? speedOpt.days : 4;
 
     const doorstepPickupFee = pickupAddress.district 
-      ? getDeliveryChargeForDistrict(pickupAddress.district)
-      : (pickupAddress.division === 'Dhaka' ? 60 : 120);
+      ? getDeliveryChargeForDistrict(
+          pickupAddress.district,
+          pickupAddress.distanceFromShopKm,
+          shopSettings.pickupServiceRadiusKm
+        )
+      : (pickupAddress.division === 'Chattogram' ? shopSettings.chattogramCityDeliveryFee : shopSettings.nationwideCourierFee);
 
     const subTotal = activeGarment.basePrice + customizationTotal + fabricCost + liningFee + deliverySpeedFee + doorstepPickupFee;
     const discountAmount = Math.min(subTotal, promoDiscount);
@@ -853,6 +902,8 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     const orderObj: TailorOrder = {
       id: newOrderId,
       orderNumber,
+      orderType: fabricDetails.fabricSource === 'shop_fabric' ? 'fabric_and_tailoring' : 'custom_own_fabric',
+      distanceFromShopKm: pickupAddress.distanceFromShopKm,
       createdAt: new Date().toISOString(),
       garment: activeGarment,
       gender: activeGarment.gender,
@@ -1094,6 +1145,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         
         fabrics,
         garments,
+        shopSettings,
         selectedShopFabric,
         selectShopFabric,
         startOrderWithFabric,

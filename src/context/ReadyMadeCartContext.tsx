@@ -132,8 +132,9 @@ export const ReadyMadeCartProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const getDeliveryFee = (district: string, isExpress: boolean) => {
-    const isDhaka = (district || '').toLowerCase().includes('dhaka');
-    let fee = isDhaka ? 60 : 120;
+    const d = (district || '').toLowerCase();
+    const isChattogram = d.includes('chattogram') || d.includes('chittagong') || d.includes('oxygen');
+    let fee = isChattogram ? 80 : 120;
     if (isExpress) fee += 50;
     return fee;
   };

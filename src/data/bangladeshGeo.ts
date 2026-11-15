@@ -105,7 +105,7 @@ export const BANGLADESH_64_DISTRICTS: DistrictGeo[] = [
     divisionEn: 'Dhaka',
     divisionBn: 'ঢাকা',
     isDhakaCity: true,
-    deliveryCharge: 60,
+    deliveryCharge: 120,
     thanas: [
       { id: 'dhanmondi', nameEn: 'Dhanmondi', nameBn: 'ধানমন্ডি' },
       { id: 'gulshan', nameEn: 'Gulshan 1 & 2', nameBn: 'গুলশান ১ ও ২' },
@@ -318,15 +318,18 @@ export const BANGLADESH_64_DISTRICTS: DistrictGeo[] = [
     divisionEn: 'Chattogram',
     divisionBn: 'চট্টগ্রাম',
     isDhakaCity: false,
-    deliveryCharge: 120,
+    deliveryCharge: 80,
     thanas: [
-      { id: 'kotwali_ctg', nameEn: 'Kotwali & New Market', nameBn: 'কোতোয়ালী ও নিউ মার্কেট' },
+      { id: 'oxygen_bayazid', nameEn: 'Oxygen Mor & Bayazid Bostami (Local Workshop Zone)', nameBn: 'অক্সিজেন মোড় ও বায়েজিদ বোস্তামী (লোকাল ওয়ার্কশপ জোন)' },
+      { id: 'kulgaon_baluchara', nameEn: 'Kulgaon, Baluchara & Shershah', nameBn: 'কুলগাঁও, বালুচরা ও শেরশাহ' },
+      { id: 'muradpur_2nogate', nameEn: '2 No. Gate, Ruby Gate & Muradpur', nameBn: '২ নং গেট, রুবি গেট ও মুরাদপুর' },
+      { id: 'panchlaish', nameEn: 'Panchlaish, Polytechnic & Medical Area', nameBn: 'পাঁচলাইশ, পলিটেকনিক ও মেডিকেল এলাকা' },
       { id: 'gec_nasirabad', nameEn: 'GEC Circle & Nasirabad', nameBn: 'জিইসি মোড় ও নাসিরাবাদ' },
-      { id: 'agrabad', nameEn: 'Agrabad Commercial Area', nameBn: 'আগ্রাবাদ বাণিজ্যিক এলাকা' },
       { id: 'khulshi', nameEn: 'Khulshi R/A', nameBn: 'খুলশী আ/এ' },
+      { id: 'chawkbazar_ctg', nameEn: 'Chawkbazar & Jamalkhan', nameBn: 'চকবাজার ও জামালখান' },
+      { id: 'kotwali_ctg', nameEn: 'Kotwali & New Market', nameBn: 'কোতোয়ালী ও নিউ মার্কেট' },
+      { id: 'agrabad', nameEn: 'Agrabad Commercial Area', nameBn: 'আগ্রাবাদ বাণিজ্যিক এলাকা' },
       { id: 'halishahar', nameEn: 'Halishahar', nameBn: 'হালিশহর' },
-      { id: 'panchlaish', nameEn: 'Panchlaish / Medical Area', nameBn: 'পাঁচলাইশ' },
-      { id: 'chawkbazar_ctg', nameEn: 'Chawkbazar', nameBn: 'চকবাজার' },
       { id: 'hathazari', nameEn: 'Hathazari', nameBn: 'হাটহাজারী' },
       { id: 'sitakunda', nameEn: 'Sitakunda', nameBn: 'সীতাকুণ্ড' },
       { id: 'patiya', nameEn: 'Patiya', nameBn: 'পটিয়া' }
@@ -1106,10 +1109,20 @@ export function getDistrictById(districtId: string): DistrictGeo | undefined {
   );
 }
 
-export function getDeliveryChargeForDistrict(districtIdOrName: string): number {
+export function getDeliveryChargeForDistrict(
+  districtIdOrName: string,
+  distanceFromShopKm?: number | null,
+  maxRadiusKm: number = 3.0
+): number {
+  if (typeof distanceFromShopKm === 'number' && !Number.isNaN(distanceFromShopKm) && distanceFromShopKm <= maxRadiusKm) {
+    return 60; // Within 3 km Oxygen local service zone
+  }
   const district = getDistrictById(districtIdOrName);
-  if (!district) return 60; // default inside dhaka
-  return district.deliveryCharge;
+  if (!district) return 80;
+  if (district.id === 'chattogram') {
+    return 80; // Chattogram city outside 3 km
+  }
+  return district.deliveryCharge || 120; // Nationwide courier outside Chattogram
 }
 
 export function getThanasForDistrict(districtIdOrName: string): ThanaArea[] {

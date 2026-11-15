@@ -55,6 +55,10 @@ async function startServer() {
     res.json({ fabrics: db.getFabricsCatalog() });
   });
 
+  app.get('/api/catalog/settings', (req, res) => {
+    res.json({ settings: db.getData().settings });
+  });
+
   // SEO Static and Dynamic Routes (sitemap.xml and robots.txt)
   app.use('/', seoRouter);
 

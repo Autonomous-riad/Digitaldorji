@@ -124,11 +124,16 @@ export function createAdminOrderNotification(order: any, stage: string, note?: s
 adminRouter.get('/dashboard', requirePermission('reports', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const orders = data.orders || [];
+  const rmOrders = data.ready_made_orders || [];
+  const standaloneOrders = orders.filter((o: any) => !o.parentCartOrderNumber);
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const todayOrders = orders.filter(o => o.createdAt && o.createdAt.startsWith(todayStr));
-  const todayNewOrdersCount = todayOrders.length;
-  const todayRevenue = todayOrders.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
+  const todayBespoke = standaloneOrders.filter(o => o.createdAt && o.createdAt.startsWith(todayStr));
+  const todayRM = rmOrders.filter(ro => ro.created_at && ro.created_at.startsWith(todayStr));
+  const todayNewOrdersCount = todayBespoke.length + todayRM.length;
+  const todayRevenue =
+    todayBespoke.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0) +
+    todayRM.reduce((sum, ro) => sum + (ro.total || 0), 0);
 
   const pendingPickupsCount = (data.pickups || []).filter(p => p.status === 'pending' || p.status === 'scheduled').length;
   
@@ -142,7 +147,13 @@ adminRouter.get('/dashboard', requirePermission('reports', 'view'), (req: Authen
     return st === 'ready';
   }).length;
 
-  const totalRevenue = orders.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
+  const totalRevenue =
+    standaloneOrders.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0) +
+    rmOrders.reduce((sum, ro) => sum + (ro.total || 0), 0);
+
+  const lowStockFabricsCount = (data.fabrics_catalog || []).filter(
+    (f: any) => (typeof f.stockGaz === 'number' ? f.stockGaz : 85) <= (f.lowStockThresholdGaz || 15)
+  ).length;
 
   // Generate last 7 days revenue for Recharts
   const weeklyRevenue = [];
@@ -152,13 +163,16 @@ adminRouter.get('/dashboard', requirePermission('reports', 'view'), (req: Authen
     const dateStr = d.toISOString().split('T')[0];
     const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
     
-    const dayOrders = orders.filter(o => o.createdAt && o.createdAt.startsWith(dateStr));
-    const dayRev = dayOrders.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
+    const dayBespoke = standaloneOrders.filter(o => o.createdAt && o.createdAt.startsWith(dateStr));
+    const dayRM = rmOrders.filter(ro => ro.created_at && ro.created_at.startsWith(dateStr));
+    const dayRev =
+      dayBespoke.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0) +
+      dayRM.reduce((sum, ro) => sum + (ro.total || 0), 0);
     weeklyRevenue.push({
       day: dayLabel,
       date: dateStr,
       revenue: dayRev,
-      ordersCount: dayOrders.length
+      ordersCount: dayBespoke.length + dayRM.length
     });
   }
 
@@ -190,15 +204,16 @@ adminRouter.get('/dashboard', requirePermission('reports', 'view'), (req: Authen
       ordersInTailoringCount,
       readyForDeliveryCount,
       todayRevenue,
-      totalOrdersCount: orders.length,
+      totalOrdersCount: standaloneOrders.length + rmOrders.length,
       totalRevenue,
+      lowStockFabricsCount,
       activeStaffCount: (data.staff || []).filter(s => s.active).length,
       totalCustomersCount: (data.users || []).filter(u => u.role === 'customer').length
     },
     weeklyRevenue,
     topGarments,
     recentOrders: orders.slice(0, 5),
-    pendingPickups: (data.pickups || []).filter(p => p.status === 'pending').slice(0, 4)
+    pendingPickups: (data.pickups || []).filter(p => p.status === 'pending' || p.status === 'scheduled').slice(0, 4)
   });
 });
 
@@ -1077,10 +1092,10 @@ adminRouter.get('/delivery', requirePermission('orders', 'view'), (req: Authenti
   });
 });
 
-// PUT /api/admin/delivery/:id/dispatch - Dispatch delivery rider
+// PUT /api/admin/delivery/:id/dispatch - Dispatch delivery rider or nationwide courier
 adminRouter.put('/delivery/:id/dispatch', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
-  const { currentStage, assignedRider, trackingNumber } = req.body;
+  const { currentStage, assignedRider, trackingNumber, deliveryMode, courierName, courierTrackingNumber } = req.body;
 
   let updatedOrder: any = null;
   let createdNotif: any = null;
@@ -1089,21 +1104,31 @@ adminRouter.put('/delivery/:id/dispatch', requirePermission('orders', 'edit'), (
     const order = data.orders.find(o => o.id === id || o.orderNumber === id);
     if (order) {
       if (assignedRider) order.assignedRider = assignedRider;
-      if (trackingNumber) order.trackingNumber = trackingNumber;
+      if (deliveryMode) order.deliveryMode = deliveryMode;
+      if (courierName !== undefined) order.courierName = courierName;
+      const resolvedTracking = courierTrackingNumber || trackingNumber;
+      if (resolvedTracking !== undefined) {
+        order.trackingNumber = resolvedTracking;
+        order.courierTrackingNumber = resolvedTracking;
+      }
       if (currentStage) {
         order.currentStage = currentStage;
         order.status = currentStage;
         if (!order.statusHistory) order.statusHistory = [];
+        const dispatchNote =
+          order.deliveryMode === 'nationwide_courier' && order.courierName
+            ? `Dispatched via ${order.courierName} Courier${order.courierTrackingNumber ? ` (Tracking: ${order.courierTrackingNumber})` : ''}`
+            : `Delivery updated: ${currentStage.replace(/_/g, ' ')}`;
         order.statusHistory.push({
           id: 'his-' + Date.now().toString(36),
           stage: currentStage,
           timestamp: new Date().toISOString(),
           changedBy: req.user?.name || 'Admin',
-          noteEn: `Delivery updated: ${currentStage.replace(/_/g, ' ')}`,
-          noteBn: `ডেলিভারি আপডেট: ${currentStage}`
+          noteEn: dispatchNote,
+          noteBn: `ডেলিভারি আপডেট: ${dispatchNote}`
         });
 
-        createdNotif = createAdminOrderNotification(order, currentStage);
+        createdNotif = createAdminOrderNotification(order, currentStage, dispatchNote);
       }
       updatedOrder = order;
     }
@@ -1252,14 +1277,86 @@ adminRouter.put('/catalog/garments/:garmentId/options/:optionId/image', requireP
   });
 });
 
-// PUT /api/admin/catalog/fabrics/:id - Update dynamic fabric catalog item
+// POST /api/admin/catalog/fabrics - Create new fabric in catalog
+adminRouter.post('/catalog/fabrics', requirePermission('catalog', 'create'), (req: AuthenticatedRequest, res: Response) => {
+  const payload = req.body || {};
+  if (!payload.nameEn || payload.pricePerGaz === undefined) {
+    return res.status(400).json({ error: 'Fabric English name and pricePerGaz are required' });
+  }
+  const pricePerGaz = Math.max(0, Number(payload.pricePerGaz) || 400);
+  const stockGaz = payload.stockGaz !== undefined ? Math.max(0, Number(payload.stockGaz)) : 60;
+  const lowStockThresholdGaz = payload.lowStockThresholdGaz !== undefined ? Math.max(1, Number(payload.lowStockThresholdGaz)) : 15;
+  const id = payload.id || `fab-${Date.now().toString(36)}`;
+  const sku = payload.sku || `FAB-${Math.floor(100 + Math.random() * 900)}`;
+
+  const newFabric = {
+    id,
+    sku,
+    nameEn: String(payload.nameEn).trim(),
+    nameBn: String(payload.nameBn || payload.nameEn).trim(),
+    materialComposition: payload.materialComposition || '100% Premium Woven Fabric',
+    materialCategory: payload.materialCategory || 'cotton',
+    pattern: payload.pattern || 'Solid',
+    patternBn: payload.patternBn || 'এক রঙা সলিড',
+    colorName: payload.colorName || 'Classic White',
+    colorNameBn: payload.colorNameBn || payload.colorName || 'ক্লাসিক সাদা',
+    colorHex: payload.colorHex || '#E2E8F0',
+    pricePerGaz,
+    pricePerMeter: Math.round(pricePerGaz * 1.0936),
+    weightGsm: Number(payload.weightGsm) || 140,
+    yarnCount: payload.yarnCount || '60s Compact Yarn',
+    season: payload.season || 'All-Season',
+    seasonBn: payload.seasonBn || 'সব ঋতুর উপযোগী',
+    opacity: payload.opacity || 'Opaque (No lining needed)',
+    tactileRating: Number(payload.tactileRating) || 4.8,
+    drapeRating: Number(payload.drapeRating) || 4.5,
+    image: payload.image || '/images/fabrics/giza-egyptian-cotton.jpg',
+    swatchImage: payload.swatchImage || payload.image || '/images/fabrics/giza-egyptian-cotton.jpg',
+    descriptionEn: payload.descriptionEn || 'Premium bespoke fabric curated by Digital Dorji Atelier.',
+    descriptionBn: payload.descriptionBn || 'ডিজিটাল দর্জি ওয়ার্কশপের প্রিমিয়াম মানের কাপড়।',
+    washCareEn: payload.washCareEn || 'Gentle machine wash cool, warm steam iron.',
+    washCareBn: payload.washCareBn || 'হালকা ঠান্ডা পানিতে ধৌত করুন এবং স্টিম আয়রন করুন।',
+    suitableGarmentIds: Array.isArray(payload.suitableGarmentIds) && payload.suitableGarmentIds.length > 0
+      ? payload.suitableGarmentIds
+      : ['men-formal-shirt', 'men-panjabi-kurta', 'women-three-piece'],
+    stockGaz,
+    lowStockThresholdGaz,
+    inStock: stockGaz > 0 && payload.inStock !== false,
+    featured: Boolean(payload.featured),
+    tags: Array.isArray(payload.tags) ? payload.tags : ['Bespoke Fabric', 'Atelier Selection']
+  };
+
+  db.mutate(data => {
+    if (!data.fabrics_catalog) data.fabrics_catalog = [];
+    data.fabrics_catalog.unshift(newFabric);
+  });
+
+  res.status(201).json({ message: 'Fabric added to catalog', fabric: newFabric });
+});
+
+// PUT /api/admin/catalog/fabrics/:id - Update dynamic fabric catalog item & yardage stock
 adminRouter.put('/catalog/fabrics/:id', requirePermission('catalog', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
-  const { pricePerGaz, inStock, featured, image, swatchImage, nameEn, nameBn, colorName, materialCategory, pattern } = req.body;
+  const {
+    pricePerGaz,
+    stockGaz,
+    lowStockThresholdGaz,
+    inStock,
+    featured,
+    image,
+    swatchImage,
+    nameEn,
+    nameBn,
+    colorName,
+    materialCategory,
+    pattern
+  } = req.body;
 
-  // Input sanitization and validation (Harden Admin Panel Requirement)
   if (pricePerGaz !== undefined && (isNaN(Number(pricePerGaz)) || Number(pricePerGaz) < 0)) {
     return res.status(400).json({ error: 'Price per gaz must be a positive number' });
+  }
+  if (stockGaz !== undefined && (isNaN(Number(stockGaz)) || Number(stockGaz) < 0)) {
+    return res.status(400).json({ error: 'Stock Gaz must be a non-negative number' });
   }
 
   let updatedFabric: any = null;
@@ -1270,6 +1367,35 @@ adminRouter.put('/catalog/fabrics/:id', requirePermission('catalog', 'edit'), (r
       if (pricePerGaz !== undefined) {
         item.pricePerGaz = Number(pricePerGaz);
         item.pricePerMeter = Math.round(Number(pricePerGaz) * 1.0936);
+      }
+      if (stockGaz !== undefined) {
+        const prevGaz = typeof item.stockGaz === 'number' ? item.stockGaz : 0;
+        const nextGaz = Number(Number(stockGaz).toFixed(2));
+        item.stockGaz = nextGaz;
+        if (nextGaz === 0) {
+          item.inStock = false;
+        } else if (inStock === undefined && prevGaz === 0 && nextGaz > 0) {
+          item.inStock = true;
+        }
+        if (nextGaz !== prevGaz) {
+          if (!data.inventory_transactions) data.inventory_transactions = [];
+          data.inventory_transactions.unshift({
+            id: `inv-fab-adj-${Date.now()}`,
+            variant_id: item.id,
+            product_id: item.id,
+            sku: item.sku || item.id,
+            product_name: `${item.nameEn} (Gaz)`,
+            transaction_type: nextGaz > prevGaz ? 'restock' : 'manual_adjustment',
+            quantity_change: Number((nextGaz - prevGaz).toFixed(2)),
+            previous_stock: prevGaz,
+            new_stock: nextGaz,
+            reason: 'Admin Fabric Yardage Stock Update',
+            created_at: new Date().toISOString()
+          });
+        }
+      }
+      if (lowStockThresholdGaz !== undefined) {
+        item.lowStockThresholdGaz = Math.max(0, Number(lowStockThresholdGaz));
       }
       if (inStock !== undefined) item.inStock = Boolean(inStock);
       if (featured !== undefined) item.featured = Boolean(featured);
@@ -1294,6 +1420,21 @@ adminRouter.put('/catalog/fabrics/:id', requirePermission('catalog', 'edit'), (r
   }
 
   res.json({ message: 'Fabric updated successfully', fabric: updatedFabric });
+});
+
+// DELETE /api/admin/catalog/fabrics/:id - Remove fabric from catalog
+adminRouter.delete('/catalog/fabrics/:id', requirePermission('catalog', 'delete'), (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  let removed = false;
+  db.mutate(data => {
+    const before = (data.fabrics_catalog || []).length;
+    data.fabrics_catalog = (data.fabrics_catalog || []).filter((f: any) => f.id !== id);
+    removed = data.fabrics_catalog.length < before;
+  });
+  if (!removed) {
+    return res.status(404).json({ error: 'Fabric not found' });
+  }
+  res.json({ message: 'Fabric removed from catalog' });
 });
 
 // GET /api/admin/measurements - Customer saved measurements

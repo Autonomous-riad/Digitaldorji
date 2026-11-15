@@ -108,8 +108,16 @@ export const ItemCard: React.FC<ItemCardProps> = (props) => {
                 </span>
               </div>
               <div className="flex items-center justify-between px-2 py-1.5 sm:p-2 rounded-lg bg-cream-200/90 border border-cream-300">
-                <span className="text-[#3B4454] font-medium truncate">{t('Weight:', 'ওজন:')}</span>
-                <span className="font-bold text-purple-950 shrink-0 ml-1">{fabric.weightGsm} GSM</span>
+                <span className="text-[#3B4454] font-medium truncate">{t('Stock:', 'মজুত:')}</span>
+                <span className={`font-bold font-mono shrink-0 ml-1 ${
+                  fabric.inStock === false || (fabric.stockGaz !== undefined && fabric.stockGaz <= 0)
+                    ? 'text-red-700'
+                    : 'text-emerald-800'
+                }`}>
+                  {fabric.inStock === false || (fabric.stockGaz !== undefined && fabric.stockGaz <= 0)
+                    ? t('Out of Stock', 'স্টক শেষ')
+                    : `${fabric.stockGaz ?? 85} ${t('Gaz', 'গজ')}`}
+                </span>
               </div>
             </div>
           )}

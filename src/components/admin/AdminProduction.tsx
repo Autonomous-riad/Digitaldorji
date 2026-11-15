@@ -95,14 +95,24 @@ export const AdminProduction: React.FC = () => {
             {cuttingQueue.length === 0 ? (
               <p className="text-xs text-slate-600 text-center py-6">{t('No garments waiting for cutting.', 'কাটিং টেবিলে কোনো কাপড় অপেক্ষমাণ নেই।')}</p>
             ) : (
-              cuttingQueue.map((item: any) => (
+              cuttingQueue.map((item: any) => {
+                const isShopFab = item.orderType === 'fabric_and_tailoring' || item.fabricDetails?.fabricSource === 'shop_fabric';
+                return (
                 <div key={item.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold text-indigo-700">{item.orderNumber}</span>
-                    <span className="text-[10px] text-slate-600 font-semibold">{item.garment?.nameEn}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${
+                      isShopFab
+                        ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                    }`}>
+                      {isShopFab ? '🏪 Website Fabric' : '🏠 Customer Fabric'}
+                    </span>
                   </div>
-                  <p className="text-xs text-slate-950 font-bold">{item.customerName}</p>
-                  <p className="text-[11px] text-slate-600">{item.fabricDetails?.fabricType}</p>
+                  <p className="text-xs text-slate-950 font-bold">{item.customerName} • <span className="text-slate-600 font-medium">{item.garment?.nameEn}</span></p>
+                  <p className="text-[11px] text-slate-600 font-mono">
+                    {item.fabricDetails?.fabricType} ({item.fabricDetails?.lengthGaz || 2.5} Gaz)
+                  </p>
 
                   <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
                     <select
@@ -125,7 +135,8 @@ export const AdminProduction: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
@@ -146,13 +157,21 @@ export const AdminProduction: React.FC = () => {
             {stitchingQueue.length === 0 ? (
               <p className="text-xs text-slate-600 text-center py-6">{t('No garments currently on sewing machines.', 'কোনো কাপড় সেলাই হচ্ছে না।')}</p>
             ) : (
-              stitchingQueue.map((item: any) => (
+              stitchingQueue.map((item: any) => {
+                const isShopFab = item.orderType === 'fabric_and_tailoring' || item.fabricDetails?.fabricSource === 'shop_fabric';
+                return (
                 <div key={item.id} className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="font-mono text-xs font-bold text-indigo-700">{item.orderNumber}</span>
-                    <span className="text-[10px] text-slate-600 font-semibold">{item.garment?.nameEn}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold border ${
+                      isShopFab
+                        ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                    }`}>
+                      {isShopFab ? '🏪 Website Fabric' : '🏠 Customer Fabric'}
+                    </span>
                   </div>
-                  <p className="text-xs text-slate-950 font-bold">{item.customerName}</p>
+                  <p className="text-xs text-slate-950 font-bold">{item.customerName} • <span className="text-slate-600 font-medium">{item.garment?.nameEn}</span></p>
                   <p className="text-[11px] text-slate-600 italic">Notes: {item.tailorNotes || 'Standard fitting'}</p>
 
                   <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-2">
@@ -169,7 +188,8 @@ export const AdminProduction: React.FC = () => {
                     </button>
                   </div>
                 </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>

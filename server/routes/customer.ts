@@ -14,7 +14,10 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
     return o.userId === userId || 
       (normUserPhone && oPhone && (oPhone === normUserPhone || oPhone.endsWith(normUserPhone) || normUserPhone.endsWith(oPhone))) ||
       (normUserEmail && oEmail && oEmail === normUserEmail);
-  });
+  }).map(o => ({
+    ...o,
+    orderType: o.orderType || (o.fabricDetails?.fabricSource === 'shop_fabric' ? 'fabric_and_tailoring' : 'custom_own_fabric')
+  }));
 
   const readyMadeOrders = db.getReadyMadeOrders().filter(ro => {
     const roPhone = (ro.customer_phone || '').replace(/[\s-]/g, '');
@@ -24,9 +27,10 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
       (normUserEmail && roEmail && roEmail === normUserEmail);
   }).map(ro => {
     const stageMap: Record<string, string> = {
-      'Pending': 'pickup_scheduled',
+      'Payment Pending': 'fabric_received_at_shop',
+      'Pending': 'fabric_received_at_shop',
       'Confirmed': 'fabric_received_at_shop',
-      'Processing': 'cutting_in_progress',
+      'Processing': 'quality_and_ironing',
       'Dispatched': 'out_for_delivery',
       'Shipped': 'out_for_delivery',
       'Delivered': 'delivered',
@@ -35,6 +39,7 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
     return {
       id: ro.id,
       orderNumber: ro.order_number,
+      orderType: 'ready_made',
       userId: ro.customer_id || userId,
       customerName: ro.customer_name,
       customerPhone: ro.customer_phone,
@@ -57,6 +62,7 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
         streetAddress: ro.delivery_address
       },
       deliveryUrgency: ro.delivery_method,
+      deliveryMode: 'nationwide_courier',
       estimatedDeliveryDate: new Date(new Date(ro.created_at).getTime() + 3 * 86400000).toISOString(),
       grandTotal: ro.total,
       paymentMethod: ro.payment_method,

@@ -18,12 +18,13 @@ import { useTailor } from '../../context/TailorContext';
 import { useAuth } from '../../context/AuthContext';
 import { ReadyMadeOrder } from '../../types/readyMade';
 import { OrderSuccessModal } from './OrderSuccessModal';
+import { OXYGEN_CHATTOGRAM_ZONES, validatePickupEligibility } from '../../utils/geoDistance';
 
 const BD_DISTRICTS = [
+  'Chattogram',
   'Dhaka',
   'Gazipur',
   'Narayanganj',
-  'Chittagong',
   'Sylhet',
   'Rajshahi',
   'Khulna',
@@ -59,7 +60,7 @@ export const CheckoutModal: React.FC = () => {
     getGrandTotal
   } = useReadyMadeCart();
 
-  const { t, lang } = useTailor();
+  const { t, lang, shopSettings } = useTailor();
   const { user } = useAuth();
 
   // Form State
@@ -67,8 +68,9 @@ export const CheckoutModal: React.FC = () => {
   const [customerPhone, setCustomerPhone] = useState(user?.phone || '');
   const [customerEmail, setCustomerEmail] = useState(user?.email || '');
   const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [district, setDistrict] = useState('Dhaka');
-  const [area, setArea] = useState('');
+  const [district, setDistrict] = useState('Chattogram');
+  const [area, setArea] = useState('Oxygen Mor, Bayazid Bostami');
+  const [oxygenZoneId, setOxygenZoneId] = useState('oxygen_mor');
   const [isExpress, setIsExpress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bkash' | 'nagad' | 'card'>('cod');
   const [notes, setNotes] = useState('');
@@ -77,6 +79,13 @@ export const CheckoutModal: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [completedOrder, setCompletedOrder] = useState<ReadyMadeOrder | null>(null);
+
+  const hasCustomerOwnFabricInCart = cart.some(
+    item => item.item_type === 'tailored' && (
+      item.tailor_details?.fabricSource === 'customer_provided' ||
+      (item.tailor_details as any)?.fabric_source === 'customer_provided'
+    )
+  );
 
   // Sync with user profile if logged in
   useEffect(() => {
@@ -100,6 +109,16 @@ export const CheckoutModal: React.FC = () => {
       />
     );
   }
+
+  const pickupCheck = validatePickupEligibility({
+    district,
+    area,
+    streetAddress: deliveryAddress,
+    zoneId: district === 'Chattogram' ? oxygenZoneId : undefined,
+    shopLat: shopSettings?.shopLat,
+    shopLng: shopSettings?.shopLng,
+    maxRadiusKm: shopSettings?.pickupServiceRadiusKm ?? 3.0
+  });
 
   const deliveryFee = getDeliveryFee(district, isExpress);
   const grandTotal = getGrandTotal(district, isExpress);
@@ -129,6 +148,11 @@ export const CheckoutModal: React.FC = () => {
       return;
     }
 
+    if (hasCustomerOwnFabricInCart && !pickupCheck.eligible) {
+      setErrorMessage(t(pickupCheck.reasonEn, pickupCheck.reasonBn));
+      return;
+    }
+
     if (cart.length === 0) {
       setErrorMessage(t('Your cart is empty', 'আপনার কার্ট খালি রয়েছে'));
       return;
@@ -144,6 +168,7 @@ export const CheckoutModal: React.FC = () => {
         delivery_address: deliveryAddress.trim(),
         district,
         area: area.trim(),
+        oxygen_zone_id: district === 'Chattogram' ? oxygenZoneId : undefined,
         delivery_method: isExpress ? 'express' : 'standard',
         payment_method: paymentMethod,
         items: cart.map(item => ({
@@ -346,6 +371,22 @@ export const CheckoutModal: React.FC = () => {
               <span>{t('2. Delivery Address in Bangladesh', '২. ডেলিভারি ঠিকানা')}</span>
             </h3>
 
+            {hasCustomerOwnFabricInCart && (
+              <div className={`p-3 rounded-xl border text-xs ${
+                pickupCheck.eligible
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                  : 'bg-rose-50 border-rose-200 text-rose-900'
+              }`}>
+                <p className="font-bold">
+                  {t(
+                    `Customer-Owned Fabric Pickup Zone (${shopSettings?.pickupServiceRadiusKm ?? 3.0} km around Oxygen, Chattogram)`,
+                    `নিজস্ব কাপড় পিকআপ জোন (অক্সিজেন, চট্টগ্রামের ${shopSettings?.pickupServiceRadiusKm ?? 3.0} কি.মি. এলাকা)`
+                  )}
+                </p>
+                <p className="mt-0.5">{t(pickupCheck.reasonEn, pickupCheck.reasonBn)}</p>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -353,7 +394,14 @@ export const CheckoutModal: React.FC = () => {
                 </label>
                 <select
                   value={district}
-                  onChange={(e) => setDistrict(e.target.value)}
+                  onChange={(e) => {
+                    const nextDist = e.target.value;
+                    setDistrict(nextDist);
+                    if (nextDist === 'Chattogram') {
+                      setOxygenZoneId('oxygen_mor');
+                      setArea('Oxygen Mor, Bayazid Bostami');
+                    }
+                  }}
                   className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   {BD_DISTRICTS.map((d) => (
@@ -362,19 +410,43 @@ export const CheckoutModal: React.FC = () => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {t('Thana / Area *', 'থানা / এলাকা *')}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  placeholder="e.g. Dhanmondi, Gulshan, Uttara, Mirpur"
-                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
+              {district === 'Chattogram' ? (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {t('Chattogram / Oxygen Area *', 'চট্টগ্রাম / অক্সিজেন এলাকা *')}
+                  </label>
+                  <select
+                    value={oxygenZoneId}
+                    onChange={(e) => {
+                      const zId = e.target.value;
+                      setOxygenZoneId(zId);
+                      const zObj = OXYGEN_CHATTOGRAM_ZONES.find(z => z.id === zId);
+                      if (zObj) setArea(zObj.nameEn);
+                    }}
+                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    {OXYGEN_CHATTOGRAM_ZONES.map(z => (
+                      <option key={z.id} value={z.id}>
+                        {t(z.nameEn, z.nameBn)} (~{z.approxDistanceKm} km)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    {t('Thana / Area *', 'থানা / এলাকা *')}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={area}
+                    onChange={(e) => setArea(e.target.value)}
+                    placeholder="e.g. Dhanmondi, Sylhet Sadar, Rajshahi"
+                    className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              )}
             </div>
 
             <div>
@@ -409,11 +481,11 @@ export const CheckoutModal: React.FC = () => {
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold">{t('Standard Delivery', 'স্ট্যান্ডার্ড ডেলিভারি')}</span>
                     <span className="font-mono text-xs">
-                      ৳{district.toLowerCase().includes('dhaka') ? 60 : 120}
+                      ৳{getDeliveryFee(district, false)}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-normal">
-                    {district.toLowerCase().includes('dhaka') ? '2-3 Days' : '3-5 Days'}
+                    {district.toLowerCase().includes('chattogram') ? '1-2 Days (Chattogram)' : '3-5 Days (Nationwide Courier)'}
                   </p>
                 </button>
 
@@ -432,7 +504,7 @@ export const CheckoutModal: React.FC = () => {
                       <span className="text-[9px] bg-indigo-700 text-white px-1.5 py-0.2 rounded font-bold">24H</span>
                     </span>
                     <span className="font-mono text-xs">
-                      ৳{(district.toLowerCase().includes('dhaka') ? 60 : 120) + 50}
+                      ৳{getDeliveryFee(district, true)}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-normal">

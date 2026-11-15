@@ -18,6 +18,7 @@ import {
   ReadyMadeOrderItem,
   InventoryTransaction
 } from '../../src/types/readyMade';
+import { validatePickupEligibility } from '../../src/utils/geoDistance';
 
 const router = Router();
 
@@ -309,7 +310,7 @@ router.get('/coupons/validate', (req: Request, res: Response) => {
   }
 });
 
-// 7. POST /api/ready-made/orders (Place ready-made order)
+// 7. POST /api/ready-made/orders (Place ready-made or unified cart order)
 router.post('/orders', (req: Request, res: Response) => {
   try {
     const {
@@ -318,7 +319,11 @@ router.post('/orders', (req: Request, res: Response) => {
       customer_email,
       delivery_address,
       district,
+      thana,
       area,
+      oxygen_zone_id,
+      customer_lat,
+      customer_lng,
       delivery_method,
       payment_method,
       items,
@@ -330,20 +335,71 @@ router.post('/orders', (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: 'Missing required customer or item information' });
     }
 
-    // Verify stock availability
+    const settings = db.getData().settings;
     const variants = db.getProductVariants();
     const fabrics = db.getFabricsCatalog();
+
+    // 1. Verify stock availability & 3-km service radius for customer-owned fabric items
     for (const item of items) {
-      if (
-        item.item_type === 'fabric' || 
-        item.item_type === 'tailored' || 
-        item.category === 'fabric' || 
-        String(item.variant_id || '').startsWith('fabric-') ||
+      const isTailored =
+        item.item_type === 'tailored' ||
         String(item.variant_id || '').startsWith('tailored-') ||
-        String(item.variant_id || '').startsWith('tailor-')
-      ) {
+        String(item.variant_id || '').startsWith('tailor-');
+      const isFabricOnly =
+        item.item_type === 'fabric' ||
+        item.category === 'fabric' ||
+        String(item.variant_id || '').startsWith('fabric-');
+
+      if (isTailored) {
+        const fabSource = item.tailor_details?.fabricSource || item.fabric_details?.fabricSource || 'shop_fabric';
+        if (fabSource === 'customer_provided' || fabSource === 'customer_own') {
+          const eligibility = validatePickupEligibility({
+            division: district,
+            district,
+            thana,
+            customerLat: typeof customer_lat === 'number' ? customer_lat : undefined,
+            customerLng: typeof customer_lng === 'number' ? customer_lng : undefined,
+            zoneId: oxygen_zone_id,
+            shopLat: settings.shopLat,
+            shopLng: settings.shopLng,
+            maxRadiusKm: settings.pickupServiceRadiusKm
+          });
+          if (!eligibility.eligible) {
+            return res.status(400).json({
+              success: false,
+              message: eligibility.reasonEn,
+              code: 'OUTSIDE_SERVICE_RADIUS'
+            });
+          }
+        } else if (fabSource === 'shop_fabric') {
+          const shopFabId = item.tailor_details?.selectedShopFabricId || item.fabric_details?.fabricId;
+          const reqGaz = (Number(item.tailor_details?.lengthGaz || item.fabric_details?.yards || 2.5)) * (Number(item.quantity) || 1);
+          if (shopFabId) {
+            const fab = fabrics.find((f: any) => f.id === shopFabId);
+            if (fab && typeof fab.stockGaz === 'number' && fab.stockGaz < reqGaz) {
+              return res.status(400).json({
+                success: false,
+                message: `Insufficient fabric stock for ${fab.nameEn}. Available: ${fab.stockGaz} Gaz, Required: ${reqGaz} Gaz.`
+              });
+            }
+          }
+        }
         continue;
       }
+
+      if (isFabricOnly) {
+        const fabId = item.fabric_details?.fabricId || item.product_id;
+        const reqGaz = (Number(item.fabric_details?.yards) || 2.5) * (Number(item.quantity) || 1);
+        const fab = fabrics.find((f: any) => f.id === fabId);
+        if (fab && typeof fab.stockGaz === 'number' && fab.stockGaz < reqGaz) {
+          return res.status(400).json({
+            success: false,
+            message: `Insufficient fabric stock for ${fab.nameEn}. Available: ${fab.stockGaz} Gaz, Required: ${reqGaz} Gaz.`
+          });
+        }
+        continue;
+      }
+
       const variant = variants.find(v => v.id === item.variant_id);
       if (!variant) {
         return res.status(400).json({
@@ -394,8 +450,30 @@ router.post('/orders', (req: Request, res: Response) => {
       };
     });
 
-    const isDhaka = (district || '').toLowerCase().includes('dhaka') || (delivery_address || '').toLowerCase().includes('dhaka');
-    let delivery_fee = isDhaka ? 60 : 120;
+    const isChattogram =
+      (district || '').toLowerCase().includes('chattogram') ||
+      (district || '').toLowerCase().includes('chittagong') ||
+      (delivery_address || '').toLowerCase().includes('chattogram') ||
+      (delivery_address || '').toLowerCase().includes('oxygen');
+
+    const geoCheck = validatePickupEligibility({
+      division: district,
+      district,
+      thana,
+      customerLat: typeof customer_lat === 'number' ? customer_lat : undefined,
+      customerLng: typeof customer_lng === 'number' ? customer_lng : undefined,
+      zoneId: oxygen_zone_id,
+      shopLat: settings.shopLat,
+      shopLng: settings.shopLng,
+      maxRadiusKm: settings.pickupServiceRadiusKm
+    });
+
+    let delivery_fee = geoCheck.eligible
+      ? (settings.localPickupFee ?? 60)
+      : isChattogram
+      ? (settings.chattogramCityDeliveryFee ?? 80)
+      : (settings.nationwideCourierFee ?? 120);
+
     if (delivery_method === 'express') {
       delivery_fee += 50;
     }
@@ -435,7 +513,7 @@ router.post('/orders', (req: Request, res: Response) => {
       customer_email: customer_email || '',
       customer_phone,
       delivery_address,
-      district: district || (isDhaka ? 'Dhaka' : 'Outside Dhaka'),
+      district: district || (isChattogram ? 'Chattogram' : 'Dhaka'),
       area: area || '',
       delivery_method: delivery_method || 'standard',
       payment_method: payment_method || 'cod',
@@ -454,40 +532,206 @@ router.post('/orders', (req: Request, res: Response) => {
           status: payment_method === 'cod' ? 'Confirmed' : 'Payment Pending',
           timestamp: now.toISOString(),
           note: payment_method === 'cod'
-            ? 'Ready-made product order placed successfully (Cash on Delivery).'
-            : 'Ready-made product order placed. Awaiting online payment confirmation.'
+            ? 'Order confirmed (Cash on Delivery).'
+            : 'Order placed. Awaiting online payment confirmation.'
         }
       ],
       created_at: now.toISOString(),
       updated_at: now.toISOString()
     };
 
-    // Deduct stock and record inventory transactions
+    // Deduct stock, record inventory transactions, and route tailored items to Workshop queue
     db.mutate(data => {
       // 1. Save order and items
       data.ready_made_orders.unshift(newOrder);
       data.ready_made_order_items.push(...orderItems);
 
-      // 2. Adjust variant inventory and record transaction
-      orderItems.forEach(item => {
-        const variant = data.product_variants.find(v => v.id === item.variant_id);
-        if (variant) {
-          const prev = variant.stock_quantity;
-          variant.stock_quantity = Math.max(0, variant.stock_quantity - item.quantity);
-          const txn: InventoryTransaction = {
-            id: `inv-txn-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-            variant_id: variant.id,
-            product_id: item.product_id,
-            sku: variant.sku,
-            product_name: item.product_name_en,
-            transaction_type: 'order_placed',
-            quantity_change: -item.quantity,
-            previous_stock: prev,
-            new_stock: variant.stock_quantity,
-            reason: `Order ${order_number}`,
-            created_at: now.toISOString()
+      // 2. Adjust variant inventory, fabric yardage inventory, and workshop queue
+      orderItems.forEach((item, idx) => {
+        if (item.item_type === 'ready_made') {
+          const variant = data.product_variants.find(v => v.id === item.variant_id);
+          if (variant) {
+            const prev = variant.stock_quantity;
+            variant.stock_quantity = Math.max(0, variant.stock_quantity - item.quantity);
+            const txn: InventoryTransaction = {
+              id: `inv-txn-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+              variant_id: variant.id,
+              product_id: item.product_id,
+              sku: variant.sku,
+              product_name: item.product_name_en,
+              transaction_type: 'order_placed',
+              quantity_change: -item.quantity,
+              previous_stock: prev,
+              new_stock: variant.stock_quantity,
+              reason: `Order ${order_number}`,
+              created_at: now.toISOString()
+            };
+            data.inventory_transactions.unshift(txn);
+          }
+        } else if (item.item_type === 'fabric') {
+          const fDetails: any = item.fabric_details || {};
+          const fabId = fDetails.fabricId || item.product_id;
+          const usedGaz = (Number(fDetails.gaz || fDetails.yards) || 2.5) * item.quantity;
+          const fab = data.fabrics_catalog?.find((f: any) => f.id === fabId);
+          if (fab) {
+            const prevGaz = typeof fab.stockGaz === 'number' ? fab.stockGaz : 85;
+            const nextGaz = Math.max(0, Number((prevGaz - usedGaz).toFixed(2)));
+            fab.stockGaz = nextGaz;
+            fab.inStock = nextGaz > 0;
+            data.inventory_transactions.unshift({
+              id: `inv-fab-${Date.now()}-${idx}`,
+              variant_id: fab.id,
+              product_id: fab.id,
+              sku: fab.sku || fab.id,
+              product_name: `${fab.nameEn} (Gaz)`,
+              transaction_type: 'order_placed',
+              quantity_change: -usedGaz,
+              previous_stock: prevGaz,
+              new_stock: nextGaz,
+              reason: `Fabric Order ${order_number} (${usedGaz} Gaz)`,
+              created_at: now.toISOString()
+            });
+          }
+        } else if (item.item_type === 'tailored') {
+          const tDetails: any = (item as any).tailor_details || {};
+          const fDetails: any = item.fabric_details || {};
+          const isShopFab = tDetails.fabricSource === 'shop_fabric';
+          const usedGaz = (Number(tDetails.lengthGaz || fDetails.gaz || fDetails.yards || 2.5)) * item.quantity;
+          const shopFabId = tDetails.selectedShopFabricId || fDetails.fabricId;
+
+          if (isShopFab && shopFabId) {
+            const fab = data.fabrics_catalog?.find((f: any) => f.id === shopFabId);
+            if (fab) {
+              const prevGaz = typeof fab.stockGaz === 'number' ? fab.stockGaz : 85;
+              const nextGaz = Math.max(0, Number((prevGaz - usedGaz).toFixed(2)));
+              fab.stockGaz = nextGaz;
+              fab.inStock = nextGaz > 0;
+              data.inventory_transactions.unshift({
+                id: `inv-fab-t-${Date.now()}-${idx}`,
+                variant_id: fab.id,
+                product_id: fab.id,
+                sku: fab.sku || fab.id,
+                product_name: `${fab.nameEn} (Gaz)`,
+                transaction_type: 'order_placed',
+                quantity_change: -usedGaz,
+                previous_stock: prevGaz,
+                new_stock: nextGaz,
+                reason: `Combined Fabric + Tailoring Order ${order_number} (${usedGaz} Gaz)`,
+                created_at: now.toISOString()
+              });
+            }
+          }
+
+          // Create corresponding workshop order in data.orders so Master Tailors & Riders receive it
+          const bespokeOrderId = `ord-cart-${Date.now()}-${idx + 1}`;
+          const bespokeOrderNumber = orderItems.length === 1 ? order_number : `${order_number}-T${idx + 1}`;
+          const workshopStage = isShopFab ? 'cutting_in_progress' : 'pickup_scheduled';
+          const bespokeOrder = {
+            id: bespokeOrderId,
+            orderNumber: bespokeOrderNumber,
+            parentCartOrderNumber: order_number,
+            orderType: isShopFab ? 'fabric_and_tailoring' : 'custom_own_fabric',
+            customerName: customer_name,
+            customerPhone: customer_phone,
+            customerEmail: customer_email || '',
+            createdAt: now.toISOString(),
+            garment: {
+              id: item.product_id,
+              nameEn: tDetails.garmentNameEn || item.product_name_en,
+              nameBn: tDetails.garmentNameBn || item.product_name_bn,
+              gender: tDetails.gender || 'men',
+              basePrice: item.unit_price,
+              image: item.product_image
+            },
+            gender: tDetails.gender || 'men',
+            measurementMethod: tDetails.measurementMethod || 'custom_manual',
+            measurements: tDetails.measurements || {},
+            selectedSizePreset: tDetails.selectedSizePreset,
+            selectedCustomizations: tDetails.selectedCustomizations || {},
+            fabricDetails: {
+              fabricSource: isShopFab ? 'shop_fabric' : 'customer_provided',
+              hasFabricAtHome: !isShopFab,
+              selectedShopFabricId: shopFabId,
+              fabricType: tDetails.fabricType || 'Custom Fabric',
+              colorName: tDetails.colorName || item.selected_color,
+              lengthGaz: usedGaz,
+              needLiningAstra: Boolean(tDetails.needLiningAstra),
+              specialInstructions: tDetails.specialInstructions || notes || ''
+            },
+            pickupAddress: {
+              fullName: customer_name,
+              phone: customer_phone,
+              division: district || 'Chattogram',
+              district: district || 'Chattogram',
+              thana: thana || '',
+              area: area || district || 'Oxygen, Chattogram',
+              streetAddress: delivery_address,
+              apartmentFloor: '',
+              pickupDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+              pickupSlot: 'morning',
+              distanceFromShopKm: geoCheck.distanceKm ?? undefined
+            },
+            distanceFromShopKm: geoCheck.distanceKm ?? undefined,
+            deliveryMode: isChattogram ? 'local_rider' : 'nationwide_courier',
+            deliveryUrgency: delivery_method === 'express' ? 'express' : 'standard',
+            estimatedDeliveryDate: new Date(Date.now() + 4 * 86400000).toISOString(),
+            basePrice: item.unit_price,
+            customizationTotal: item.customization_total,
+            fabricCost: Number(tDetails.fabricCost) || 0,
+            liningFee: tDetails.needLiningAstra ? 180 : 0,
+            deliverySpeedFee: delivery_method === 'express' ? 50 : 0,
+            doorstepPickupFee: delivery_fee,
+            discountAmount: 0,
+            grandTotal: item.total_price,
+            paymentMethod: payment_method || 'cod',
+            paymentStatus: payment_method === 'cod' ? 'pay_on_delivery' : 'pending',
+            currentStage: workshopStage,
+            statusHistory: [
+              {
+                stage: workshopStage,
+                timestamp: now.toISOString(),
+                noteEn: isShopFab
+                  ? `Website fabric (${usedGaz} Gaz) allocated & sent to Oxygen Cutting Table.`
+                  : `Fabric pickup scheduled within 3 km of Oxygen, Chattogram.`,
+                noteBn: isShopFab
+                  ? `ওয়েবসাইটের ফেব্রিক (${usedGaz} গজ) বরাদ্দ ও কাটিং টেবিলে প্রেরণ করা হয়েছে।`
+                  : `অক্সিজেন, চট্টগ্রামের ৩ কি.মি. এরিয়ায় কাপড় পিকআপ শিডিউল হয়েছে।`
+              }
+            ],
+            masterTailorName: 'Ustad Moinul Islam',
+            tailorNotes: tDetails.specialInstructions || notes || 'Unified cart custom tailoring order.'
           };
-          data.inventory_transactions.unshift(txn);
+          data.orders.unshift(bespokeOrder);
+
+          if (!isShopFab) {
+            data.pickups.unshift({
+              id: `pic-cart-${Date.now()}-${idx + 1}`,
+              orderId: bespokeOrder.id,
+              order_id: bespokeOrder.id,
+              orderNumber: bespokeOrder.orderNumber,
+              order_number: bespokeOrder.orderNumber,
+              customerName: customer_name,
+              customer_name: customer_name,
+              customerPhone: customer_phone,
+              phone: customer_phone,
+              division: district || 'Chattogram',
+              area: area || 'Oxygen, Chattogram',
+              address: delivery_address,
+              pickup_address: delivery_address,
+              scheduledDate: bespokeOrder.pickupAddress.pickupDate,
+              preferred_date: bespokeOrder.pickupAddress.pickupDate,
+              timeSlot: '10:00 AM - 01:00 PM',
+              slot: 'Morning (10 AM - 1 PM)',
+              preferred_slot: 'morning',
+              status: 'scheduled',
+              assignedRider: 'Rashedul Karim',
+              fabricType: bespokeOrder.fabricDetails.fabricType,
+              colorName: bespokeOrder.fabricDetails.colorName,
+              lengthGaz: usedGaz,
+              securityBagCode: `BAG-CTG-${Math.floor(100 + Math.random() * 900)}`,
+              fabricNotes: bespokeOrder.tailorNotes
+            });
+          }
         }
       });
     });
