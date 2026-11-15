@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import dotenv from 'dotenv';
 import { authRouter } from './server/routes/auth';
 import { customerRouter } from './server/routes/customer';
 import { adminRouter } from './server/routes/admin';
@@ -19,8 +18,6 @@ import {
   loginRateLimiter,
   orderPlacementRateLimiter,
 } from './server/lib/security';
-
-dotenv.config();
 
 async function startServer() {
   const app = express();

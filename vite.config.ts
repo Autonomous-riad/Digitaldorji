@@ -30,7 +30,6 @@ export default defineConfig((): UserConfig => {
             'vendor-react': ['react', 'react-dom'],
             'vendor-icons': ['lucide-react'],
             'vendor-charts': ['recharts'],
-            'vendor-supabase': ['@supabase/supabase-js'],
             'vendor-confetti': ['canvas-confetti'],
             'vendor-zod': ['zod'],
           },
