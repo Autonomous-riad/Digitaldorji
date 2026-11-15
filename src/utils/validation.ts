@@ -23,35 +23,23 @@ export function normalizeBDPhone(rawPhone: string): string {
 }
 
 /**
- * Formats user input dynamically into "+880 1XXX-XXXXXX"
+ * Formats user input dynamically into an 11-digit Bangladeshi mobile number "01XXXXXXXXX"
  */
 export function formatBDPhoneInput(input: string): string {
   if (!input) return '';
   // Extract pure digits
   let digits = input.replace(/\D/g, '');
-  
-  // If user typed leading 880 or 88, strip it to get the local 10/11 digits
+  if (!digits) return '';
+
+  // If user pasted leading 880 (e.g. 8801712345678), convert to 01...
   if (digits.startsWith('880')) {
-    digits = digits.substring(3);
-  } else if (digits.startsWith('88')) {
+    digits = '0' + digits.substring(3);
+  } else if (digits.startsWith('88') && digits.length > 11) {
     digits = digits.substring(2);
   }
-  
-  // If starts with 0 (e.g. 017), strip 0 to format with +880
-  if (digits.startsWith('0')) {
-    digits = digits.substring(1);
-  }
 
-  // Limit to 10 digits after +880 (e.g., 1712345678)
-  digits = digits.substring(0, 10);
-
-  if (digits.length === 0) {
-    return '+880 ';
-  }
-  if (digits.length <= 4) {
-    return `+880 ${digits}`;
-  }
-  return `+880 ${digits.slice(0, 4)}-${digits.slice(4)}`;
+  // Limit to 11 digits (standard BD mobile number length: 01XXXXXXXXX)
+  return digits.slice(0, 11);
 }
 
 /**

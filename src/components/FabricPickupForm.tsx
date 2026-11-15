@@ -787,9 +787,10 @@ export const FabricPickupForm: React.FC = () => {
               <Phone className="w-4 h-4 text-[#5C6677] absolute left-3.5 top-3.5" />
               <input
                 type="tel"
-                value={pickupAddress.phone}
+                inputMode="numeric"
+                value={pickupAddress.phone.replace(/\D/g, '').replace(/^880/, '0').slice(0, 11)}
                 onChange={(e) => handlePhoneInputChange(e.target.value)}
-                placeholder="01712XXXXXX"
+                placeholder="01712345678"
                 maxLength={14}
                 className={`w-full pl-10 pr-3.5 py-2.5 sm:py-3 text-xs sm:text-sm rounded-xl border ${
                   fieldErrors.phone ? 'border-red-500 ring-1 ring-red-500/20' : 'border-[#C5CBD4]'
