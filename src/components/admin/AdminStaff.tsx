@@ -672,7 +672,7 @@ export const AdminStaff: React.FC = () => {
                 onClick={handleOpenAddUser}
                 className="px-3.5 py-2 bg-purple-950 hover:bg-purple-900 text-cream-50 rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
               >
-                <UserPlus className="w-3.5 h-3.5 text-amber-300" />
+                <UserPlus className="w-3.5 h-3.5 text-white" />
                 <span>{t('Add New User / Staff', 'নতুন ইউজার যোগ করুন')}</span>
               </button>
               <button
@@ -936,7 +936,7 @@ export const AdminStaff: React.FC = () => {
                 onClick={() => setShowAddArtisanModal(true)}
                 className="px-3.5 py-2 bg-purple-950 hover:bg-purple-900 text-cream-50 rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
-                <UserPlus className="w-3.5 h-3.5 text-amber-300" />
+                <UserPlus className="w-3.5 h-3.5 text-white" />
                 <span>{t('Add New Artisan', 'নতুন কারিগর যোগ করুন')}</span>
               </button>
               <button

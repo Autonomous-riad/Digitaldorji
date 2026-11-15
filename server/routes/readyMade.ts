@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { db } from '../db';
+import { db, restoreReadyMadeOrderInventory } from '../db';
 import { requirePermission } from '../lib/permissions';
-import { AuthenticatedRequest } from '../auth';
+import { AuthenticatedRequest, optionalAuth } from '../auth';
 import {
   INITIAL_CATEGORIES,
   INITIAL_PRODUCTS,
@@ -679,8 +679,8 @@ router.post('/orders', (req: Request, res: Response) => {
             customizationTotal: item.customization_total,
             fabricCost: Number(tDetails.fabricCost) || 0,
             liningFee: tDetails.needLiningAstra ? 180 : 0,
-            deliverySpeedFee: delivery_method === 'express' ? 50 : 0,
-            doorstepPickupFee: delivery_fee,
+            deliverySpeedFee: 0,
+            doorstepPickupFee: 0,
             discountAmount: 0,
             grandTotal: item.total_price,
             paymentMethod: payment_method || 'cod',
@@ -781,8 +781,8 @@ router.post('/seed', requirePermission('readyMade', 'edit'), (req: Authenticated
   }
 });
 
-// 10. GET /api/ready-made/orders/:orderNumber (Tracking with optional phone check)
-router.get('/orders/:orderNumber', (req: Request, res: Response) => {
+// 10. GET /api/ready-made/orders/:orderNumber (Tracking with phone or auth check)
+router.get('/orders/:orderNumber', optionalAuth, (req: AuthenticatedRequest, res: Response) => {
   try {
     const { orderNumber } = req.params;
     const phone = req.query.phone ? String(req.query.phone).trim() : null;
@@ -796,11 +796,17 @@ router.get('/orders/:orderNumber', (req: Request, res: Response) => {
       return res.status(404).json({ success: false, message: 'Ready-made order not found' });
     }
 
-    if (phone) {
-      const cleanPhone = phone.replace(/\D/g, '').slice(-11);
+    const isStaffOrAdmin = req.user && (req.user.role === 'admin' || req.user.role === 'staff');
+    const isRecentOrder = order.created_at && (Date.now() - new Date(order.created_at).getTime() < 15 * 60 * 1000);
+
+    if (!isStaffOrAdmin && !isRecentOrder) {
+      const cleanPhone = (phone || req.user?.phone || '').replace(/\D/g, '').slice(-11);
       const orderPhone = (order.customer_phone || '').replace(/\D/g, '').slice(-11);
-      if (cleanPhone !== orderPhone) {
-        return res.status(403).json({ success: false, message: 'Phone number does not match this order.' });
+      if (!cleanPhone || cleanPhone !== orderPhone) {
+        return res.status(403).json({
+          success: false,
+          message: 'Phone number verification is required to view this order.'
+        });
       }
     }
 
@@ -1344,10 +1350,16 @@ router.patch('/admin/orders/:id/status', (req: Request, res: Response) => {
           timestamp: new Date().toISOString(),
           note: note || `Order status updated to ${status}`
         });
+        if (String(status).toLowerCase() === 'cancelled') {
+          restoreReadyMadeOrderInventory(data, order, note || 'Admin Cancelled Order');
+        }
       }
 
       if (payment_status) {
         order.payment_status = payment_status;
+        if (payment_status === 'refunded') {
+          restoreReadyMadeOrderInventory(data, order, note || 'Admin Refunded Order');
+        }
       }
 
       order.updated_at = new Date().toISOString();

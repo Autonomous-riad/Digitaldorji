@@ -107,9 +107,18 @@ export const OXYGEN_CHATTOGRAM_ZONES: OxygenZone[] = [
     approxDistanceKm: 3.24,
   },
   {
+    id: 'gec_nasirabad',
+    nameEn: 'GEC Circle & Nasirabad Commercial Area',
+    nameBn: 'জিইসি মোড় ও নাসিরাবাদ বাণিজ্যিক এলাকা',
+    thanaId: 'gec_nasirabad',
+    lat: 22.3610,
+    lng: 91.8225,
+    approxDistanceKm: 3.43,
+  },
+  {
     id: 'gec_circle_khulshi',
-    nameEn: 'GEC Circle & South Khulshi',
-    nameBn: 'জিইসি মোড় ও দক্ষিণ খুলশী',
+    nameEn: 'Khulshi R/A & South Khulshi',
+    nameBn: 'খুলশী আবাসিক এলাকা ও দক্ষিণ খুলশী',
     thanaId: 'khulshi',
     lat: 22.3590,
     lng: 91.8215,
@@ -119,7 +128,7 @@ export const OXYGEN_CHATTOGRAM_ZONES: OxygenZone[] = [
     id: 'chawkbazar_jamalkhan',
     nameEn: 'Chawkbazar & Jamalkhan',
     nameBn: 'চকবাজার ও জামালখান',
-    thanaId: 'chawkbazar',
+    thanaId: 'chawkbazar_ctg',
     lat: 22.3525,
     lng: 91.8365,
     approxDistanceKm: 4.63,
@@ -128,7 +137,7 @@ export const OXYGEN_CHATTOGRAM_ZONES: OxygenZone[] = [
     id: 'bahaddarhat_chandgaon',
     nameEn: 'Bahaddarhat & Chandgaon R/A',
     nameBn: 'বহদ্দারহাট ও চান্দগাঁও আবাসিক এলাকা',
-    thanaId: 'panchlaish',
+    thanaId: 'chandgaon',
     lat: 22.3685,
     lng: 91.8520,
     approxDistanceKm: 4.07,
@@ -168,6 +177,33 @@ export const OXYGEN_CHATTOGRAM_ZONES: OxygenZone[] = [
     lat: 22.4780,
     lng: 91.8120,
     approxDistanceKm: 9.63,
+  },
+  {
+    id: 'patenga_airport',
+    nameEn: 'Patenga & CEPZ Area',
+    nameBn: 'পতেঙ্গা ও সিইপিজেড এলাকা',
+    thanaId: 'patenga',
+    lat: 22.2635,
+    lng: 91.7915,
+    approxDistanceKm: 14.59,
+  },
+  {
+    id: 'sitakunda_upazila',
+    nameEn: 'Sitakunda',
+    nameBn: 'সীতাকুণ্ড',
+    thanaId: 'sitakunda',
+    lat: 22.6195,
+    lng: 91.6615,
+    approxDistanceKm: 30.20,
+  },
+  {
+    id: 'patiya_upazila',
+    nameEn: 'Patiya',
+    nameBn: 'পটিয়া',
+    thanaId: 'patiya',
+    lat: 22.2950,
+    lng: 91.9790,
+    approxDistanceKm: 19.45,
   },
 ];
 
@@ -232,12 +268,13 @@ export function validatePickupEligibility(
       : DEFAULT_SERVICE_RADIUS_KM;
 
   const districtNormalized = (input.district || '').toLowerCase().trim();
+  const divisionNormalized = (input.division || '').toLowerCase().trim();
   const isChattogram =
     districtNormalized === 'chattogram' ||
     districtNormalized === 'chittagong' ||
-    (input.division || '').toLowerCase().trim() === 'chattogram';
+    (!districtNormalized && (divisionNormalized === 'chattogram' || divisionNormalized === 'chittagong'));
 
-  if (districtNormalized && districtNormalized !== 'chattogram' && districtNormalized !== 'chittagong') {
+  if ((districtNormalized && districtNormalized !== 'chattogram' && districtNormalized !== 'chittagong') || !isChattogram) {
     return {
       eligible: false,
       distanceKm: 185.0,
@@ -247,18 +284,35 @@ export function validatePickupEligibility(
     };
   }
 
+  const thanaNormalized = (input.thana || '').toLowerCase().trim();
+  const zoneByThana = thanaNormalized
+    ? OXYGEN_CHATTOGRAM_ZONES.find(
+        (z) => z.thanaId === thanaNormalized || z.id === thanaNormalized
+      )
+    : undefined;
+  const zoneById = input.zoneId
+    ? OXYGEN_CHATTOGRAM_ZONES.find((z) => z.id === input.zoneId)
+    : undefined;
+
+  // Anti-spoofing guard: if an explicit thana is provided and maps exclusively to an out-of-range zone (> maxRadiusKm),
+  // do not allow stale or spoofed zoneId/coordinates to override it unless the thana has at least one eligible zone.
+  const anyEligibleZoneInThana = thanaNormalized
+    ? OXYGEN_CHATTOGRAM_ZONES.some(
+        (z) =>
+          (z.thanaId === thanaNormalized || z.id === thanaNormalized) &&
+          calculateHaversineDistanceKm(shopLat, shopLng, z.lat, z.lng) <= maxRadiusKm
+      )
+    : true;
+
+  let matchedZone: OxygenZone | undefined = zoneById || zoneByThana;
   let lat = input.customerLat;
   let lng = input.customerLng;
-  let matchedZone: OxygenZone | undefined;
 
-  if (input.zoneId) {
-    matchedZone = OXYGEN_CHATTOGRAM_ZONES.find((z) => z.id === input.zoneId);
-  }
-  if (!matchedZone && input.thana) {
-    matchedZone = OXYGEN_CHATTOGRAM_ZONES.find((z) => z.thanaId === input.thana);
-  }
-
-  if ((typeof lat !== 'number' || Number.isNaN(lat)) && matchedZone) {
+  if (thanaNormalized && zoneByThana && !anyEligibleZoneInThana) {
+    matchedZone = zoneByThana;
+    lat = zoneByThana.lat;
+    lng = zoneByThana.lng;
+  } else if ((typeof lat !== 'number' || Number.isNaN(lat)) && matchedZone) {
     lat = matchedZone.lat;
     lng = matchedZone.lng;
   }
@@ -288,21 +342,12 @@ export function validatePickupEligibility(
     };
   }
 
-  if (!isChattogram) {
-    return {
-      eligible: false,
-      distanceKm: 185.0,
-      maxRadiusKm,
-      reasonEn: `Customer-owned fabric pickup is only available within ${maxRadiusKm} km of Oxygen, Chattogram.`,
-      reasonBn: `নিজস্ব কাপড় পিকআপ শুধুমাত্র অক্সিজেন, চট্টগ্রামের ${maxRadiusKm} কি.মি. এরিয়ায় প্রযোজ্য।`,
-    };
-  }
-
+  // If no coordinates and no recognized 3-km Oxygen zone or thana was provided, reject by default instead of assuming 0.5 km
   return {
-    eligible: true,
-    distanceKm: 0.5,
+    eligible: false,
+    distanceKm: 8.5,
     maxRadiusKm,
-    reasonEn: `Within ${maxRadiusKm} km Oxygen, Chattogram local pickup & delivery zone.`,
-    reasonBn: `অক্সিজেন, চট্টগ্রামের ${maxRadiusKm} কি.মি. লোকাল পিকআপ ও ডেলিভারি জোনের ভেতরে।`,
+    reasonEn: `Please select a verified local zone within ${maxRadiusKm} km of Oxygen, Chattogram or use GPS verification for customer-owned fabric pickup.`,
+    reasonBn: `নিজস্ব কাপড় পিকআপের জন্য অনুগ্রহ করে অক্সিজেন, চট্টগ্রামের ${maxRadiusKm} কি.মি. এরিয়ার ভেতরে একটি নির্ধারিত জোন নির্বাচন করুন অথবা জিপিএস ভেরিফিকেশন ব্যবহার করুন।`,
   };
 }

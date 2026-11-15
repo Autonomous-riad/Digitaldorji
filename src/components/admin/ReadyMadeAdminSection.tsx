@@ -859,8 +859,8 @@ export const ReadyMadeAdminSection: React.FC = () => {
                                 className="absolute inset-0 bg-slate-950/70 text-white rounded-lg flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-0.5"
                                 title={t('Change product pictures', 'পণ্যের ছবি পরিবর্তন')}
                               >
-                                <Camera className="w-4 h-4 text-amber-300" />
-                                <span className="text-[8px] font-bold mt-0.5">{t('Change', 'পরিবর্তন')}</span>
+                                <Camera className="w-4 h-4 text-white" />
+                                <span className="text-[8px] font-bold mt-0.5 text-white">{t('Change', 'পরিবর্তন')}</span>
                               </button>
                             </div>
                             <div className="min-w-0">

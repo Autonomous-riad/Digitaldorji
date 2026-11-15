@@ -1285,8 +1285,15 @@ class Database {
       return;
     }
     this.isSaving = true;
+    // Prune expired sessions before serializing
+    if (Array.isArray(data.sessions)) {
+      const now = Date.now();
+      data.sessions = data.sessions.filter((s: any) => s && s.expiresAt > now);
+    }
     const payload = JSON.stringify(data, null, 2);
-    fs.promises.writeFile(DB_FILE_PATH, payload, 'utf-8')
+    const tmpPath = `${DB_FILE_PATH}.tmp`;
+    fs.promises.writeFile(tmpPath, payload, 'utf-8')
+      .then(() => fs.promises.rename(tmpPath, DB_FILE_PATH))
       .catch(err => {
         console.error('Failed to write DB file:', err);
       })
@@ -1338,6 +1345,164 @@ class Database {
   public getReadyMadeOrderItems(): ReadyMadeOrderItem[] { return this.data.ready_made_order_items; }
   public getInventoryTransactions(): InventoryTransaction[] { return this.data.inventory_transactions; }
   public getCoupons(): Coupon[] { return this.data.coupons; }
+}
+
+/**
+ * Restores fabric yardage (Gaz) stock for a cancelled/failed/refunded bespoke order.
+ * Guarded by `order.inventoryRestocked` to prevent duplicate restoration.
+ */
+export function restoreBespokeOrderInventory(data: DatabaseSchema, order: any, reasonLabel: string = 'Order Cancelled / Refunded') {
+  if (!order || order.inventoryRestocked) return;
+  const fabricSource = order.fabricSource || order.fabricDetails?.fabricSource;
+  if (fabricSource !== 'shop_fabric') {
+    order.inventoryRestocked = true;
+    return;
+  }
+
+  const shopFabricId =
+    order.fabricDetails?.selectedShopFabricId ||
+    order.fabricDetails?.selectedShopFabric?.id ||
+    order.selectedShopFabric?.id;
+  const gazUsed = Number(
+    order.fabricQuantityGaz ||
+      order.fabricDetails?.lengthGaz ||
+      order.garment?.recommendedFabricGaz ||
+      0
+  );
+
+  if (shopFabricId && gazUsed > 0 && Array.isArray(data.fabrics_catalog)) {
+    const fabItem = data.fabrics_catalog.find((f: any) => f.id === shopFabricId || f.sku === shopFabricId);
+    if (fabItem) {
+      const prevGaz = typeof fabItem.stockGaz === 'number' ? fabItem.stockGaz : 0;
+      const nextGaz = Number((prevGaz + gazUsed).toFixed(2));
+      fabItem.stockGaz = nextGaz;
+      if (nextGaz > 0) fabItem.inStock = true;
+
+      if (!data.inventory_transactions) data.inventory_transactions = [];
+      data.inventory_transactions.unshift({
+        id: `inv-fab-restock-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        variant_id: fabItem.id,
+        product_id: fabItem.id,
+        sku: fabItem.sku || fabItem.id,
+        product_name: `${fabItem.nameEn} (Gaz)`,
+        transaction_type: 'order_cancelled',
+        quantity_change: gazUsed,
+        previous_stock: prevGaz,
+        new_stock: nextGaz,
+        reason: `${reasonLabel} (#${order.orderNumber || order.id})`,
+        created_at: new Date().toISOString()
+      });
+    }
+  }
+
+  order.inventoryRestocked = true;
+}
+
+/**
+ * Restores ready-made variant stock and/or fabric Gaz stock for a cancelled/failed/refunded ReadyMadeOrder (including mixed cart items).
+ * Guarded by `rmOrder.inventoryRestocked` to prevent duplicate restoration.
+ */
+export function restoreReadyMadeOrderInventory(data: DatabaseSchema, rmOrder: any, reasonLabel: string = 'Order Cancelled / Refunded') {
+  if (!rmOrder || rmOrder.inventoryRestocked) return;
+  const items = Array.isArray(rmOrder.items) ? rmOrder.items : [];
+  const nowIso = new Date().toISOString();
+
+  for (const item of items) {
+    const itemType = item.item_type || 'ready_made';
+    const qty = Number(item.quantity) || 1;
+
+    if (itemType === 'fabric_only') {
+      const fab = (data.fabrics_catalog || []).find(
+        (f: any) => f.id === item.product_id || f.id === item.variant_id || f.sku === item.sku
+      );
+      if (fab && qty > 0) {
+        const prevGaz = typeof fab.stockGaz === 'number' ? fab.stockGaz : 0;
+        const nextGaz = Number((prevGaz + qty).toFixed(2));
+        fab.stockGaz = nextGaz;
+        if (nextGaz > 0) fab.inStock = true;
+
+        if (!data.inventory_transactions) data.inventory_transactions = [];
+        data.inventory_transactions.unshift({
+          id: `inv-fab-restock-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          variant_id: fab.id,
+          product_id: fab.id,
+          sku: fab.sku || fab.id,
+          product_name: `${fab.nameEn} (Gaz)`,
+          transaction_type: 'order_cancelled',
+          quantity_change: qty,
+          previous_stock: prevGaz,
+          new_stock: nextGaz,
+          reason: `${reasonLabel} (#${rmOrder.order_number || rmOrder.id})`,
+          created_at: nowIso
+        });
+      }
+    } else if (itemType === 'tailored') {
+      const tDetails = item.tailor_details || {};
+      const isShopFab = tDetails.fabricSource === 'shop_fabric' || tDetails.fabric_source === 'shop_fabric';
+      const shopFabId = tDetails.selectedShopFabricId || tDetails.fabricId || tDetails.fabric_id;
+      const usedGaz = Number(tDetails.lengthGaz || tDetails.fabric_gaz || 3.0) * qty;
+
+      if (isShopFab && shopFabId && usedGaz > 0) {
+        const fab = (data.fabrics_catalog || []).find((f: any) => f.id === shopFabId || f.sku === shopFabId);
+        if (fab) {
+          const prevGaz = typeof fab.stockGaz === 'number' ? fab.stockGaz : 0;
+          const nextGaz = Number((prevGaz + usedGaz).toFixed(2));
+          fab.stockGaz = nextGaz;
+          if (nextGaz > 0) fab.inStock = true;
+
+          if (!data.inventory_transactions) data.inventory_transactions = [];
+          data.inventory_transactions.unshift({
+            id: `inv-fab-restock-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            variant_id: fab.id,
+            product_id: fab.id,
+            sku: fab.sku || fab.id,
+            product_name: `${fab.nameEn} (Gaz)`,
+            transaction_type: 'order_cancelled',
+            quantity_change: usedGaz,
+            previous_stock: prevGaz,
+            new_stock: nextGaz,
+            reason: `${reasonLabel} (#${rmOrder.order_number || rmOrder.id})`,
+            created_at: nowIso
+          });
+        }
+      }
+    } else {
+      const variant = (data.product_variants || []).find((v: any) => v.id === item.variant_id);
+      if (variant && qty > 0) {
+        const prevStock = variant.stock_quantity;
+        const nextStock = prevStock + qty;
+        variant.stock_quantity = nextStock;
+
+        if (!data.inventory_transactions) data.inventory_transactions = [];
+        data.inventory_transactions.unshift({
+          id: `inv-rm-restock-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          variant_id: variant.id,
+          product_id: variant.product_id,
+          sku: variant.sku,
+          product_name: item.product_name_en || 'Ready-Made Product',
+          transaction_type: 'order_cancelled',
+          quantity_change: qty,
+          previous_stock: prevStock,
+          new_stock: nextStock,
+          reason: `${reasonLabel} (#${rmOrder.order_number || rmOrder.id})`,
+          created_at: nowIso
+        });
+      }
+    }
+  }
+
+  // Also mark any linked child workshop orders as restocked and cancelled so they cannot be double-restocked
+  if (Array.isArray(data.orders) && rmOrder.order_number) {
+    for (const childOrder of data.orders) {
+      if (childOrder.parentCartOrderNumber === rmOrder.order_number) {
+        childOrder.inventoryRestocked = true;
+        childOrder.currentStage = 'cancelled';
+        childOrder.status = 'cancelled';
+      }
+    }
+  }
+
+  rmOrder.inventoryRestocked = true;
 }
 
 export const db = new Database();

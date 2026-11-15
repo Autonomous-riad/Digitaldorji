@@ -65,36 +65,31 @@ ordersRouter.post('/', orderPlacementRateLimiter, optionalAuth, (req: Authentica
   // Enforce 3-km Oxygen, Chattogram Service Radius when customer provides their own fabric
   let calculatedDistanceKm: number | undefined = orderData.pickupAddress?.distanceFromShopKm;
   if (orderType === 'custom_own_fabric' && !orderData.isDemo) {
-    const hasExplicitGeoOrDistrict = Boolean(
-      orderData.pickupAddress?.district ||
-      orderData.pickupAddress?.oxygenZoneId ||
-      typeof orderData.pickupAddress?.customerLat === 'number'
-    );
-    if (hasExplicitGeoOrDistrict) {
-      const eligibility = validatePickupEligibility({
-        division,
-        district: orderData.pickupAddress?.district,
-        thana,
-        customerLat: orderData.pickupAddress?.customerLat,
-        customerLng: orderData.pickupAddress?.customerLng,
-        zoneId: orderData.pickupAddress?.oxygenZoneId,
-        shopLat: settings.shopLat,
-        shopLng: settings.shopLng,
-        maxRadiusKm: settings.pickupServiceRadiusKm
-      });
+    const eligibility = validatePickupEligibility({
+      division,
+      district: orderData.pickupAddress?.district,
+      thana,
+      area,
+      streetAddress,
+      customerLat: orderData.pickupAddress?.customerLat,
+      customerLng: orderData.pickupAddress?.customerLng,
+      zoneId: orderData.pickupAddress?.oxygenZoneId,
+      shopLat: settings.shopLat,
+      shopLng: settings.shopLng,
+      maxRadiusKm: settings.pickupServiceRadiusKm
+    });
 
-      if (!eligibility.eligible) {
-        return res.status(400).json({
-          error: eligibility.reasonEn,
-          errorBn: eligibility.reasonBn,
-          code: 'OUTSIDE_SERVICE_RADIUS',
-          distanceKm: eligibility.distanceKm,
-          maxRadiusKm: eligibility.maxRadiusKm
-        });
-      }
-      if (typeof eligibility.distanceKm === 'number') {
-        calculatedDistanceKm = eligibility.distanceKm;
-      }
+    if (!eligibility.eligible) {
+      return res.status(400).json({
+        error: eligibility.reasonEn,
+        errorBn: eligibility.reasonBn,
+        code: 'OUTSIDE_SERVICE_RADIUS',
+        distanceKm: eligibility.distanceKm,
+        maxRadiusKm: eligibility.maxRadiusKm
+      });
+    }
+    if (typeof eligibility.distanceKm === 'number') {
+      calculatedDistanceKm = eligibility.distanceKm;
     }
   }
 
@@ -509,23 +504,21 @@ function handleTrackOrder(req: Request, res: Response) {
       : 'custom_own_fabric';
   }
 
-  if (!matchedOrder.isReadyMade) {
-    // Verify customer phone number for bespoke orders
-    const orderPhone1 = normalizePhone(matchedOrder.customerPhone || '');
-    const orderPhone2 = normalizePhone(matchedOrder.pickupAddress?.phone || '');
-    const isRecentOrder = matchedOrder.createdAt && (Date.now() - new Date(matchedOrder.createdAt).getTime() < 15 * 60 * 1000);
+  // Verify customer phone number for both bespoke and ready-made orders
+  const orderPhone1 = normalizePhone(matchedOrder.customerPhone || '');
+  const orderPhone2 = normalizePhone(matchedOrder.pickupAddress?.phone || '');
+  const isRecentOrder = matchedOrder.createdAt && (Date.now() - new Date(matchedOrder.createdAt).getTime() < 15 * 60 * 1000);
 
-    const phoneMatches =
-      (phoneQuery.trim().toLowerCase() === 'all' && isRecentOrder) ||
-      Boolean(cleanPhone && orderPhone1 && (orderPhone1 === cleanPhone || orderPhone1.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone1))) ||
-      Boolean(cleanPhone && orderPhone2 && (orderPhone2 === cleanPhone || orderPhone2.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone2)));
+  const phoneMatches =
+    (phoneQuery.trim().toLowerCase() === 'all' && isRecentOrder) ||
+    Boolean(cleanPhone && orderPhone1 && (orderPhone1 === cleanPhone || orderPhone1.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone1))) ||
+    Boolean(cleanPhone && orderPhone2 && (orderPhone2 === cleanPhone || orderPhone2.endsWith(cleanPhone) || cleanPhone.endsWith(orderPhone2)));
 
-    if (!phoneMatches) {
-      return res.status(403).json({
-        error: 'Security Verification Failed: The phone number entered does not match the contact number for this Order ID.',
-        code: 'PHONE_MISMATCH'
-      });
-    }
+  if (!phoneMatches) {
+    return res.status(403).json({
+      error: 'Security Verification Failed: The phone number entered does not match the contact number for this Order ID.',
+      code: 'PHONE_MISMATCH'
+    });
   }
 
   // Return tracked order details with current stage, milestone history, and concierge info

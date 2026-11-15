@@ -1,6 +1,6 @@
 import { Router, Response } from 'express';
-import { db } from '../db';
-import { requireAdmin, requireStaffOrAdmin, AuthenticatedRequest } from '../auth';
+import { db, restoreBespokeOrderInventory, restoreReadyMadeOrderInventory } from '../db';
+import { requireAdmin, requireStaffOrAdmin, AuthenticatedRequest, hashPassword } from '../auth';
 import {
   requirePermission,
   validateStaffMutation,
@@ -321,6 +321,10 @@ const handleStatusUpdate = (req: AuthenticatedRequest, res: Response) => {
 
       order.statusHistory.push(historyItem);
 
+      if (status === 'cancelled') {
+        restoreBespokeOrderInventory(data, order, note || 'Order Cancelled by Admin');
+      }
+
       // Create rich notification object
       createdNotif = createAdminOrderNotification(order, status, note);
 
@@ -437,9 +441,12 @@ adminRouter.post('/orders/:id/refund', requirePermission('orders', 'edit'), (req
     const order = data.orders.find(o => o.id === id || o.orderNumber === id);
     if (order) {
       order.paymentStatus = 'refunded';
+      order.currentStage = 'cancelled';
+      order.status = 'cancelled';
       order.refundAmount = refundAmount || order.grandTotal;
       order.refundReason = reason || 'Customer requested cancellation/refund';
       order.refundedAt = new Date().toISOString();
+      restoreBespokeOrderInventory(data, order, order.refundReason);
 
       if (!order.statusHistory) order.statusHistory = [];
       order.statusHistory.push({
@@ -635,7 +642,7 @@ adminRouter.post('/users', requirePermission('staff', 'create'), (req: Authentic
     id: 'usr-' + (newUserRole === 'admin' ? 'adm-' : 'stf-') + Date.now().toString(36),
     name: name.trim(),
     email: normalizedEmail,
-    password: String(password).trim(),
+    password: hashPassword(String(password).trim()),
     role: newUserRole,
     title: title ? title.trim() : (newUserRole === 'admin' ? 'Shop Administrator' : 'Artisan / Staff'),
     phone: phone ? phone.trim() : '01700-000000',
@@ -684,7 +691,7 @@ adminRouter.put('/users/:id', requirePermission('staff', 'edit'), (req: Authenti
         user.active = Boolean(active);
       }
       if (password && String(password).trim().length > 0) {
-        user.password = String(password).trim();
+        user.password = hashPassword(String(password).trim());
       }
       if (permissions && req.user?.id !== id) {
         const staffTier = permissions.staffRole || (user.role === 'admin' ? 'admin' : (permissions.canFollowUpOrders === false ? 'viewer' : 'editor'));
@@ -809,7 +816,28 @@ adminRouter.delete('/products/:id', requirePermission('catalog', 'delete'), (req
 // GET /api/admin/reports - Analytics & CSV Export Data
 adminRouter.get('/reports', requirePermission('reports', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
-  const orders = data.orders || [];
+  const topLevelBespoke = (data.orders || []).filter((o: any) => !o.parentCartOrderNumber);
+  const rmOrders = data.ready_made_orders || [];
+
+  // Unified list of top-level revenue-bearing orders (avoids double-counting child cart orders and includes Ready-Made orders)
+  const unifiedOrders = [
+    ...topLevelBespoke.map((o: any) => ({
+      createdAt: o.createdAt,
+      amount: o.grandTotal || o.total || 0,
+      stage: normalizeStage(o.currentStage || o.status),
+      itemName: o.garment?.nameEn || 'Bespoke Item',
+      customerName: o.customerName || 'Customer',
+      customerPhone: o.customerPhone || 'N/A'
+    })),
+    ...rmOrders.map((ro: any) => ({
+      createdAt: ro.created_at,
+      amount: ro.total || 0,
+      stage: ro.order_status === 'delivered' ? 'delivered' : ro.order_status === 'shipped' ? 'out_for_delivery' : ro.order_status === 'cancelled' ? 'cancelled' : 'ready',
+      itemName: ro.items?.[0]?.product_name_en || 'Ready-Made Clothing',
+      customerName: ro.customer_name || 'Customer',
+      customerPhone: ro.customer_phone || 'N/A'
+    }))
+  ];
 
   // Daily, Weekly, Monthly revenue sum
   const now = new Date();
@@ -817,35 +845,34 @@ adminRouter.get('/reports', requirePermission('reports', 'view'), (req: Authenti
   const weekAgo = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
   const monthAgo = new Date(now.getTime() - 30 * 24 * 3600 * 1000);
 
-  const dailyRevenue = orders
+  const dailyRevenue = unifiedOrders
     .filter(o => o.createdAt && o.createdAt.startsWith(todayStr))
-    .reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
+    .reduce((sum, o) => sum + o.amount, 0);
 
-  const weeklyRevenue = orders
+  const weeklyRevenue = unifiedOrders
     .filter(o => o.createdAt && new Date(o.createdAt) >= weekAgo)
-    .reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
+    .reduce((sum, o) => sum + o.amount, 0);
 
-  const monthlyRevenue = orders
+  const monthlyRevenue = unifiedOrders
     .filter(o => o.createdAt && new Date(o.createdAt) >= monthAgo)
-    .reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
+    .reduce((sum, o) => sum + o.amount, 0);
 
   // Orders by Status (Pie chart data)
   const statusCounts: Record<string, number> = {};
-  orders.forEach(o => {
-    const st = normalizeStage(o.currentStage || o.status);
-    statusCounts[st] = (statusCounts[st] || 0) + 1;
+  unifiedOrders.forEach(o => {
+    statusCounts[o.stage] = (statusCounts[o.stage] || 0) + 1;
   });
 
   const ordersByStatus = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
 
-  // Top Garments (Bar chart data)
+  // Top Garments / Products (Bar chart data)
   const garmentRevenueMap: Record<string, { garment: string; totalRevenue: number; orderCount: number }> = {};
-  orders.forEach(o => {
-    const name = o.garment?.nameEn || 'Bespoke Item';
+  unifiedOrders.forEach(o => {
+    const name = o.itemName;
     if (!garmentRevenueMap[name]) {
       garmentRevenueMap[name] = { garment: name, totalRevenue: 0, orderCount: 0 };
     }
-    garmentRevenueMap[name].totalRevenue += o.grandTotal || o.total || 0;
+    garmentRevenueMap[name].totalRevenue += o.amount;
     garmentRevenueMap[name].orderCount += 1;
   });
 
@@ -855,18 +882,18 @@ adminRouter.get('/reports', requirePermission('reports', 'view'), (req: Authenti
 
   // Top Customers
   const customerLTVMap: Record<string, { name: string; phone: string; ordersCount: number; lifetimeValue: number }> = {};
-  orders.forEach(o => {
-    const key = o.customerPhone || o.customerName || 'Guest';
+  unifiedOrders.forEach(o => {
+    const key = o.customerPhone !== 'N/A' ? o.customerPhone : o.customerName;
     if (!customerLTVMap[key]) {
       customerLTVMap[key] = {
-        name: o.customerName || 'Customer',
-        phone: o.customerPhone || 'N/A',
+        name: o.customerName,
+        phone: o.customerPhone,
         ordersCount: 0,
         lifetimeValue: 0
       };
     }
     customerLTVMap[key].ordersCount += 1;
-    customerLTVMap[key].lifetimeValue += o.grandTotal || o.total || 0;
+    customerLTVMap[key].lifetimeValue += o.amount;
   });
 
   const topCustomers = Object.values(customerLTVMap)
@@ -878,8 +905,8 @@ adminRouter.get('/reports', requirePermission('reports', 'view'), (req: Authenti
       dailyRevenue,
       weeklyRevenue,
       monthlyRevenue,
-      totalOrders: orders.length,
-      totalRevenue: orders.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0)
+      totalOrders: unifiedOrders.length,
+      totalRevenue: unifiedOrders.reduce((sum, o) => sum + o.amount, 0)
     },
     ordersByStatus,
     topGarmentsChart,
@@ -1059,22 +1086,67 @@ adminRouter.put('/production/:id/artisan', requirePermission('orders', 'edit'), 
   res.json({ message: 'Artisan assignment and production stage updated', order: updatedOrder });
 });
 
-// GET /api/admin/delivery - Out for delivery and ready orders
+// GET /api/admin/delivery - Out for delivery and ready orders (including Ready-Made & Cart orders)
 adminRouter.get('/delivery', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
-  const orders = data.orders || [];
+  const bespokeOrders = data.orders || [];
+  const rmOrdersMapped = (data.ready_made_orders || []).map((ro: any) => {
+    const mappedStage =
+      ro.order_status === 'delivered'
+        ? 'delivered'
+        : ro.order_status === 'shipped'
+        ? 'out_for_delivery'
+        : ro.order_status === 'cancelled'
+        ? 'cancelled'
+        : 'ready';
+    const isCtg = (ro.district || '').toLowerCase().includes('chattogram') || (ro.district || '').toLowerCase().includes('chittagong');
+    return {
+      id: ro.id,
+      orderNumber: ro.order_number,
+      orderType: 'ready_made',
+      isReadyMade: true,
+      customerName: ro.customer_name,
+      customerPhone: ro.customer_phone,
+      createdAt: ro.created_at,
+      garment: {
+        id: ro.items?.[0]?.product_id || 'rm-item',
+        nameEn: ro.items?.map((i: any) => `${i.product_name_en} (x${i.quantity})`).join(', ') || 'Ready-Made Clothing',
+        nameBn: ro.items?.map((i: any) => `${i.product_name_bn} (x${i.quantity})`).join(', ') || 'রেডিমেড পোশাক'
+      },
+      pickupAddress: {
+        fullName: ro.customer_name,
+        phone: ro.customer_phone,
+        division: ro.district || 'Bangladesh',
+        district: ro.district || 'Bangladesh',
+        area: ro.area || ro.district || 'Nationwide',
+        streetAddress: ro.delivery_address
+      },
+      deliveryMode: ro.deliveryMode || (isCtg ? 'local_rider' : 'nationwide_courier'),
+      courierName: ro.courierName || '',
+      courierTrackingNumber: ro.courierTrackingNumber || ro.trackingNumber || '',
+      trackingNumber: ro.trackingNumber || ro.courierTrackingNumber || '',
+      assignedRider: ro.assignedRider || '',
+      grandTotal: ro.total,
+      paymentMethod: ro.payment_method,
+      paymentStatus: ro.payment_status,
+      currentStage: mappedStage,
+      status: mappedStage
+    };
+  });
 
-  const pendingDelivery = orders.filter(o => {
+  const allOrders = [...bespokeOrders, ...rmOrdersMapped];
+
+  const pendingDelivery = allOrders.filter(o => {
     const s = o.currentStage || o.status;
     return s === 'quality_and_ironing' || s === 'ready' || s === 'quality_check';
   });
 
-  const outForDelivery = orders.filter(o => {
+  const outForDelivery = allOrders.filter(o => {
     const s = o.currentStage || o.status;
     return s === 'out_for_delivery';
   });
 
-  const deliveredToday = orders.filter(o => {
+  const deliveredToday = allOrders.filter(o => {
     const s = o.currentStage || o.status;
     return s === 'delivered';
   });
@@ -1092,7 +1164,7 @@ adminRouter.get('/delivery', requirePermission('orders', 'view'), (req: Authenti
   });
 });
 
-// PUT /api/admin/delivery/:id/dispatch - Dispatch delivery rider or nationwide courier
+// PUT /api/admin/delivery/:id/dispatch - Dispatch delivery rider or nationwide courier (supports both bespoke and ready-made orders)
 adminRouter.put('/delivery/:id/dispatch', requirePermission('orders', 'edit'), (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { currentStage, assignedRider, trackingNumber, deliveryMode, courierName, courierTrackingNumber } = req.body;
@@ -1131,6 +1203,43 @@ adminRouter.put('/delivery/:id/dispatch', requirePermission('orders', 'edit'), (
         createdNotif = createAdminOrderNotification(order, currentStage, dispatchNote);
       }
       updatedOrder = order;
+      return;
+    }
+
+    // Also support dispatching Ready-Made & Cart orders
+    const rmOrder: any = (data.ready_made_orders || []).find(ro => ro.id === id || ro.order_number === id);
+    if (rmOrder) {
+      if (assignedRider) rmOrder.assignedRider = assignedRider;
+      if (deliveryMode) rmOrder.deliveryMode = deliveryMode;
+      if (courierName !== undefined) rmOrder.courierName = courierName;
+      const resolvedTracking = courierTrackingNumber || trackingNumber;
+      if (resolvedTracking !== undefined) {
+        rmOrder.trackingNumber = resolvedTracking;
+        rmOrder.courierTrackingNumber = resolvedTracking;
+      }
+      if (currentStage) {
+        const mappedRmStatus =
+          currentStage === 'delivered'
+            ? 'delivered'
+            : currentStage === 'out_for_delivery'
+            ? 'shipped'
+            : currentStage === 'cancelled'
+            ? 'cancelled'
+            : 'processing';
+        rmOrder.order_status = mappedRmStatus;
+        rmOrder.updated_at = new Date().toISOString();
+        const dispatchNote =
+          rmOrder.deliveryMode === 'nationwide_courier' && rmOrder.courierName
+            ? `Dispatched via ${rmOrder.courierName} Courier${rmOrder.courierTrackingNumber ? ` (Tracking: ${rmOrder.courierTrackingNumber})` : ''}`
+            : `Delivery updated to ${mappedRmStatus}`;
+        if (!rmOrder.status_history) rmOrder.status_history = [];
+        rmOrder.status_history.push({
+          status: mappedRmStatus,
+          timestamp: new Date().toISOString(),
+          note: dispatchNote
+        });
+      }
+      updatedOrder = rmOrder;
     }
   });
 
@@ -1145,22 +1254,38 @@ adminRouter.put('/delivery/:id/dispatch', requirePermission('orders', 'edit'), (
   res.json({ message: 'Delivery dispatched and customer notified', order: updatedOrder });
 });
 
-// GET /api/admin/payments - Payment reconciliation
+// GET /api/admin/payments - Payment reconciliation (Bespoke + Ready-Made orders)
 adminRouter.get('/payments', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
-  const orders = data.orders || [];
-  const payments = orders.map(o => ({
-    id: 'pay-' + o.id,
-    orderId: o.id,
-    orderNumber: o.orderNumber,
-    customerName: o.customerName,
-    customerPhone: o.customerPhone,
-    amount: o.grandTotal || o.total || 1500,
-    paymentMethod: o.paymentMethod || 'bkash',
-    paymentStatus: o.paymentStatus || 'paid',
-    transactionId: o.transactionId || 'TRX' + Date.now().toString(36).toUpperCase(),
-    createdAt: o.createdAt
-  }));
+  const bespokeOrders = (data.orders || []).filter((o: any) => !o.parentCartOrderNumber);
+  const rmOrders = data.ready_made_orders || [];
+
+  const payments = [
+    ...bespokeOrders.map((o: any) => ({
+      id: 'pay-' + o.id,
+      orderId: o.id,
+      orderNumber: o.orderNumber,
+      customerName: o.customerName,
+      customerPhone: o.customerPhone,
+      amount: o.grandTotal || o.total || 1500,
+      paymentMethod: o.paymentMethod || 'bkash',
+      paymentStatus: o.paymentStatus || 'paid',
+      transactionId: o.paymentTrxId || o.transactionId || 'TRX' + Date.now().toString(36).toUpperCase(),
+      createdAt: o.createdAt
+    })),
+    ...rmOrders.map((ro: any) => ({
+      id: 'pay-rm-' + ro.id,
+      orderId: ro.id,
+      orderNumber: ro.order_number,
+      customerName: ro.customer_name,
+      customerPhone: ro.customer_phone,
+      amount: ro.total || 0,
+      paymentMethod: ro.payment_method || 'cod',
+      paymentStatus: ro.payment_status || 'pending',
+      transactionId: ro.payment_trx_id || `RM-TRX-${ro.order_number}`,
+      createdAt: ro.created_at
+    }))
+  ];
 
   res.json({ payments });
 });

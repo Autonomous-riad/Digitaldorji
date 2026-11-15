@@ -10,6 +10,42 @@ export interface Session {
   expiresAt: number;
 }
 
+/**
+ * Cryptographic password hashing using Node.js scrypt with per-password random 16-byte salt.
+ */
+export function hashPassword(plainPassword: string): string {
+  if (plainPassword.startsWith('scrypt$')) return plainPassword;
+  const salt = crypto.randomBytes(16).toString('hex');
+  const derivedKey = crypto.scryptSync(plainPassword, salt, 64).toString('hex');
+  return `scrypt$${salt}$${derivedKey}`;
+}
+
+/**
+ * Verifies a password against either a scrypt hash or a legacy plaintext seed password.
+ * Returns `needsRehash: true` if a legacy plaintext password matched so the caller can upgrade it.
+ */
+export function verifyPassword(plainPassword: string, storedPassword?: string): { valid: boolean; needsRehash: boolean } {
+  if (!plainPassword || !storedPassword) {
+    return { valid: false, needsRehash: false };
+  }
+  if (storedPassword.startsWith('scrypt$')) {
+    const parts = storedPassword.split('$');
+    if (parts.length !== 3) return { valid: false, needsRehash: false };
+    const [, salt, hashHex] = parts;
+    try {
+      const derivedKey = crypto.scryptSync(plainPassword, salt, 64);
+      const storedKey = Buffer.from(hashHex, 'hex');
+      if (derivedKey.length !== storedKey.length) return { valid: false, needsRehash: false };
+      const valid = crypto.timingSafeEqual(derivedKey, storedKey);
+      return { valid, needsRehash: false };
+    } catch {
+      return { valid: false, needsRehash: false };
+    }
+  }
+  const valid = storedPassword === plainPassword;
+  return { valid, needsRehash: valid };
+}
+
 // In-memory active sessions store backed by persistent JSON database
 const sessions = new Map<string, Session>();
 

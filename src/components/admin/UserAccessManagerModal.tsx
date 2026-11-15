@@ -473,8 +473,8 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
         {/* Header */}
         <div className="px-5 py-4 border-b border-cream-300 flex items-center justify-between bg-cream-100 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-950 text-cream-50 flex items-center justify-center shadow-xs">
-              <ShieldCheck className="w-5 h-5 text-amber-300" />
+            <div className="w-10 h-10 rounded-xl bg-purple-950 text-white flex items-center justify-center shadow-xs">
+              <ShieldCheck className="w-5 h-5 text-white" />
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-bold font-serif-title flex items-center gap-2 text-purple-950">
@@ -821,7 +821,7 @@ export const UserAccessManagerModal: React.FC<UserAccessManagerModalProps> = ({
                   onClick={handleOpenAdd}
                   className="px-3.5 py-2 bg-purple-950 hover:bg-purple-900 text-cream-50 rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors"
                 >
-                  <UserPlus className="w-3.5 h-3.5 text-amber-300" />
+                  <UserPlus className="w-3.5 h-3.5 text-white" />
                   <span>{t('Add New User / Staff', 'নতুন ইউজার যোগ করুন')}</span>
                 </button>
                 <button

@@ -432,7 +432,9 @@ export const OrderTracker: React.FC = () => {
 
       {!currentOrder ? (
         <div className="max-w-2xl mx-auto text-center py-16 bg-white rounded-xl border border-purple-200 p-8 shadow-xs">
-          <Truck className="w-16 h-16 text-purple-300 mx-auto mb-4" />
+          <div className="w-16 h-16 rounded-2xl bg-cream-100 border border-cream-300 flex items-center justify-center mx-auto mb-4 shadow-2xs">
+            <Truck className="w-8 h-8 text-[#0F172A] stroke-[2]" />
+          </div>
           <h3 className="text-xl font-bold text-purple-950 mb-2">
             {t('Ready to Track Your Garment', 'অর্ডার ট্র্যাক করতে প্রস্তুত')}
           </h3>

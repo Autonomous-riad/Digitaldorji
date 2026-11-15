@@ -174,22 +174,22 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-purple-950 text-cream-50 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-cream-200 text-purple-950 flex items-center justify-center shrink-0 shadow-xs">
-            <Shirt className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-xl bg-cream-50 text-[#0F172A] border border-cream-300 flex items-center justify-center shrink-0 shadow-xs">
+            <Shirt className="w-6 h-6 text-[#0F172A] stroke-[2.25]" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-purple-950 bg-cream-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-bold text-[#0F172A] bg-cream-50 border border-cream-300 px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-2xs">
                 {t('Use My Clothes Mode', 'পছন্দের জামার মাপ')}
               </span>
-              <span className="text-[10px] font-mono text-purple-200 bg-purple-900 px-2 py-0.5 rounded border border-purple-800">
+              <span className="text-[10px] font-mono font-bold text-white bg-slate-800 px-2 py-0.5 rounded border border-slate-600">
                 {referenceClothDetails.tagNumber || 'REF-TAG'}
               </span>
             </div>
-            <h3 className="text-base sm:text-lg font-bold font-serif-title text-cream-50 mt-0.5">
+            <h3 className="text-base sm:text-lg font-bold font-serif-title text-white mt-1">
               {t('Use Your Favorite Fitting Garment as Reference', 'আপনার পছন্দের জামার ফটো ও ফ্লাট মাপ দিন')}
             </h3>
-            <p className="text-xs text-cream-200/90 leading-relaxed mt-0.5 max-w-xl">
+            <p className="text-xs text-slate-100 leading-relaxed mt-0.5 max-w-xl">
               {t(
                 'Upload a photo or input flat table dimensions of a garment that already fits you perfectly. Our master dorjis will tailor your new order to match!',
                 'আপনার যে জামাটি সেরা ফিটিং দেয়, সেটির ছবি বা টেবিলের ওপর মাপা চ্যাপ্টা মাপ দিন। মাস্টার দর্জি সেই অনুযায়ী নতুন কাপড় কাটবেন।'
@@ -199,14 +199,14 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
         </div>
 
         {/* Unit switcher */}
-        <div className="flex items-center bg-purple-900/90 p-1 rounded-xl border border-purple-800 shrink-0 self-end sm:self-auto">
+        <div className="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-700 shrink-0 self-end sm:self-auto">
           <button
             type="button"
             onClick={() => setDisplayUnit('inch')}
             className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               displayUnit === 'inch'
-                ? 'bg-cream-50 text-purple-950 shadow-xs'
-                : 'text-cream-200 hover:text-cream-50'
+                ? 'bg-cream-50 text-[#0F172A] shadow-xs'
+                : 'text-slate-200 hover:text-white'
             }`}
           >
             Inch
@@ -216,8 +216,8 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
             onClick={() => setDisplayUnit('cm')}
             className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               displayUnit === 'cm'
-                ? 'bg-cream-50 text-purple-950 shadow-xs'
-                : 'text-cream-200 hover:text-cream-50'
+                ? 'bg-cream-50 text-[#0F172A] shadow-xs'
+                : 'text-slate-200 hover:text-white'
             }`}
           >
             CM
@@ -229,7 +229,7 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h4 className="text-sm font-bold text-purple-950 flex items-center gap-2">
-            <Camera className="w-4 h-4 text-purple-800" />
+            <Camera className="w-4 h-4 text-[#0F172A]" />
             <span>{t('1. Upload Photo / Size Tag of Your Well-Fitting Garment', '১. পছন্দের জামা বা সাইজ ট্যাগের ছবি দিন')}</span>
           </h4>
           <span className="text-[11px] text-purple-950/70 font-medium">
@@ -247,8 +247,8 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
               title={t('Upload garment photo', 'জামার ছবি দিন')}
             />
-            <div className="w-12 h-12 rounded-2xl bg-cream-200 text-purple-950 flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
-              <Upload className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-2xl bg-cream-50 text-[#0F172A] border border-cream-300 flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
+              <Upload className="w-6 h-6 text-[#0F172A] stroke-[2.25]" />
             </div>
             <p className="text-xs font-bold text-purple-950">
               {t('Click or drag & drop garment photo here', 'ছবি আপলোড করতে ক্লিক করুন বা টেনে আনুন')}
@@ -265,8 +265,8 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
             </span>
 
             {photosList.length === 0 ? (
-              <div className="p-6 rounded-2xl bg-cream-100 border border-cream-300 text-center text-xs text-purple-950/60 min-h-[140px] flex flex-col items-center justify-center">
-                <Shirt className="w-8 h-8 text-purple-950/30 mb-2" />
+              <div className="p-6 rounded-2xl bg-cream-100 border border-cream-300 text-center text-xs text-purple-950/70 min-h-[140px] flex flex-col items-center justify-center">
+                <Shirt className="w-8 h-8 text-slate-600 mb-2 stroke-[1.75]" />
                 <span>{t('No photos uploaded yet. You can upload or select a preset template below.', 'কোনো ছবি আপলোড করা হয়নি। নিচের টেমপ্লেট থেকে বা পছন্দমতো ছবি দিন।')}</span>
               </div>
             ) : (
@@ -528,7 +528,7 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
             }`}
           >
             <div className="flex items-center gap-2 font-bold text-xs mb-1">
-              <Truck className="w-4 h-4 text-purple-300" />
+              <Truck className={`w-4 h-4 ${referenceClothDetails.pickupMode === 'runner_pickup' && !referenceClothDetails.usePhotoAndDimensionsOnly ? 'text-purple-200' : 'text-purple-800'}`} />
               <span>{t('Send Physical Garment via Rider Pickup', 'রাইডারের মাধ্যমে স্যাম্পল জামা পাঠান')}</span>
             </div>
             <span className={`text-[10px] block ${referenceClothDetails.pickupMode === 'runner_pickup' && !referenceClothDetails.usePhotoAndDimensionsOnly ? 'text-purple-200' : 'text-purple-950/70'}`}>
@@ -546,7 +546,7 @@ export const UseMyClothesReference: React.FC<UseMyClothesReferenceProps> = ({ on
             }`}
           >
             <div className="flex items-center gap-2 font-bold text-xs mb-1">
-              <Camera className="w-4 h-4 text-purple-300" />
+              <Camera className={`w-4 h-4 ${referenceClothDetails.usePhotoAndDimensionsOnly ? 'text-purple-200' : 'text-purple-800'}`} />
               <span>{t('Stitch from Uploaded Photo & Dimensions Only', 'ছবি ও ফ্লাট মাপ দেখেই সেলাই করুন')}</span>
             </div>
             <span className={`text-[10px] block ${referenceClothDetails.usePhotoAndDimensionsOnly ? 'text-purple-200' : 'text-purple-950/70'}`}>

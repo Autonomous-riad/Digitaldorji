@@ -157,12 +157,10 @@ export const FabricPickupForm: React.FC = () => {
     updatePickupAddress({
       thana: newThanaId,
       area: thanaObj ? thanaObj.nameEn : newThanaId,
-      ...(matchedZone ? {
-        oxygenZoneId: matchedZone.id,
-        customerLat: matchedZone.lat,
-        customerLng: matchedZone.lng,
-        distanceFromShopKm: matchedZone.approxDistanceKm
-      } : {})
+      oxygenZoneId: matchedZone ? matchedZone.id : undefined,
+      customerLat: matchedZone ? matchedZone.lat : undefined,
+      customerLng: matchedZone ? matchedZone.lng : undefined,
+      distanceFromShopKm: matchedZone ? matchedZone.approxDistanceKm : 12.0
     });
     if (fieldErrors.thana) {
       setFieldErrors(prev => ({ ...prev, thana: '' }));

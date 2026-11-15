@@ -785,19 +785,19 @@ export const HowToMeasureInteractiveGuide: React.FC<Props> = ({
       }`}
     >
       {/* 1. Atelier Guide Header Bar */}
-      <div className="bg-gradient-to-r from-purple-950 via-[#3d1a4c] to-purple-950 text-cream-50 p-3 sm:p-4 flex items-center justify-between border-b border-purple-800">
+      <div className="bg-gradient-to-r from-purple-950 via-[#263449] to-purple-950 text-cream-50 p-3 sm:p-4 flex items-center justify-between border-b border-purple-800">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center justify-center shrink-0 shadow-xs">
-            <Ruler className="w-5 h-5 text-amber-300" />
+          <div className="w-9 h-9 rounded-xl bg-cream-50 text-[#0F172A] border border-cream-300 flex items-center justify-center shrink-0 shadow-xs">
+            <Ruler className="w-5 h-5 text-[#0F172A] stroke-[2.25]" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-purple-900/80 px-2 py-0.5 rounded-full border border-purple-700/60 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-300" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F172A] bg-cream-50 px-2.5 py-0.5 rounded-full border border-cream-300 flex items-center gap-1 shadow-2xs">
+                <Sparkles className="w-3 h-3 text-[#0F172A]" />
                 <span>পরিমাপ নির্দেশিকা • Step-by-Step Guide</span>
               </span>
             </div>
-            <h3 className="text-sm sm:text-base font-bold font-serif-title leading-tight mt-0.5">
+            <h3 className="text-sm sm:text-base font-bold font-serif-title text-white leading-tight mt-1">
               {field.label_bn} ({field.label_en})
             </h3>
           </div>
@@ -808,14 +808,14 @@ export const HowToMeasureInteractiveGuide: React.FC<Props> = ({
           <button
             type="button"
             onClick={toggleAutoPlay}
-            className={`px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer ${
               isAutoPlaying 
-                ? 'bg-amber-400 text-purple-950 font-bold shadow-xs' 
-                : 'bg-white/10 text-cream-200 hover:text-white hover:bg-white/15'
+                ? 'bg-cream-50 text-[#0F172A] font-bold shadow-xs border border-cream-300' 
+                : 'bg-white/15 text-white hover:bg-white/25 border border-white/20'
             }`}
             title={isAutoPlaying ? 'Pause Walkthrough (পজ করুন)' : 'Play Step-by-Step Walkthrough (স্বয়ংক্রিয় ডেমো দেখুন)'}
           >
-            {isAutoPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+            {isAutoPlaying ? <Pause className="w-3.5 h-3.5 text-[#0F172A]" /> : <Play className="w-3.5 h-3.5 fill-current text-white" />}
             <span className="text-[11px] hidden sm:inline">{isAutoPlaying ? 'পজ' : 'অটো ডেমো'}</span>
           </button>
 
@@ -823,13 +823,13 @@ export const HowToMeasureInteractiveGuide: React.FC<Props> = ({
             <button
               type="button"
               onClick={onTogglePin}
-              className={`p-1.5 rounded-lg text-cream-200 hover:text-white transition-colors cursor-pointer ${
-                isPinned ? 'bg-amber-500/30 text-amber-200 ring-1 ring-amber-400/40' : 'hover:bg-white/10'
+              className={`p-1.5 rounded-lg text-white transition-colors cursor-pointer ${
+                isPinned ? 'bg-cream-50 text-[#0F172A] ring-1 ring-cream-300' : 'hover:bg-white/15'
               }`}
               title={isPinned ? 'Unpin Guide (পিন ছাড়ুন)' : 'Pin Guide to screen (গাইডটি স্থির রাখুন)'}
               aria-label={isPinned ? 'Unpin' : 'Pin'}
             >
-              {isPinned ? <Pin className="w-4 h-4 fill-amber-300 text-amber-300" /> : <PinOff className="w-4 h-4" />}
+              {isPinned ? <Pin className="w-4 h-4 fill-[#0F172A] text-[#0F172A]" /> : <PinOff className="w-4 h-4 text-white" />}
             </button>
           )}
 
@@ -1219,7 +1219,7 @@ export const HowToMeasureInteractiveGuide: React.FC<Props> = ({
                 )}
                 <div className="flex items-center gap-1">
                   <span className={`w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold ${
-                    isCurrent ? 'bg-amber-400 text-purple-950' : 'bg-cream-300 text-purple-950'
+                    isCurrent ? 'bg-cream-50 text-[#0F172A]' : 'bg-cream-300 text-[#0F172A]'
                   }`}>
                     {idx + 1}
                   </span>

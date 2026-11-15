@@ -172,22 +172,23 @@ export const CheckoutReview: React.FC = () => {
       }
 
       // 2. SSLCommerz Online Payment flow (Cards, bKash, Nagad, Rocket)
-      const orderPayload = buildOrderObject({
+      const createdOrder = await submitOrder({
         paymentMethod: paymentMethod === 'bkash' || paymentMethod === 'nagad' || paymentMethod === 'rocket' ? paymentMethod : 'sslcommerz',
         paymentStatus: 'pending',
         advanceOption: advanceOption,
         payableAmount: payableNow,
         balanceDue: balanceDue,
-        idempotencyKey
-      });
+      }, idempotencyKey);
 
       const initResponse = await paymentApi.initiatePayment({
-        order_data: orderPayload,
+        order_id: createdOrder.id,
+        orderNumber: createdOrder.orderNumber,
+        order_data: createdOrder,
         advance_type: advanceOption,
       });
 
       if (initResponse.status === 'SUCCESS' && initResponse.GatewayPageURL) {
-        Analytics.orderPlaced(orderPayload.orderNumber, pricing.grandTotal, activeGarment?.nameEn || 'Garment', paymentMethod);
+        Analytics.orderPlaced(createdOrder.orderNumber, pricing.grandTotal, activeGarment?.nameEn || 'Garment', paymentMethod);
         toast.info(t('Redirecting to SSLCommerz Gateway...', 'SSLCommerz গেটওয়েতে রিডাইরেক্ট করা হচ্ছে...'));
         // Redirect directly to SSLCommerz Gateway (or sandbox gateway simulator)
         window.location.href = initResponse.GatewayPageURL;

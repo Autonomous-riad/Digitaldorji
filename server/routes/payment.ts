@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { db, Payment, Notification } from '../db';
+import { db, Payment, Notification, restoreBespokeOrderInventory, restoreReadyMadeOrderInventory } from '../db';
 import { sslcommerz } from '../sslcommerz';
 import { requireStaffOrAdmin, AuthenticatedRequest } from '../auth';
 
@@ -113,14 +113,18 @@ paymentRouter.post('/initiate', async (req: Request, res: Response) => {
     }
   }
 
-  // If order does not exist yet but client sent order_data, upsert it
+  // If order does not exist yet but client sent order_data, upsert it with proper stage & stock handling
   if (!order && order_data) {
+    const isShopFabric = order_data.fabricDetails?.fabricSource === 'shop_fabric' || order_data.fabricSource === 'shop_fabric';
+    const initialStage = isShopFabric ? 'fabric_received' : 'pending_pickup';
     order = {
       ...order_data,
       id: order_data.id || `ord-${Date.now().toString(36)}`,
       orderNumber: order_data.orderNumber || `DB-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      orderType: isShopFabric ? 'fabric_and_tailoring' : 'custom_own_fabric',
+      fabricSource: isShopFabric ? 'shop_fabric' : 'customer_provided',
       createdAt: order_data.createdAt || new Date().toISOString(),
-      currentStage: order_data.currentStage || 'pickup_scheduled',
+      currentStage: order_data.currentStage || initialStage,
       statusHistory: order_data.statusHistory || [],
     };
     db.mutate(d => {
@@ -212,7 +216,7 @@ paymentRouter.post('/initiate', async (req: Request, res: Response) => {
     });
 
     if (initResult.status === 'SUCCESS' && initResult.GatewayPageURL) {
-      // Record transaction metadata on order
+      // Record transaction metadata on order or ready-made order
       db.mutate(d => {
         const o = d.orders.find(item => item.id === order.id);
         if (o) {
@@ -220,6 +224,10 @@ paymentRouter.post('/initiate', async (req: Request, res: Response) => {
           o.advanceOption = advance_type || 'full';
           o.payableAmount = payableAmount;
           o.paymentMethod = 'sslcommerz';
+        }
+        const rmo = (d.ready_made_orders || []).find(item => item.id === order.id || item.order_number === order.orderNumber);
+        if (rmo) {
+          (rmo as any).latest_tran_id = tran_id;
         }
       });
 
@@ -281,6 +289,7 @@ async function processSuccessfulPayment(payload: any, res: Response) {
 
   let matchedOrder: any = null;
   let matchedReadyMadeOrder: any = null;
+  let notFound = false;
 
   db.mutate(d => {
     // 1. Find bespoke order
@@ -295,13 +304,27 @@ async function processSuccessfulPayment(payload: any, res: Response) {
       matchedReadyMadeOrder = d.ready_made_orders.find(ro =>
         (orderNumber && ro.order_number.toUpperCase() === orderNumber.toUpperCase()) ||
         (orderId && ro.id === orderId) ||
-        (tran_id && (tran_id.startsWith(ro.order_number) || ro.latest_tran_id === tran_id))
+        (tran_id && (tran_id.startsWith(ro.order_number) || (ro as any).latest_tran_id === tran_id))
       );
     }
 
-    // 3. Fallback to most recent bespoke order ONLY if orderNumber is not for a ready-made order
-    if (!matchedOrder && !matchedReadyMadeOrder && (!orderNumber || (!orderNumber.startsWith('RMO-') && !orderNumber.startsWith('RM-'))) && d.orders.length > 0) {
-      matchedOrder = d.orders[0];
+    if (!matchedOrder && !matchedReadyMadeOrder) {
+      notFound = true;
+      return;
+    }
+
+    const effectiveTrxId = valData.bank_tran_id || valData.tran_id || tran_id;
+    const targetOrderId = matchedOrder ? matchedOrder.id : matchedReadyMadeOrder.id;
+
+    // Idempotency guard: prevent duplicate payment rows & status history on callback refresh or IPN replay
+    const alreadyRecorded = d.payments.some(
+      p =>
+        p.order_id === targetOrderId &&
+        (p.status === 'paid' || p.status === 'advance_paid') &&
+        ((effectiveTrxId && p.provider_txn_id === effectiveTrxId) || (val_id && p.raw_response?.val_id === val_id))
+    );
+    if (alreadyRecorded) {
+      return;
     }
 
     if (matchedOrder) {
@@ -318,9 +341,18 @@ async function processSuccessfulPayment(payload: any, res: Response) {
       }
 
       matchedOrder.paymentMethod = 'sslcommerz';
-      matchedOrder.paymentTrxId = valData.bank_tran_id || valData.tran_id || tran_id;
+      matchedOrder.paymentTrxId = effectiveTrxId;
       matchedOrder.cardType = valData.card_type || payload.card_type;
       matchedOrder.cardIssuer = valData.card_issuer;
+
+      // If website fabric order was waiting at fabric_received for online payment, advance to cutting
+      if (
+        (matchedOrder.fabricSource === 'shop_fabric' || matchedOrder.fabricDetails?.fabricSource === 'shop_fabric') &&
+        matchedOrder.currentStage === 'fabric_received'
+      ) {
+        matchedOrder.currentStage = 'cutting';
+        matchedOrder.status = 'cutting';
+      }
 
       // Status history entry
       if (!matchedOrder.statusHistory) matchedOrder.statusHistory = [];
@@ -331,20 +363,18 @@ async function processSuccessfulPayment(payload: any, res: Response) {
         noteBn: `পেমেন্ট সফল হয়েছে ৳${verifiedAmount} (এসএসএলকমার্জ ট্রানজেকশন: ${matchedOrder.paymentTrxId})`,
       });
 
-      // Insert into 12-table relational payments model with raw_response for auditing
       const paymentRow: Payment = {
         id: `pay-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
         order_id: matchedOrder.id,
         provider: 'sslcommerz',
-        provider_txn_id: valData.bank_tran_id || valData.tran_id || tran_id,
+        provider_txn_id: effectiveTrxId,
         amount: verifiedAmount,
         status: isAdvance ? 'advance_paid' : 'paid',
-        raw_response: valData, // Auditing requirement
+        raw_response: valData,
         created_at: new Date().toISOString(),
       };
       d.payments.unshift(paymentRow);
 
-      // Trigger SMS Notification requirement: "পেমেন্ট সফল হয়েছে ৳[amount]"
       const smsTemplate = `পেমেন্ট সফল হয়েছে ৳${verifiedAmount}। অর্ডার নং: ${matchedOrder.orderNumber}। ডিজিটাল দর্জিতে আপনার অর্ডারটি এখন প্রস্তুত করা হচ্ছে।`;
       const notification: Notification = {
         id: `notif-${Date.now().toString(36)}`,
@@ -357,7 +387,6 @@ async function processSuccessfulPayment(payload: any, res: Response) {
       };
       d.notifications.unshift(notification);
 
-      // Update relational orders if present
       const relOrder = d.relational_orders?.find(ro => ro.order_number === matchedOrder.orderNumber || ro.id === matchedOrder.id);
       if (relOrder) {
         relOrder.payment_status = isAdvance ? 'advance_paid' : 'paid';
@@ -367,7 +396,7 @@ async function processSuccessfulPayment(payload: any, res: Response) {
       matchedReadyMadeOrder.payment_status = 'paid';
       matchedReadyMadeOrder.order_status = 'Confirmed';
       matchedReadyMadeOrder.payment_method = valData.card_type || payload.card_type || 'sslcommerz';
-      matchedReadyMadeOrder.payment_trx_id = valData.bank_tran_id || valData.tran_id || tran_id;
+      matchedReadyMadeOrder.payment_trx_id = effectiveTrxId;
       matchedReadyMadeOrder.updated_at = new Date().toISOString();
 
       if (!matchedReadyMadeOrder.status_history) matchedReadyMadeOrder.status_history = [];
@@ -377,12 +406,29 @@ async function processSuccessfulPayment(payload: any, res: Response) {
         note: `Online payment of ৳${verifiedAmount} confirmed via SSLCommerz (${valData.card_type || 'Payment Gateway'}, TrxID: ${matchedReadyMadeOrder.payment_trx_id})`
       });
 
-      // Insert payment record
+      // Synchronize any linked child workshop tailoring orders created from a Mixed Cart
+      for (const childOrder of d.orders) {
+        if (childOrder.parentCartOrderNumber === matchedReadyMadeOrder.order_number) {
+          childOrder.paymentStatus = 'paid';
+          childOrder.paymentMethod = 'sslcommerz';
+          childOrder.paymentTrxId = effectiveTrxId;
+          childOrder.advancePaid = childOrder.grandTotal;
+          childOrder.balanceDue = 0;
+          if (!childOrder.statusHistory) childOrder.statusHistory = [];
+          childOrder.statusHistory.push({
+            stage: childOrder.currentStage,
+            timestamp: new Date().toISOString(),
+            noteEn: `Online payment confirmed via parent cart order #${matchedReadyMadeOrder.order_number} (TrxID: ${effectiveTrxId})`,
+            noteBn: `প্যারেন্ট কার্ট অর্ডার #${matchedReadyMadeOrder.order_number}-এর মাধ্যমে অনলাইন পেমেন্ট নিশ্চিত হয়েছে।`
+          });
+        }
+      }
+
       const paymentRow: Payment = {
         id: `pay-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
         order_id: matchedReadyMadeOrder.id,
         provider: 'sslcommerz',
-        provider_txn_id: valData.bank_tran_id || valData.tran_id || tran_id,
+        provider_txn_id: effectiveTrxId,
         amount: verifiedAmount,
         status: 'paid',
         raw_response: valData,
@@ -390,8 +436,7 @@ async function processSuccessfulPayment(payload: any, res: Response) {
       };
       d.payments.unshift(paymentRow);
 
-      // Trigger SMS Notification
-      const smsTemplate = `পেমেন্ট সফল হয়েছে ৳${verifiedAmount}। অর্ডার নং: ${matchedReadyMadeOrder.order_number}। ডিজিটাল দর্জিতে আপনার রেডিমেড অর্ডারটি কনফার্ম করা হয়েছে।`;
+      const smsTemplate = `পেমেন্ট সফল হয়েছে ৳${verifiedAmount}। অর্ডার নং: ${matchedReadyMadeOrder.order_number}। ডিজিটাল দর্জিতে আপনার অর্ডারটি কনফার্ম করা হয়েছে।`;
       const notification: Notification = {
         id: `notif-${Date.now().toString(36)}`,
         order_id: matchedReadyMadeOrder.id,
@@ -404,6 +449,10 @@ async function processSuccessfulPayment(payload: any, res: Response) {
       d.notifications.unshift(notification);
     }
   });
+
+  if (notFound) {
+    return res.redirect(`/order/${orderNumber || 'unknown'}/failed?reason=order_not_found`);
+  }
 
   const redirectOrderNumber = matchedReadyMadeOrder?.order_number || matchedOrder?.orderNumber || orderNumber || 'success';
   const trxId = valData.bank_tran_id || valData.tran_id || tran_id || '';
@@ -448,12 +497,15 @@ paymentRouter.post('/fail', (req: Request, res: Response) => {
     const order = d.orders.find(o => (orderNumber && o.orderNumber === orderNumber) || (tran_id && o.latestTranId === tran_id));
     if (order) {
       order.paymentStatus = 'failed';
+      order.currentStage = 'cancelled';
+      order.status = 'cancelled';
+      restoreBespokeOrderInventory(d, order, 'Online Payment Failed');
       if (!order.statusHistory) order.statusHistory = [];
       order.statusHistory.push({
-        stage: order.currentStage,
+        stage: 'cancelled',
         timestamp: new Date().toISOString(),
-        noteEn: `Online payment attempt failed via SSLCommerz: ${error || 'Declined'}`,
-        noteBn: `এসএসএলকমার্জ পেমেন্ট ব্যর্থ হয়েছে: ${error || 'প্রত্যাখ্যাত'}`,
+        noteEn: `Online payment attempt failed via SSLCommerz: ${error || 'Declined'}. Inventory restored.`,
+        noteBn: `এসএসএলকমার্জ পেমেন্ট ব্যর্থ হয়েছে: ${error || 'প্রত্যাখ্যাত'}। স্টক পুনরুদ্ধার করা হয়েছে।`,
       });
 
       d.payments.unshift({
@@ -466,6 +518,13 @@ paymentRouter.post('/fail', (req: Request, res: Response) => {
         raw_response: req.body,
         created_at: new Date().toISOString(),
       });
+    } else if (d.ready_made_orders) {
+      const rmo = d.ready_made_orders.find(ro => (orderNumber && ro.order_number === orderNumber) || (tran_id && (ro as any).latest_tran_id === tran_id));
+      if (rmo) {
+        rmo.payment_status = 'failed';
+        rmo.order_status = 'Cancelled';
+        restoreReadyMadeOrderInventory(d, rmo, 'Online Payment Failed');
+      }
     }
   });
 
@@ -491,12 +550,15 @@ paymentRouter.post('/cancel', (req: Request, res: Response) => {
     const order = d.orders.find(o => (orderNumber && o.orderNumber === orderNumber) || (tran_id && o.latestTranId === tran_id));
     if (order) {
       order.paymentStatus = 'cancelled';
+      order.currentStage = 'cancelled';
+      order.status = 'cancelled';
+      restoreBespokeOrderInventory(d, order, 'Online Payment Cancelled by Customer');
       if (!order.statusHistory) order.statusHistory = [];
       order.statusHistory.push({
-        stage: order.currentStage,
+        stage: 'cancelled',
         timestamp: new Date().toISOString(),
-        noteEn: 'Online payment cancelled by customer at payment gateway.',
-        noteBn: 'গ্রাহক দ্বারা পেমেন্ট গেটওয়েতে লেনদেন বাতিল করা হয়েছে।',
+        noteEn: 'Online payment cancelled by customer at payment gateway. Inventory restored.',
+        noteBn: 'গ্রাহক দ্বারা পেমেন্ট গেটওয়েতে লেনদেন বাতিল করা হয়েছে। স্টক পুনরুদ্ধার করা হয়েছে।',
       });
 
       d.payments.unshift({
@@ -509,6 +571,13 @@ paymentRouter.post('/cancel', (req: Request, res: Response) => {
         raw_response: req.body,
         created_at: new Date().toISOString(),
       });
+    } else if (d.ready_made_orders) {
+      const rmo = d.ready_made_orders.find(ro => (orderNumber && ro.order_number === orderNumber) || (tran_id && (ro as any).latest_tran_id === tran_id));
+      if (rmo) {
+        rmo.payment_status = 'failed';
+        rmo.order_status = 'Cancelled';
+        restoreReadyMadeOrderInventory(d, rmo, 'Online Payment Cancelled by Customer');
+      }
     }
   });
 
@@ -585,6 +654,9 @@ paymentRouter.post('/refund', requireStaffOrAdmin, async (req: AuthenticatedRequ
         if (o) {
           o.paymentStatus = 'refunded';
           o.refundedAmount = refundAmount;
+          o.currentStage = 'cancelled';
+          o.status = 'cancelled';
+          restoreBespokeOrderInventory(d, o, reason || 'Order Refunded via SSLCommerz');
           if (!o.statusHistory) o.statusHistory = [];
           o.statusHistory.push({
             stage: o.currentStage,

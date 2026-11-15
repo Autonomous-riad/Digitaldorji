@@ -287,8 +287,8 @@ export const MeasurementForm: React.FC = () => {
         >
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="w-8 h-8 rounded-lg bg-cream-200 text-purple-950 flex items-center justify-center font-bold text-xs">
-                <Ruler className="w-4 h-4" />
+              <span className="w-8 h-8 rounded-lg bg-cream-200 text-[#0F172A] border border-cream-300 flex items-center justify-center font-bold text-xs">
+                <Ruler className="w-4 h-4 text-[#0F172A] stroke-[2.25]" />
               </span>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'custom_manual' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
@@ -319,8 +319,8 @@ export const MeasurementForm: React.FC = () => {
         >
           <div>
             <div className="flex items-center justify-between mb-2">
-              <span className="w-8 h-8 rounded-lg bg-cream-200 text-purple-950 flex items-center justify-center font-bold text-xs">
-                <Layers className="w-4 h-4 text-purple-950" />
+              <span className="w-8 h-8 rounded-lg bg-cream-200 text-[#0F172A] border border-cream-300 flex items-center justify-center font-bold text-xs">
+                <Layers className="w-4 h-4 text-[#0F172A] stroke-[2.25]" />
               </span>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'preset_size' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
@@ -478,7 +478,7 @@ export const MeasurementForm: React.FC = () => {
                   }`}
                 >
                   <span className="block text-xs font-bold leading-tight">{t(fit.labelEn, fit.labelBn)}</span>
-                  <span className={`text-[10px] block mt-0.5 ${fitSilhouette === fit.id ? 'text-amber-200' : 'text-stone-500'}`}>
+                  <span className={`text-[10px] block mt-0.5 ${fitSilhouette === fit.id ? 'text-cream-100' : 'text-stone-600'}`}>
                     {fit.desc}
                   </span>
                 </button>
@@ -509,7 +509,7 @@ export const MeasurementForm: React.FC = () => {
                 }`}
                 title={t('Toggle live hover measurement guide', 'লাইভ ইন্টারেক্টিভ গাইড চালু বা বন্ধ করুন')}
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                <Sparkles className={`w-3.5 h-3.5 ${showLiveGuidePanel ? 'text-amber-300' : 'text-amber-700'}`} />
                 <span>{showLiveGuidePanel ? t('Live Guide Active', 'লাইভ গাইড চালু') : t('Show Live Guide', 'লাইভ গাইড দেখুন')}</span>
               </button>
 
@@ -793,10 +793,10 @@ export const MeasurementForm: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveInteractiveModalField(activeHoveredGuideField)}
-              className="px-2.5 py-1.5 bg-amber-400 hover:bg-amber-300 text-purple-950 text-xs font-bold rounded-xl flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+              className="px-2.5 py-1.5 bg-cream-50 hover:bg-white text-[#0F172A] border border-cream-300 text-xs font-bold rounded-xl flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
               title={t('Open full 3-step interactive guide', 'সম্পূর্ণ ৩ ধাপের নির্দেশিকা খুলুন')}
             >
-              <Eye className="w-3.5 h-3.5" />
+              <Eye className="w-3.5 h-3.5 text-[#0F172A]" />
               <span className="hidden xs:inline">{t('Guide', 'গাইড')}</span>
             </button>
             <button

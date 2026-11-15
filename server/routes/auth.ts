@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { db, User } from '../db';
-import { createSession, revokeSession, extractToken, requireAuth, AuthenticatedRequest } from '../auth';
+import { createSession, revokeSession, extractToken, requireAuth, AuthenticatedRequest, hashPassword, verifyPassword } from '../auth';
 
 export const authRouter = Router();
 
@@ -11,13 +11,21 @@ authRouter.post('/login', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedEmail = String(email).trim().toLowerCase();
   const user = db.getData().users.find(
-    u => u.email.toLowerCase() === normalizedEmail && u.password === password
+    u => u.email.toLowerCase() === normalizedEmail
   );
 
-  if (!user) {
+  const check = user ? verifyPassword(String(password), user.password) : { valid: false, needsRehash: false };
+  if (!user || !check.valid) {
     return res.status(401).json({ error: 'Invalid email or password' });
+  }
+
+  if (check.needsRehash) {
+    db.mutate(data => {
+      const target = data.users.find(u => u.id === user.id);
+      if (target) target.password = hashPassword(String(password));
+    });
   }
 
   const token = createSession(user);
@@ -51,10 +59,11 @@ export const handleAdminLogin = (req: Request, res: Response) => {
 
   const normalizedEmail = String(email).trim().toLowerCase();
   const user = db.getData().users.find(
-    u => u.email.toLowerCase() === normalizedEmail && u.password === password
+    u => u.email.toLowerCase() === normalizedEmail
   );
 
-  if (!user) {
+  const check = user ? verifyPassword(String(password), user.password) : { valid: false, needsRehash: false };
+  if (!user || !check.valid) {
     return res.status(401).json({
       error: 'Invalid Atelier credentials',
       code: 'INVALID_CREDENTIALS'
@@ -74,6 +83,13 @@ export const handleAdminLogin = (req: Request, res: Response) => {
     return res.status(403).json({
       error: 'Access Denied: Customer accounts cannot access the Master Atelier workshop portal. Please use the Customer Login or guest checkout on the storefront.',
       code: 'CUSTOMER_CANNOT_ACCESS_ADMIN'
+    });
+  }
+
+  if (check.needsRehash) {
+    db.mutate(data => {
+      const target = data.users.find(u => u.id === user.id);
+      if (target) target.password = hashPassword(String(password));
     });
   }
 
@@ -100,7 +116,7 @@ authRouter.post('/register', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Name, email, and password are required' });
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedEmail = String(email).trim().toLowerCase();
   const existing = db.getData().users.find(u => u.email.toLowerCase() === normalizedEmail);
   if (existing) {
     return res.status(409).json({ error: 'An account with this email already exists' });
@@ -108,9 +124,9 @@ authRouter.post('/register', (req: Request, res: Response) => {
 
   const newUser: User = {
     id: 'usr-cust-' + Date.now().toString(36),
-    name: name.trim(),
+    name: String(name).trim(),
     email: normalizedEmail,
-    password,
+    password: hashPassword(String(password)),
     role: 'customer', // Always customer on public registration
     phone: phone || '',
     address: address || '',

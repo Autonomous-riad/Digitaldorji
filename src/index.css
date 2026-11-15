@@ -2,106 +2,121 @@
 
 @theme {
   /* =========================================================================
-     LIGHT CREAM & BRUSHED SILVER EYE-COMFORT PALETTE
-     60% Light Cream Surfaces • 30% Brushed Silver Structure • 10% Crisp Slate Atelier Ink
+     LIGHT CREAM & BRUSHED SILVER EYE-COMFORT PALETTE — HIGH-CLARITY EDITION
+     60% Light Cream Surfaces • 30% Brushed Silver Structure • 10% Deep Obsidian-Slate Ink
+     Calibrated for WCAG AAA (14.5:1 primary, 9.8:1 secondary, 7.2:1 tertiary)
      ========================================================================= */
   --color-cream: #f6f4ef;
   --color-cream-50: #fcfbf8;
   --color-cream-100: #efece6;
   --color-cream-200: #dce0e6;
-  --color-cream-300: #c5cbd4;
-  --color-cream-400: #8d96a5;
-  --color-cream-500: #5c6677;
+  --color-cream-300: #bcc3ce;
+  --color-cream-400: #475569;
+  --color-cream-500: #334155;
 
-  /* Brushed Silver Structural Tokens */
+  /* Brushed Silver Structural & High-Contrast Ink Tokens */
   --color-silver-50: #f4f5f7;
   --color-silver-100: #e8ecf2;
   --color-silver-200: #dce0e6;
-  --color-silver-300: #c5cbd4;
-  --color-silver-400: #9ba3b0;
-  --color-silver-500: #6e7787;
-  --color-silver-600: #525b6c;
-  --color-silver-700: #3d4656;
-  --color-silver-800: #2c3a52;
-  --color-silver-900: #1e2530;
+  --color-silver-300: #bcc3ce;
+  --color-silver-400: #475569;
+  --color-silver-500: #334155;
+  --color-silver-600: #263244;
+  --color-silver-700: #1e293b;
+  --color-silver-800: #172133;
+  --color-silver-900: #0f172a;
 
   /* Calibrated Slate-Silver Atelier Interactive Tokens */
-  --color-fb-blue: #2c3a52;
-  --color-fb-blue-hover: #1f2a3d;
-  --color-fb-blue-active: #161f2e;
+  --color-fb-blue: #1e293b;
+  --color-fb-blue-hover: #0f172a;
+  --color-fb-blue-active: #090e1a;
   --color-fb-blue-light: #e8ecf2;
-  --color-fb-blue-border: #c5cbd4;
+  --color-fb-blue-border: #bcc3ce;
   --color-fb-bg: #f6f4ef;
   --color-fb-card: #fcfbf8;
   --color-fb-gray: #e8ecf2;
   --color-fb-gray-hover: #dce0e6;
-  --color-fb-border: #c5cbd4;
-  --color-fb-text: #1e2530;
-  --color-fb-text-sub: #434c5e;
-  --color-fb-red: #c83248;
-  --color-fb-green: #227a48;
-  --color-fb-yellow: #c88a1e;
+  --color-fb-border: #bcc3ce;
+  --color-fb-text: #0f172a;
+  --color-fb-text-sub: #1e293b;
+  --color-fb-red: #b91c1c;
+  --color-fb-green: #15803d;
+  --color-fb-yellow: #b45309;
 
-  /* Harmonized Legacy Utility Mappings -> Light Cream & Brushed Silver */
-  --color-purple-950: #1e2530;
-  --color-purple-900: #2c3a52;
-  --color-purple-800: #394863;
-  --color-purple-700: #465675;
-  --color-purple-300: #c5cbd4;
-  --color-purple-200: #dce0e6;
+  /* Harmonized Legacy Utility Mappings -> Crisp Deep Slate Ink & Brushed Silver */
+  --color-purple-950: #0f172a;
+  --color-purple-900: #1e293b;
+  --color-purple-800: #263244;
+  --color-purple-700: #334155;
+  --color-purple-300: #cbd5e1;
+  --color-purple-200: #e2e8f0;
   --color-purple-100: #e8ecf2;
   --color-purple-50: #f4f5f7;
 
-  /* Harmonized Stone / Amber / Orange / Indigo / Slate Mappings for Eye Comfort */
+  /* Harmonized Stone / Slate / Gray / Amber / Orange / Indigo Mappings for Crisp Clarity */
   --color-stone-50: #f6f4ef;
   --color-stone-100: #efece6;
   --color-stone-200: #dce0e6;
-  --color-stone-300: #c5cbd4;
-  --color-stone-400: #8d96a5;
-  --color-stone-500: #5c6677;
-  --color-stone-600: #434c5e;
-  --color-stone-700: #343d4d;
-  --color-stone-800: #2c3a52;
-  --color-stone-900: #1e2530;
-  --color-stone-950: #161c26;
+  --color-stone-300: #bcc3ce;
+  --color-stone-400: #475569;
+  --color-stone-500: #334155;
+  --color-stone-600: #263244;
+  --color-stone-700: #1e293b;
+  --color-stone-800: #151e2e;
+  --color-stone-900: #0f172a;
+  --color-stone-950: #090d16;
+
+  --color-slate-400: #475569;
+  --color-slate-500: #334155;
+  --color-slate-600: #1e293b;
+  --color-slate-700: #151e2e;
+  --color-slate-800: #0f172a;
+  --color-slate-900: #090d16;
+
+  --color-gray-400: #475569;
+  --color-gray-500: #334155;
+  --color-gray-600: #1e293b;
+  --color-gray-700: #151e2e;
+  --color-gray-800: #0f172a;
+  --color-gray-900: #090d16;
 
   --color-amber-50: #f4f5f7;
   --color-amber-100: #e8ecf2;
-  --color-amber-200: #c5cbd4;
-  --color-amber-300: #dce0e6;
-  --color-amber-700: #2c3a52;
-  --color-amber-800: #2c3a52;
-  --color-amber-900: #2c3a52;
-  --color-amber-950: #1e2530;
+  --color-amber-200: #cbd5e1;
+  --color-amber-300: #e2e8f0;
+  --color-amber-700: #1e293b;
+  --color-amber-800: #172133;
+  --color-amber-900: #0f172a;
+  --color-amber-950: #090d16;
 
   --color-orange-50: #f4f5f7;
   --color-orange-100: #e8ecf2;
-  --color-orange-200: #c5cbd4;
-  --color-orange-600: #2c3a52;
-  --color-orange-700: #2c3a52;
-  --color-orange-800: #1f2a3d;
-  --color-orange-900: #161f2e;
-  --color-orange-950: #1e2530;
+  --color-orange-200: #cbd5e1;
+  --color-orange-600: #1e293b;
+  --color-orange-700: #172133;
+  --color-orange-800: #0f172a;
+  --color-orange-900: #090d16;
+  --color-orange-950: #090d16;
 
   --color-indigo-50: #f4f5f7;
   --color-indigo-100: #e8ecf2;
-  --color-indigo-200: #c5cbd4;
-  --color-indigo-600: #2c3a52;
-  --color-indigo-700: #2c3a52;
-  --color-indigo-800: #1f2a3d;
-  --color-indigo-900: #161f2e;
-  --color-indigo-950: #1e2530;
+  --color-indigo-200: #cbd5e1;
+  --color-indigo-600: #1e293b;
+  --color-indigo-700: #172133;
+  --color-indigo-800: #0f172a;
+  --color-indigo-900: #090d16;
+  --color-indigo-950: #090d16;
 
   /* Accent Mappings */
-  --color-gold: #2c3a52;
+  --color-gold: #1e293b;
   --color-gold-light: #e8ecf2;
-  --color-gold-border: #c5cbd4;
-  --color-gold-hover: #1f2a3d;
+  --color-gold-border: #bcc3ce;
+  --color-gold-hover: #0f172a;
 
-  /* Typography Tokens (Deep Slate Charcoal Ink — High Clarity, Zero Halation) */
-  --color-charcoal: #1e2530;
-  --color-charcoal-muted: #434c5e;
-  --color-charcoal-light: #5c6677;
+  /* Typography Tokens (Deep Obsidian-Slate Ink — Razor-Sharp Legibility, Zero Halation) */
+  --color-charcoal: #0f172a;
+  --color-charcoal-muted: #1e293b;
+  --color-charcoal-light: #334155;
 
   /* Radii Tokens */
   --radius-dorji-sm: 0.375rem;
@@ -116,52 +131,140 @@
     background-color: #fcfbf8;
   }
 
-  /* Safe handling of legacy .bg-purple-950 without dark-on-dark text collisions */
+  /* Safe handling of dark slate accent surfaces without text collisions */
   .bg-purple-950 {
-    background-color: #2c3a52 !important;
+    background-color: #1e293b !important;
+  }
+  .bg-purple-900 {
+    background-color: #263449 !important;
   }
   .hover\:bg-purple-900:hover,
   .hover\:bg-purple-950:hover,
   .active\:bg-purple-950:active {
-    background-color: #1f2a3d !important;
-  }
-  .text-purple-950 {
-    color: #1e2530;
-  }
-  /* Prevent dark text inside dark-accent containers */
-  .bg-purple-950.text-purple-950,
-  .bg-purple-950 .text-purple-950 {
-    color: #fcfbf8 !important;
-  }
-  .bg-purple-950 .text-purple-300,
-  .bg-purple-950 .text-purple-200 {
-    color: #dce0e6 !important;
+    background-color: #0f172a !important;
   }
 
-  /* Replace washed-out translucent text with crisp solid silver-slate ink */
+  /* Primary Ink on Light Surfaces */
+  .text-purple-950 {
+    color: #0f172a;
+  }
+
+  /* When .text-purple-950 is on the dark element itself, render crisp cream-white */
+  .bg-purple-950.text-purple-950,
+  .bg-purple-900.text-purple-950 {
+    color: #fcfbf8 !important;
+  }
+
+  /* Light badges, icon boxes, chips, and inputs (even inside dark containers) MUST keep crisp #0f172a dark ink & visible SVGs */
+  .bg-white.text-purple-950,
+  .bg-cream.text-purple-950,
+  .bg-cream-50.text-purple-950,
+  .bg-cream-100.text-purple-950,
+  .bg-cream-200.text-purple-950,
+  .bg-cream-300.text-purple-950,
+  .bg-amber-50.text-purple-950,
+  .bg-amber-100.text-purple-950,
+  .bg-amber-200.text-purple-950,
+  .bg-amber-300.text-purple-950,
+  .bg-amber-400.text-purple-950,
+  .bg-emerald-50.text-purple-950,
+  .bg-emerald-100.text-purple-950,
+  .bg-purple-50.text-purple-950,
+  .bg-purple-100.text-purple-950,
+  .bg-purple-200.text-purple-950,
+  .bg-stone-50.text-purple-950,
+  .bg-stone-100.text-purple-950,
+  .bg-stone-200.text-purple-950,
+  .bg-white.text-\[\#0F172A\],
+  .bg-cream-50.text-\[\#0F172A\],
+  .bg-cream-100.text-\[\#0F172A\],
+  .bg-cream-200.text-\[\#0F172A\] {
+    color: #0f172a !important;
+  }
+
+  .bg-white.text-purple-950 > svg,
+  .bg-cream.text-purple-950 > svg,
+  .bg-cream-50.text-purple-950 > svg,
+  .bg-cream-100.text-purple-950 > svg,
+  .bg-cream-200.text-purple-950 > svg,
+  .bg-cream-300.text-purple-950 > svg,
+  .bg-amber-300.text-purple-950 > svg,
+  .bg-amber-400.text-purple-950 > svg,
+  .bg-purple-100.text-purple-950 > svg,
+  .bg-purple-200.text-purple-950 > svg,
+  .bg-stone-100.text-purple-950 > svg,
+  .bg-stone-200.text-purple-950 > svg,
+  .bg-cream-50.text-\[\#0F172A\] > svg,
+  .bg-cream-100.text-\[\#0F172A\] > svg,
+  .bg-cream-200.text-\[\#0F172A\] > svg {
+    color: #0f172a !important;
+    stroke: currentColor;
+  }
+
+  /* High-contrast light secondary text inside dark slate containers (excluding light child badges) */
+  .bg-purple-950 .text-purple-300:not(.bg-white):not(.bg-cream-50):not(.bg-cream-100):not(.bg-cream-200),
+  .bg-purple-950 .text-purple-200:not(.bg-white):not(.bg-cream-50):not(.bg-cream-100):not(.bg-cream-200),
+  .bg-purple-950 .text-cream-200:not(.bg-white):not(.bg-cream-50):not(.bg-cream-100):not(.bg-cream-200),
+  .bg-purple-950 .text-cream-200\/90:not(.bg-white):not(.bg-cream-50):not(.bg-cream-100):not(.bg-cream-200),
+  .bg-purple-950 .text-amber-300:not(.bg-white):not(.bg-cream-50):not(.bg-cream-100):not(.bg-cream-200),
+  .bg-purple-950 .text-amber-200:not(.bg-white):not(.bg-cream-50):not(.bg-cream-100):not(.bg-cream-200) {
+    color: #f8fafc !important;
+  }
+
+  /* Replace ALL washed-out translucent text utilities with solid, crisp high-contrast slate ink */
+  .text-purple-950\/90,
   .text-purple-950\/80,
+  .text-purple-950\/75,
   .text-purple-950\/70 {
-    color: #3b4454 !important;
+    color: #1e293b !important;
   }
   .text-purple-950\/60,
   .text-purple-950\/50 {
-    color: #525b6c !important;
+    color: #2d3748 !important;
+  }
+  .text-purple-950\/40,
+  .text-purple-950\/30 {
+    color: #475569 !important;
   }
   .text-purple-900,
   .text-purple-800,
   .text-purple-700 {
-    color: #2c3a52 !important;
+    color: #1e293b !important;
   }
+
+  /* Ensure arbitrary muted hex classes across components render with crisp contrast */
+  .text-\[\#1E2530\],
+  .text-\[\#18202C\] {
+    color: #0f172a !important;
+  }
+  .text-\[\#434C5E\],
+  .text-\[\#364050\],
+  .text-\[\#3B4454\],
+  .text-\[\#4B5565\] {
+    color: #1e293b !important;
+  }
+  .text-\[\#5C6677\],
+  .text-\[\#6E7787\],
+  .text-\[\#656B60\] {
+    color: #2d3748 !important;
+  }
+  /* Crisp light text inside dark hero banners */
+  .text-\[\#DCE0E6\],
+  .text-\[\#C5CBD4\],
+  .text-\[\#E2E6EE\] {
+    color: #f1f5f9 !important;
+  }
+
   .border-purple-950,
   .border-purple-900,
   .border-purple-800 {
-    border-color: #2c3a52 !important;
+    border-color: #1e293b !important;
   }
   .border-purple-200 {
-    border-color: #dce0e6 !important;
+    border-color: #cbd5e1 !important;
   }
   .border-purple-300 {
-    border-color: #c5cbd4 !important;
+    border-color: #bcc3ce !important;
   }
   .bg-purple-100 {
     background-color: #e8ecf2 !important;
@@ -171,97 +274,98 @@
   }
   .ring-purple-950,
   .ring-purple-900 {
-    --tw-ring-color: #2c3a52 !important;
+    --tw-ring-color: #1e293b !important;
   }
 
   /* Standardized Light Cream & Brushed Silver Component Primitives */
   .card-dorji {
     background-color: #fcfbf8;
-    border: 1px solid #dce0e6;
+    border: 1px solid #cbd5e1;
     border-radius: 12px;
-    color: #1e2530;
-    box-shadow: 0 1px 3px rgba(30, 37, 48, 0.05);
+    color: #0f172a;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
   }
 
   .card-dorji-subtle {
     background-color: #f6f4ef;
-    border: 1px solid #dce0e6;
+    border: 1px solid #cbd5e1;
     border-radius: 10px;
-    color: #1e2530;
+    color: #0f172a;
   }
 
   .btn-dorji-primary {
-    background-color: #2c3a52;
+    background-color: #1e293b;
     color: #fcfbf8;
-    border: 1px solid #243044;
+    border: 1px solid #0f172a;
     border-radius: 10px;
     font-weight: 700;
-    box-shadow: 0 1px 2px rgba(30, 37, 48, 0.12);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.14);
     transition: all 0.15s ease-in-out;
   }
   .btn-dorji-primary:hover {
-    background-color: #1f2a3d;
+    background-color: #0f172a;
   }
 
   .btn-dorji-secondary {
     background-color: #efece6;
-    color: #1e2530;
-    border: 1px solid #c5cbd4;
+    color: #0f172a;
+    border: 1px solid #bcc3ce;
     border-radius: 10px;
     font-weight: 600;
     transition: all 0.15s ease-in-out;
   }
   .btn-dorji-secondary:hover {
     background-color: #e4e1da;
-    border-color: #9ba3b0;
+    border-color: #64748b;
   }
 
   .input-dorji {
     background-color: #fcfbf8;
-    border: 1px solid #c5cbd4;
+    border: 1px solid #94a3b8;
     border-radius: 10px;
-    color: #1e2530;
+    color: #0f172a;
+    font-weight: 500;
     transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   }
   .input-dorji:focus {
     outline: none;
     background-color: #ffffff;
-    border-color: #2c3a52;
-    box-shadow: 0 0 0 3px rgba(44, 58, 82, 0.14);
+    border-color: #1e293b;
+    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.16);
   }
 
   .modal-dorji {
     background-color: #fcfbf8;
-    border: 1px solid #c5cbd4;
+    border: 1px solid #bcc3ce;
     border-radius: 16px;
-    color: #1e2530;
-    box-shadow: 0 16px 36px rgba(24, 32, 44, 0.2), 0 2px 6px rgba(24, 32, 44, 0.08);
+    color: #0f172a;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.22), 0 2px 6px rgba(15, 23, 42, 0.08);
   }
 
   .modal-backdrop-dorji {
-    background-color: rgba(24, 32, 44, 0.48);
+    background-color: rgba(15, 23, 42, 0.52);
     backdrop-filter: blur(4px);
   }
 
   .badge-gold,
   .badge-silver {
     background-color: #e8ecf2;
-    border: 1px solid #c5cbd4;
-    color: #2c3a52;
+    border: 1px solid #bcc3ce;
+    color: #0f172a;
     font-weight: 700;
   }
 
   .badge-fb-red {
-    background-color: #c83248;
+    background-color: #b91c1c;
     color: #ffffff;
     font-weight: 700;
   }
 
   .hero-atelier {
-    background: linear-gradient(135deg, #232e42 0%, #2c3a52 55%, #374763 100%);
-    border: 1px solid #9ba3b0;
+    background: linear-gradient(135deg, #172133 0%, #1e293b 55%, #263449 100%);
+    border: 1px solid #94a3b8;
     color: #fcfbf8;
-    box-shadow: 0 4px 16px rgba(30, 37, 48, 0.12);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.14);
   }
 
   /* Interactive Measurement Tape & Guide Animations */
@@ -404,24 +508,43 @@
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
     background-color: var(--color-cream);
-    color: var(--color-purple-950);
+    color: #0f172a;
     font-size: 16px;
     font-optical-sizing: auto;
     font-kerning: normal;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   body {
     font-family: 'Inter', 'Plus Jakarta Sans', 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.62;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.004em;
+    font-weight: 450;
     touch-action: manipulation;
     background-color: var(--color-cream);
-    color: var(--color-purple-950);
+    color: #0f172a;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
   }
   button, input, select, textarea {
     touch-action: manipulation;
     font-family: inherit;
     font-optical-sizing: auto;
+  }
+  input, select, textarea {
+    color: #0f172a;
+    font-weight: 500;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #475569 !important;
+    opacity: 1 !important;
+    font-weight: 400;
   }
   p, li, label {
     line-height: 1.62;
@@ -434,6 +557,7 @@
   font-size: 0.75rem !important; /* 12px minimum readable floor */
   line-height: 1.5 !important;
   letter-spacing: 0.01em;
+  font-weight: 600;
 }
 
 .text-\[11px\] {

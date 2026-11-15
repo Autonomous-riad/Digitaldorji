@@ -202,7 +202,7 @@ export const SSLCommerzSandboxGateway: React.FC = () => {
             <button
               type="button"
               onClick={handleFillNagad}
-              className="px-2.5 py-1 bg-orange-900/60 hover:bg-orange-800 text-orange-300 rounded-lg text-[11px] font-bold border border-orange-700 cursor-pointer"
+              className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-200 rounded-lg text-[11px] font-bold border border-slate-600 cursor-pointer"
             >
               Autofill Nagad
             </button>
@@ -215,12 +215,12 @@ export const SSLCommerzSandboxGateway: React.FC = () => {
           <div className="bg-slate-850 p-4 border-b border-slate-700 flex flex-wrap items-center justify-between text-xs gap-2">
             <div className="flex items-center gap-4">
               <div>
-                <span className="text-slate-400 block text-[10px]">ORDER NUMBER</span>
-                <span className="font-mono font-bold text-amber-400">{orderNumber}</span>
+                <span className="text-slate-300 block text-[10px]">ORDER NUMBER</span>
+                <span className="font-mono font-bold text-white">{orderNumber}</span>
               </div>
               <div>
-                <span className="text-slate-400 block text-[10px]">CUSTOMER</span>
-                <span className="font-semibold text-slate-200">{customerName}</span>
+                <span className="text-slate-300 block text-[10px]">CUSTOMER</span>
+                <span className="font-semibold text-white">{customerName}</span>
               </div>
             </div>
             <div>
@@ -353,8 +353,8 @@ export const SSLCommerzSandboxGateway: React.FC = () => {
                     onClick={() => setSelectedMobile('nagad')}
                     className={`flex-1 p-3 rounded-xl border text-center font-bold text-xs cursor-pointer transition-all ${
                       selectedMobile === 'nagad'
-                        ? 'border-orange-500 bg-orange-950/40 text-orange-400 ring-1 ring-orange-500'
-                        : 'border-slate-700 bg-slate-900 text-slate-400'
+                        ? 'border-emerald-400 bg-slate-700 text-white ring-1 ring-emerald-400'
+                        : 'border-slate-700 bg-slate-900 text-slate-300'
                     }`}
                   >
                     Nagad (নগদ)
@@ -364,8 +364,8 @@ export const SSLCommerzSandboxGateway: React.FC = () => {
                     onClick={() => setSelectedMobile('rocket')}
                     className={`flex-1 p-3 rounded-xl border text-center font-bold text-xs cursor-pointer transition-all ${
                       selectedMobile === 'rocket'
-                        ? 'border-purple-500 bg-purple-950/40 text-purple-400 ring-1 ring-purple-500'
-                        : 'border-slate-700 bg-slate-900 text-slate-400'
+                        ? 'border-emerald-400 bg-slate-700 text-white ring-1 ring-emerald-400'
+                        : 'border-slate-700 bg-slate-900 text-slate-300'
                     }`}
                   >
                     Rocket (রকেট)
