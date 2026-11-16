@@ -4,7 +4,7 @@ import { createSession, revokeSession, extractToken, requireAuth, AuthenticatedR
 
 export const authRouter = Router();
 
-// Customer or Universal Login
+// Customer-Only Login (Master/Staff accounts must use /api/auth/admin-login)
 authRouter.post('/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -16,9 +16,17 @@ authRouter.post('/login', (req: Request, res: Response) => {
     u => u.email.toLowerCase() === normalizedEmail
   );
 
+  // Strictly block Master/Admin/Staff accounts from logging in via Customer Login
+  if (user && (user.role === 'admin' || user.role === 'staff')) {
+    return res.status(403).json({
+      error: 'This login is strictly for Customer accounts. Master & Staff accounts must use the separate Master Portal.',
+      code: 'MASTER_ACCOUNT_NOT_ALLOWED_ON_CUSTOMER_LOGIN'
+    });
+  }
+
   const check = user ? verifyPassword(String(password), user.password) : { valid: false, needsRehash: false };
   if (!user || !check.valid) {
-    return res.status(401).json({ error: 'Invalid email or password' });
+    return res.status(401).json({ error: 'Invalid customer email or password' });
   }
 
   if (check.needsRehash) {
@@ -32,7 +40,7 @@ authRouter.post('/login', (req: Request, res: Response) => {
   const { password: _, ...safeUser } = user;
 
   res.json({
-    message: 'Login successful',
+    message: 'Customer login successful',
     token,
     user: safeUser
   });

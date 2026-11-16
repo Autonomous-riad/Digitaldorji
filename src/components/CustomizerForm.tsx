@@ -1,29 +1,20 @@
 import React, { useState } from 'react';
 import { useTailor } from '../context/TailorContext';
-import { useAuth } from '../context/AuthContext';
 import { CustomizationOptionArt } from './CustomizationArt';
 import { GarmentLiveVisualizer } from './GarmentLiveVisualizer';
 import { MobileBottomActionBar } from './MobileBottomActionBar';
 import { SizeGuideTooltip } from './common/SizeGuideTooltip';
 import { CUSTOMIZATION_GUIDES, CustomizationOptionGuide } from '../data/customizationGuides';
 import { getPresetsForGarment, StylePreset } from '../data/stylePresets';
-import { GarmentCustomizationGroup, GarmentCustomizationOption } from '../types/tailor';
-import { AdminOptionPictureModal } from './admin/AdminOptionPictureModal';
-import { toast } from 'sonner';
+import { GarmentCustomizationGroup } from '../types/tailor';
 import { 
-  Scissors, 
   ArrowLeft, 
   ArrowRight, 
   Sparkles, 
   Check, 
   ShieldCheck, 
   Type, 
-  Layers, 
-  Tag, 
-  Palette,
-  CircleDot,
   Info,
-  ZoomIn,
   X,
   Award,
   Eye,
@@ -32,36 +23,22 @@ import {
   ListFilter,
   CheckCircle2,
   SlidersHorizontal,
-  ChevronRight,
   Star,
-  CheckCheck,
-  Shirt,
-  Camera,
-  Plus,
-  Trash2
+  CheckCheck
 } from 'lucide-react';
 
 export const CustomizerForm: React.FC = () => {
   const { 
     t, 
-    lang,
-    role,
     activeGarment, 
     selectedCustomizations, 
     updateCustomization, 
-    updateOptionImage,
-    addCustomizationOption,
-    removeCustomizationOption,
     stitchingSpecs,
     updateStitchingSpecs,
     fabricDetails,
     setActiveStep, 
-    calculatePricing,
-    measurementMethod
+    calculatePricing
   } = useTailor();
-
-  const { user } = useAuth();
-  const isCustomizationRestricted = Boolean(user && user.role === 'staff' && user.permissions?.canManageCustomizations === false);
 
   const [activeGuideModal, setActiveGuideModal] = useState<{
     guide: CustomizationOptionGuide;
@@ -75,88 +52,6 @@ export const CustomizerForm: React.FC = () => {
   const [showFloatingPreviewModal, setShowFloatingPreviewModal] = useState(false);
   const [selectedGroupTab, setSelectedGroupTab] = useState<string>('all');
   const [appliedPresetToast, setAppliedPresetToast] = useState<string | null>(null);
-
-  // Admin Option Customization State
-  const [editingOptionPicture, setEditingOptionPicture] = useState<{
-    groupId: string;
-    groupTitleEn: string;
-    groupTitleBn: string;
-    option: GarmentCustomizationOption;
-  } | null>(null);
-
-  const [adminEditPicturesMode, setAdminEditPicturesMode] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('dorji_admin_picture_edit_mode') === 'true';
-    } catch {
-      return false;
-    }
-  });
-
-  const [addingOptionInWizard, setAddingOptionInWizard] = useState<{
-    groupId: string;
-    groupTitleEn: string;
-    groupTitleBn: string;
-  } | null>(null);
-
-  const [wizardNewOptionForm, setWizardNewOptionForm] = useState({
-    labelEn: '',
-    labelBn: '',
-    priceDelta: 0,
-    image: '',
-    isDefault: false
-  });
-
-  const handleWizardAddOption = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isCustomizationRestricted) {
-      toast.error(t('Access Denied: You do not have permission to add customization options.', 'অ্যাক্সেস অস্বীকৃত: আপনার কাস্টমাইজেশন অপশন যোগ করার অনুমতি নেই।'));
-      return;
-    }
-    if (!activeGarment || !addingOptionInWizard) return;
-    if (!wizardNewOptionForm.labelEn.trim()) return;
-
-    const optId = `opt_${wizardNewOptionForm.labelEn.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_${Date.now() % 10000}`;
-    const newOpt: GarmentCustomizationOption = {
-      id: optId,
-      labelEn: wizardNewOptionForm.labelEn.trim(),
-      labelBn: wizardNewOptionForm.labelBn.trim() || wizardNewOptionForm.labelEn.trim(),
-      priceDelta: Number(wizardNewOptionForm.priceDelta) || 0,
-      image: wizardNewOptionForm.image.trim() || undefined
-    };
-
-    try {
-      await addCustomizationOption(activeGarment.id, addingOptionInWizard.groupId, newOpt);
-      if (wizardNewOptionForm.isDefault) {
-        updateCustomization(addingOptionInWizard.groupId, optId);
-      }
-      setAddingOptionInWizard(null);
-      setWizardNewOptionForm({ labelEn: '', labelBn: '', priceDelta: 0, image: '', isDefault: false });
-      toast.success(t('New style option added!', 'নতুন স্টাইল অপশন যোগ করা হয়েছে!'));
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to add option');
-    }
-  };
-
-  const handleWizardRemoveOption = async (groupId: string, optionId: string, label: string) => {
-    if (isCustomizationRestricted) {
-      toast.error(t('Access Denied: You do not have permission to delete customization options.', 'অ্যাক্সেস অস্বীকৃত: আপনার কাস্টমাইজেশন অপশন মুছে ফেলার অনুমতি নেই।'));
-      return;
-    }
-    if (!activeGarment) return;
-    const grp = activeGarment.customizationGroups.find(g => g.id === groupId);
-    if (grp && grp.options.length <= 1) {
-      toast.error(t('Cannot delete the only option in this category', 'এই ক্যাটাগরির একমাত্র অপশনটি মুছে ফেলা যাবে না'));
-      return;
-    }
-    if (!confirm(`Are you sure you want to remove "${label}"?`)) return;
-
-    try {
-      await removeCustomizationOption(activeGarment.id, groupId, optionId);
-      toast.success(t(`Option "${label}" removed`, `"${label}" অপশন মুছে ফেলা হয়েছে`));
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to remove option');
-    }
-  };
 
   if (!activeGarment) {
     return (
@@ -520,62 +415,6 @@ export const CustomizerForm: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-1.5 flex-wrap justify-end shrink-0">
-                      {/* Admin Picture Customizer Mode Toggle Button */}
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (isCustomizationRestricted) {
-                            toast.error(t('Access Denied: You do not have permission to manage customizations or pictures. Contact Shop Master.', 'অ্যাক্সেস অস্বীকৃত: আপনার কাস্টমাইজেশন বা ছবি পরিচালনার পারমিশন নেই।'));
-                            return;
-                          }
-                          const next = !adminEditPicturesMode;
-                          setAdminEditPicturesMode(next);
-                          try {
-                            localStorage.setItem('dorji_admin_picture_edit_mode', String(next));
-                          } catch {}
-                          toast.info(next 
-                            ? t('Admin Picture Customization Mode Activated! Click any option photo to customize.', 'অ্যাডমিন ফটো এডিটর চালু হয়েছে! যেকোনো ছবিতে ক্লিক করে পরিবর্তন করুন।')
-                            : t('Admin Picture Customization Mode turned off.', 'অ্যাডমিন ফটো এডিটর বন্ধ করা হয়েছে।')
-                          );
-                        }}
-                        className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
-                          adminEditPicturesMode
-                            ? 'bg-[#2C3A52] text-[#FCFBF8] border-[#2C3A52] shadow-xs'
-                            : 'text-[#2C3A52] bg-[#EFECE6] hover:bg-[#E8ECF2] border-[#C5CBD4]'
-                        }`}
-                        title={t('Toggle admin picture customization for all options', 'অ্যাডমিন ছবি কাস্টমাইজেশন টুল চালু/বন্ধ')}
-                      >
-                        <Camera className="w-3.5 h-3.5" />
-                        <span className="text-[11px] hidden sm:inline">
-                          {adminEditPicturesMode 
-                            ? t('Edit Pictures: ON', 'ফটো এডিট: চালু') 
-                            : t('Customize Pictures', 'ছবি কাস্টমাইজ')}
-                        </span>
-                      </button>
-
-                      {/* Admin Add Option Button */}
-                      {adminEditPicturesMode && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (isCustomizationRestricted) {
-                              toast.error(t('Access Denied: You do not have permission to add customization options.', 'অ্যাক্সেস অস্বীকৃত: আপনার কাস্টমাইজেশন অপশন যোগ করার অনুমতি নেই।'));
-                              return;
-                            }
-                            setAddingOptionInWizard({
-                              groupId: group.id,
-                              groupTitleEn: group.titleEn,
-                              groupTitleBn: group.titleBn
-                            });
-                          }}
-                          className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-[#E8ECF2] hover:bg-[#DCE0E6] text-[#2C3A52] border border-[#C5CBD4] transition-colors cursor-pointer"
-                          title={t('Add a new option to this category', 'নতুন অপশন যোগ করুন')}
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span className="text-[11px]">{t('Add Option', 'অপশন যোগ')}</span>
-                        </button>
-                      )}
-
                       {/* Compare Button */}
                       <button
                         type="button"
@@ -618,50 +457,6 @@ export const CustomizerForm: React.FC = () => {
                                 isSelected={isSelected} 
                               />
                             </div>
-
-                            {/* Admin Delete Option Button */}
-                            {adminEditPicturesMode && (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleWizardRemoveOption(group.id, option.id, option.labelEn);
-                                }}
-                                className="absolute top-1.5 right-1.5 z-20 p-1 rounded-md bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition-transform hover:scale-110 cursor-pointer"
-                                title={t('Delete this option (Admin)', 'অপশনটি মুছে ফেলুন (অ্যাডমিন)')}
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            )}
-
-                            {/* Admin Customize Picture Button on Photo Element */}
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (isCustomizationRestricted) {
-                                  toast.error(t('Access Denied: You do not have permission to customize pictures.', 'অ্যাক্সেস অস্বীকৃত: আপনার ছবি পরিবর্তন করার অনুমতি নেই।'));
-                                  return;
-                                }
-                                setEditingOptionPicture({
-                                  groupId: group.id,
-                                  groupTitleEn: group.titleEn,
-                                  groupTitleBn: group.titleBn,
-                                  option
-                                });
-                              }}
-                              className={`absolute bottom-1.5 left-1.5 z-20 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-xs transition-all flex items-center gap-1 cursor-pointer ${
-                                option.image
-                                  ? 'bg-[#2C3A52] text-[#FCFBF8] hover:bg-[#1F2A3D] opacity-95 hover:opacity-100 shadow-xs'
-                                  : adminEditPicturesMode
-                                    ? 'bg-[#2C3A52] text-[#FCFBF8] hover:bg-[#1F2A3D] shadow-xs ring-1 ring-white/80'
-                                    : 'opacity-0 group-hover:opacity-100 bg-[#1E2530]/85 hover:bg-[#2C3A52] text-[#FCFBF8] backdrop-blur-xs'
-                              }`}
-                              title={t('Customize this style picture (Admin)', 'অ্যাডমিন: এই অপশনের ছবি পরিবর্তন করুন')}
-                            >
-                              <Camera className="w-3 h-3 shrink-0" />
-                              <span>{option.image ? t('Customized', 'কাস্টম ছবি') : t('Edit Photo', 'ছবি বদলান')}</span>
-                            </button>
 
                             {/* Top-left Style Badge */}
                             {guide && (
@@ -1027,23 +822,6 @@ export const CustomizerForm: React.FC = () => {
 
                     <div className="w-full h-24 bg-[#F6F4EF] rounded-lg border border-[#DCE0E6] flex items-center justify-center overflow-hidden relative group/art">
                       <CustomizationOptionArt optionId={opt.id} customImage={opt.image} isSelected={isSelected} />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingOptionPicture({
-                            groupId: activeCompareGroup.id,
-                            groupTitleEn: activeCompareGroup.titleEn,
-                            groupTitleBn: activeCompareGroup.titleBn,
-                            option: opt
-                          });
-                        }}
-                        className="absolute bottom-1 right-1 z-10 px-1.5 py-0.5 rounded bg-[#1E2530]/85 hover:bg-[#2C3A52] text-[#FCFBF8] text-[9px] font-bold flex items-center gap-1 cursor-pointer transition-colors shadow-xs"
-                        title={t('Customize picture (Admin)', 'ছবি কাস্টমাইজ করুন (অ্যাডমিন)')}
-                      >
-                        <Camera className="w-2.5 h-2.5" />
-                        <span>{opt.image ? t('Custom', 'কাস্টম') : t('Edit', 'এডিট')}</span>
-                      </button>
                     </div>
 
                     {guide && (
@@ -1157,146 +935,6 @@ export const CustomizerForm: React.FC = () => {
             >
               {t('Got It, Close Guide', 'বুঝেছি, বন্ধ করুন')}
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Admin Option Picture Customization Modal */}
-      {editingOptionPicture && activeGarment && (
-        <AdminOptionPictureModal
-          isOpen={true}
-          onClose={() => setEditingOptionPicture(null)}
-          garmentId={activeGarment.id}
-          garmentNameEn={activeGarment.nameEn}
-          garmentNameBn={activeGarment.nameBn}
-          groupId={editingOptionPicture.groupId}
-          groupTitleEn={editingOptionPicture.groupTitleEn}
-          groupTitleBn={editingOptionPicture.groupTitleBn}
-          option={editingOptionPicture.option}
-          onSave={async (newImageUrl) => {
-            await updateOptionImage(
-              activeGarment.id,
-              editingOptionPicture.groupId,
-              editingOptionPicture.option.id,
-              newImageUrl
-            );
-          }}
-          lang={lang}
-        />
-      )}
-
-      {/* Wizard Admin Add Option Modal */}
-      {addingOptionInWizard && activeGarment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 modal-backdrop-dorji animate-in fade-in duration-200">
-          <div 
-            className="bg-[#FCFBF8] rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-[#C5CBD4] space-y-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-[#DCE0E6]">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#2C3A52] bg-[#E8ECF2] px-2 py-0.5 rounded border border-[#C5CBD4]">
-                  {t(addingOptionInWizard.groupTitleEn, addingOptionInWizard.groupTitleBn)}
-                </span>
-                <h3 className="text-base font-bold text-[#1E2530] mt-1">
-                  {t('Add New Style Option', 'নতুন স্টাইল অপশন যোগ করুন')}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setAddingOptionInWizard(null)}
-                className="p-1 rounded-full text-[#434C5E] hover:text-[#1E2530] hover:bg-[#EFECE6] cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleWizardAddOption} className="space-y-3.5">
-              <div>
-                <label className="block text-xs font-bold text-[#1E2530] mb-1">
-                  {t('Option Name (English)', 'অপশনের নাম (ইংরেজি)')} *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={wizardNewOptionForm.labelEn}
-                  onChange={(e) => setWizardNewOptionForm({ ...wizardNewOptionForm, labelEn: e.target.value })}
-                  placeholder="e.g. Italian Spread Collar / Side Pocket"
-                  className="w-full p-2.5 bg-[#F6F4EF] border border-[#C5CBD4] rounded-xl text-xs text-[#1E2530] focus:outline-none focus:ring-2 focus:ring-[#2C3A52]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#1E2530] mb-1">
-                  {t('Option Name (Bengali)', 'অপশনের নাম (বাংলা)')}
-                </label>
-                <input
-                  type="text"
-                  value={wizardNewOptionForm.labelBn}
-                  onChange={(e) => setWizardNewOptionForm({ ...wizardNewOptionForm, labelBn: e.target.value })}
-                  placeholder="যেমন: ইতালিয়ান স্প্রেড কলার / সাইড পকেট"
-                  className="w-full p-2.5 bg-[#F6F4EF] border border-[#C5CBD4] rounded-xl text-xs text-[#1E2530] focus:outline-none focus:ring-2 focus:ring-[#2C3A52]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#1E2530] mb-1">
-                  {t('Additional Charge (৳ BDT)', 'অতিরিক্ত সেলাই চার্জ (৳)')}
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="10"
-                  value={wizardNewOptionForm.priceDelta}
-                  onChange={(e) => setWizardNewOptionForm({ ...wizardNewOptionForm, priceDelta: Number(e.target.value) || 0 })}
-                  className="w-full p-2.5 bg-[#F6F4EF] border border-[#C5CBD4] rounded-xl text-xs text-[#1E2530] focus:outline-none focus:ring-2 focus:ring-[#2C3A52]"
-                />
-                <p className="text-[10px] text-[#5C6677] mt-0.5">
-                  {t('Enter 0 if included in base garment charge', 'বেস সেলাই মূল্যের অন্তর্ভুক্ত হলে ০ রাখুন')}
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#1E2530] mb-1">
-                  {t('Picture URL (Optional)', 'ছবির লিঙ্ক (ঐচ্ছিক)')}
-                </label>
-                <input
-                  type="url"
-                  value={wizardNewOptionForm.image}
-                  onChange={(e) => setWizardNewOptionForm({ ...wizardNewOptionForm, image: e.target.value })}
-                  placeholder="https://images.unsplash.com/photo-..."
-                  className="w-full p-2.5 bg-[#F6F4EF] border border-[#C5CBD4] rounded-xl text-xs text-[#1E2530] focus:outline-none focus:ring-2 focus:ring-[#2C3A52]"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="wizardDefaultCheck"
-                  checked={wizardNewOptionForm.isDefault}
-                  onChange={(e) => setWizardNewOptionForm({ ...wizardNewOptionForm, isDefault: e.target.checked })}
-                  className="w-4 h-4 text-[#2C3A52] rounded border-[#C5CBD4] focus:ring-[#2C3A52]"
-                />
-                <label htmlFor="wizardDefaultCheck" className="text-xs font-semibold text-[#1E2530] cursor-pointer">
-                  {t('Select this option right now', 'এখনই এটি নির্বাচিত করুন')}
-                </label>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t border-[#DCE0E6]">
-                <button
-                  type="button"
-                  onClick={() => setAddingOptionInWizard(null)}
-                  className="px-4 py-2 bg-[#EFECE6] hover:bg-[#DCE0E6] text-[#1E2530] rounded-xl text-xs font-semibold cursor-pointer border border-[#C5CBD4]"
-                >
-                  {t('Cancel', 'বাতিল')}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-[#2C3A52] hover:bg-[#1F2A3D] text-[#FCFBF8] rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
-                >
-                  {t('Add Option', 'অপশন যোগ করুন')}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

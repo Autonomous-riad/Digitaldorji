@@ -164,39 +164,38 @@ const AppRouterContent: React.FC = () => {
   // 1. PUBLIC AUTH ROUTES (/login, /signup)
   // ==========================================
   if (currentPath === '/login') {
-    if (!isLoading && user) {
-      const destination = user.role === 'admin' || user.role === 'staff' ? '/admin' : '/account';
-      return <Navigate to={destination} replace />;
+    if (!isLoading && user && user.role === 'customer') {
+      return <Navigate to="/account" replace />;
     }
     return (
       <>
-        <SEOHead title="লগইন (Login) | Digital Dorji" />
-        <LoginPage />
+        <SEOHead title="লগইন (Customer Login) | Digital Dorji" />
+        <LoginPage initialTab="signin" />
       </>
     );
   }
 
   if (currentPath === '/signup') {
-    if (!isLoading && user) {
-      const destination = user.role === 'admin' || user.role === 'staff' ? '/admin' : '/account';
-      return <Navigate to={destination} replace />;
+    if (!isLoading && user && user.role === 'customer') {
+      return <Navigate to="/account" replace />;
     }
     return (
       <>
-        <SEOHead title="রেজিস্ট্রেশন (Create Account) | Digital Dorji" />
+        <SEOHead title="রেজিস্ট্রেশন (Create Customer Account) | Digital Dorji" />
         <SignupPage />
       </>
     );
   }
 
-  // Dedicated /admin/login route
-  if (currentPath === '/admin/login') {
+  // Dedicated Master Portal entry route: /Autonomous (or /autonomous, /admin/login)
+  const lowerPath = currentPath.toLowerCase();
+  if (lowerPath === '/autonomous' || lowerPath === '/autonomous/' || currentPath === '/admin/login') {
     if (!isLoading && user && (user.role === 'admin' || user.role === 'staff')) {
-      return <Navigate to="/admin" replace />;
+      return <Navigate to="/admin/dashboard" replace />;
     }
     return (
       <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-orange-600" /></div>}>
-        <SEOHead title="Atelier Staff Login | Digital Dorji" />
+        <SEOHead title="Atelier Master Portal | Digital Dorji" />
         <AdminLogin />
       </Suspense>
     );
@@ -217,7 +216,7 @@ const AppRouterContent: React.FC = () => {
     }
 
     if (!user) {
-      return <Navigate to="/admin/login" replace />;
+      return <Navigate to="/Autonomous" replace />;
     }
 
     if (user.role !== 'admin' && user.role !== 'staff') {
@@ -260,12 +259,8 @@ const AppRouterContent: React.FC = () => {
       );
     }
 
-    if (!user) {
+    if (!user || user.role !== 'customer') {
       return <Navigate to="/login" replace />;
-    }
-
-    if (user.role === 'admin' || user.role === 'staff') {
-      return <Navigate to="/admin" replace />;
     }
 
     return (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTailor } from '../context/TailorContext';
 import { useRouter } from '../context/RouterContext';
 import { useReadyMadeCart } from '../context/ReadyMadeCartContext';
-import { Scissors, Layers, Shirt, ShoppingBag, ArrowRight, X, Home } from 'lucide-react';
+import { Scissors, Layers, Shirt, ArrowRight, X, Home } from 'lucide-react';
 
 export const MobileBottomNav: React.FC = () => {
   const { 
@@ -12,7 +12,7 @@ export const MobileBottomNav: React.FC = () => {
     activeGarment 
   } = useTailor();
   const { currentPath, navigate } = useRouter();
-  const { cartCount, isCartOpen, setIsCartOpen } = useReadyMadeCart();
+  const { setIsCartOpen } = useReadyMadeCart();
   const [dismissedGarmentId, setDismissedGarmentId] = useState<string | null>(null);
 
   // If in admin dashboard or active ordering customizer flow, hide bottom nav
@@ -22,8 +22,7 @@ export const MobileBottomNav: React.FC = () => {
   }
 
   // Authoritative single active tab resolution (guarantees mutual exclusion: only one tab can be selected at a time)
-  const getActiveTab = (): 'home' | 'tailoring' | 'fabrics' | 'clothes' | 'cart' | null => {
-    if (isCartOpen) return 'cart';
+  const getActiveTab = (): 'home' | 'tailoring' | 'fabrics' | 'clothes' | null => {
     if (currentPath.startsWith('/ready-made')) return 'clothes';
     if (currentPath === '/fabric-catalog' || activeStep === 'fabric_catalog') return 'fabrics';
     if (currentPath === '/catalog' || (currentPath === '/' && activeStep === 'catalog')) return 'tailoring';
@@ -69,7 +68,7 @@ export const MobileBottomNav: React.FC = () => {
       )}
 
       {/* Core Tab Buttons matching the Main Header */}
-      <div className="grid grid-cols-5 gap-1" role="navigation" aria-label="মোবাইল নেভিগেশন (Mobile Navigation)">
+      <div className="grid grid-cols-4 gap-1" role="navigation" aria-label="মোবাইল নেভিগেশন (Mobile Navigation)">
         {/* Tab 0: হোম (Home) */}
         <button
           onClick={() => {
@@ -162,33 +161,6 @@ export const MobileBottomNav: React.FC = () => {
           </div>
           <span className="text-[10px] mt-0.5 font-semibold tracking-tight">
             {t('Clothes', 'পোশাক')}
-          </span>
-        </button>
-
-        {/* Tab 4: Cart Drawer */}
-        <button
-          onClick={() => {
-            setIsCartOpen(!isCartOpen);
-          }}
-          aria-label="শপিং কার্ট (Shopping Cart)"
-          className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-xl transition-all cursor-pointer min-h-[42px] focus-visible:ring-2 focus-visible:ring-[#2C3A52] ${
-            activeTab === 'cart'
-              ? 'bg-[#E8ECF2] text-[#1E2530] font-bold shadow-2xs border border-[#C5CBD4]'
-              : 'text-[#5C6677] hover:text-[#1E2530] active:scale-95'
-          }`}
-        >
-          <div className="relative">
-            <ShoppingBag className={`w-4 h-4 transition-transform ${
-              activeTab === 'cart' ? 'text-[#2C3A52] scale-110' : 'text-[#5C6677]'
-            }`} />
-            {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 text-[9px] bg-[#2C3A52] text-[#FCFBF8] font-bold rounded-full flex items-center justify-center px-1 shadow-xs animate-in zoom-in-50 border border-[#C5CBD4]">
-                {cartCount}
-              </span>
-            )}
-          </div>
-          <span className="text-[10px] mt-0.5 font-semibold tracking-tight">
-            {t('Cart', 'কার্ট')}
           </span>
         </button>
       </div>

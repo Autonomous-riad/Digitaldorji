@@ -6,12 +6,7 @@ import {
   MapPin, 
   Phone, 
   Mail, 
-  Clock, 
-  ShieldCheck, 
-  Truck, 
-  Globe,
-  Sparkles,
-  MessageSquare
+  Clock
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {

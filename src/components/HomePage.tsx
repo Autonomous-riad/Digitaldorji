@@ -118,9 +118,6 @@ export const HomePage: React.FC = () => {
                   <Building2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#475569] block">
-                    {t('Main Atelier & Showroom', 'প্রধান কারখানা ও শোরুম')}
-                  </span>
                   <h2 className="text-lg font-extrabold text-[#0F172A]">
                     {shopSettings?.shopName || 'Digital Dorji Atelier'}
                   </h2>
