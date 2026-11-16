@@ -347,27 +347,24 @@ export const CustomerDashboard: React.FC = () => {
           </div>
 
           {/* Doorstep Pickup CTA Card */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200/70 p-5 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-700 text-white flex items-center justify-center">
-              <Truck className="w-5 h-5" />
+          <div className="bg-cream-50 rounded-2xl border border-cream-300 p-5 space-y-3 shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-purple-950 text-white flex items-center justify-center">
+              <Truck className="w-5 h-5 text-white" />
             </div>
             <div>
               <h4 className="text-sm font-bold text-purple-950">
                 {t('Need fabric picked up from your home?', 'বাসা থেকে কাপড় সংগ্রহ প্রয়োজন?')}
               </h4>
-              <p className="text-xs text-purple-800/80 mt-1">
-                {t('Our dedicated rider will collect your unstitched fabric from anywhere in Dhaka within 24 hours.', 'আমাদের নিজস্ব রাইডার ঢাকার যে কোনো স্থান থেকে আপনার আনস্টিচ কাপড় সংগ্রহ করে নিয়ে আসবে।')}
+              <p className="text-xs text-purple-950/75 mt-1">
+                {t('Our dedicated rider collects unstitched fabric within 3km of Oxygen, Chattogram — and we deliver ready-made & shop-fabric garments nationwide across Bangladesh.', 'অক্সিজেন, চট্টগ্রামের ৩ কি.মি. এরিয়ায় আমাদের নিজস্ব রাইডার বাসা থেকে কাপড় সংগ্রহ করে এবং দোকানের কাপড় ও রেডিমেড পোশাক সারাদেশে কুরিয়ারে ডেলিভারি দেওয়া হয়।')}
               </p>
             </div>
             <button
-              onClick={() => {
-                setActiveStep('pickup_details');
-                navigate('/pickup');
-              }}
-              className="w-full py-2.5 bg-orange-700 hover:bg-orange-800 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:outline-none"
+              onClick={() => navigate('/account')}
+              className="w-full py-2.5 bg-purple-950 hover:bg-purple-900 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs"
             >
-              <span>{t('Schedule Doorstep Pickup', 'পিকআপের সময় নির্ধারণ করুন')}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>{t('Open Unified Customer Panel', 'পূর্ণাঙ্গ কাস্টমার প্যানেল খুলুন')}</span>
+              <ArrowRight className="w-3.5 h-3.5 text-white" />
             </button>
           </div>
         </div>

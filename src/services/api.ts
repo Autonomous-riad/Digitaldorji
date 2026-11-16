@@ -127,6 +127,20 @@ export const customerApi = {
     }),
   deleteMeasurement: (id: string) =>
     apiRequest(`/api/customer/measurements/${id}`, { method: 'DELETE' }),
+  getAddresses: () => apiRequest<{ addresses: any[] }>('/api/customer/addresses'),
+  addAddress: (address: { label: string; district: string; thana?: string; area: string; street: string; landmark?: string; is_default?: boolean }) =>
+    apiRequest<{ message: string; address: any; addresses: any[] }>('/api/customer/addresses', {
+      method: 'POST',
+      body: JSON.stringify(address)
+    }),
+  setDefaultAddress: (id: string) =>
+    apiRequest<{ message: string; addresses: any[] }>(`/api/customer/addresses/${id}/default`, {
+      method: 'PUT'
+    }),
+  deleteAddress: (id: string) =>
+    apiRequest<{ message: string; addresses: any[] }>(`/api/customer/addresses/${id}`, {
+      method: 'DELETE'
+    }),
   getProfile: () => apiRequest<{ profile: UserProfile }>('/api/customer/profile'),
   updateProfile: (data: Partial<UserProfile> & { password?: string }) =>
     apiRequest<{ message: string; profile: UserProfile }>('/api/customer/profile', {
@@ -139,7 +153,16 @@ export const customerApi = {
 export const adminApi = {
   getDashboard: () => apiRequest('/api/admin/dashboard'),
   getReports: () => apiRequest('/api/admin/reports'),
-  getOrders: (params?: { stage?: string; status?: string; dateRange?: string; paymentStatus?: string; search?: string }) => {
+  addExpense: (data: { title: string; category: string; amount: number; date?: string; notes?: string }) =>
+    apiRequest<{ message: string; expense: any; expenses: any[] }>('/api/admin/expenses', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+  deleteExpense: (id: string) =>
+    apiRequest<{ message: string; expenses: any[] }>(`/api/admin/expenses/${id}`, {
+      method: 'DELETE'
+    }),
+  getOrders: (params?: { stage?: string; status?: string; dateRange?: string; paymentStatus?: string; search?: string; orderType?: string }) => {
     const cleanParams: Record<string, string> = {};
     if (params) {
       Object.entries(params).forEach(([k, v]) => {

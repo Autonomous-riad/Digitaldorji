@@ -37,6 +37,7 @@ export const AdminOrders: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [selectedDateRange, setSelectedDateRange] = useState('all');
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState('all');
+  const [selectedOrderType, setSelectedOrderType] = useState<'all' | 'custom_own_fabric' | 'fabric_and_tailoring' | 'ready_made'>('all');
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   
   // Note editing state
@@ -62,6 +63,7 @@ export const AdminOrders: React.FC = () => {
         status: selectedStatus !== 'all' ? selectedStatus : undefined,
         dateRange: selectedDateRange !== 'all' ? selectedDateRange : undefined,
         paymentStatus: selectedPaymentStatus !== 'all' ? selectedPaymentStatus : undefined,
+        orderType: selectedOrderType !== 'all' ? selectedOrderType : undefined,
         search: search.trim() || undefined
       });
       setOrders(res.orders || []);
@@ -87,7 +89,7 @@ export const AdminOrders: React.FC = () => {
   useEffect(() => {
     fetchOrders();
     fetchStaff();
-  }, [selectedStatus, selectedDateRange, selectedPaymentStatus]);
+  }, [selectedStatus, selectedDateRange, selectedPaymentStatus, selectedOrderType]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -232,6 +234,34 @@ export const AdminOrders: React.FC = () => {
         </div>
       </div>
 
+      {/* 3 Business Divisions Filter Bar */}
+      <div className="flex flex-wrap items-center gap-2 bg-cream-50 p-2 rounded-2xl border border-cream-300 shadow-2xs text-xs">
+        {[
+          { id: 'all', labelEn: 'All Orders (সব ধরনের অর্ডার)', icon: ShoppingBag },
+          { id: 'custom_own_fabric', labelEn: '1. Custom Tailoring (নিজের কাপড়ে সেলাই)', icon: Scissors },
+          { id: 'fabric_and_tailoring', labelEn: '2. Shop Fabric + Tailoring (দোকানের কাপড় + সেলাই)', icon: FileText },
+          { id: 'ready_made', labelEn: '3. Ready-Made Clothing (রেডিমেড পোশাক)', icon: Shirt },
+        ].map(tab => {
+          const TabIcon = tab.icon;
+          const active = selectedOrderType === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setSelectedOrderType(tab.id as any)}
+              className={`px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                active
+                  ? 'bg-purple-950 text-white shadow-xs'
+                  : 'text-purple-950 hover:bg-cream-200'
+              }`}
+            >
+              <TabIcon className="w-3.5 h-3.5" />
+              <span>{tab.labelEn}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Filter and Search Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 space-y-3 shadow-xs">
         <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3">
@@ -330,8 +360,21 @@ export const AdminOrders: React.FC = () => {
                     }`}
                   >
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-mono font-bold text-xs text-indigo-700">{order.orderNumber}</span>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+                          order.orderType === 'ready_made'
+                            ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                            : order.orderType === 'fabric_and_tailoring'
+                            ? 'bg-purple-100 text-purple-950 border-purple-300'
+                            : 'bg-cream-200 text-[#0F172A] border-cream-300'
+                        }`}>
+                          {order.orderType === 'ready_made'
+                            ? 'Ready-Made'
+                            : order.orderType === 'fabric_and_tailoring'
+                            ? 'Shop Fabric + Tailor'
+                            : 'Own Fabric (3km)'}
+                        </span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-orange-100 text-orange-800 border border-orange-200">
                           {(order.currentStage || order.status || 'new').replace(/_/g, ' ')}
                         </span>

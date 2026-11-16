@@ -217,10 +217,80 @@ adminRouter.get('/dashboard', requirePermission('reports', 'view'), (req: Authen
   });
 });
 
-// GET /api/admin/orders - Table list with status, date range, payment status, phone filter
+// GET /api/admin/orders - Unified table list across all 3 business divisions (Custom Own Fabric, Fabric + Tailoring, Ready-Made)
 adminRouter.get('/orders', requirePermission('orders', 'view'), (req: AuthenticatedRequest, res: Response) => {
-  const { status, dateRange, paymentStatus, search } = req.query;
-  let orders = [...(db.getData().orders || [])];
+  const { status, dateRange, paymentStatus, search, orderType } = req.query;
+  const data = db.getData();
+
+  const bespokeOrders = (data.orders || []).map((o: any) => {
+    const resolvedType = o.orderType || (o.fabricDetails?.fabricSource === 'shop_fabric' ? 'fabric_and_tailoring' : 'custom_own_fabric');
+    return {
+      ...o,
+      orderType: resolvedType
+    };
+  });
+
+  const rmOrdersMapped = (data.ready_made_orders || []).map((ro: any) => {
+    const stMap: Record<string, string> = {
+      'pending': 'fabric_received_at_shop',
+      'confirmed': 'fabric_received_at_shop',
+      'processing': 'quality_and_ironing',
+      'shipped': 'out_for_delivery',
+      'delivered': 'delivered',
+      'cancelled': 'cancelled'
+    };
+    const mappedStage = stMap[(ro.order_status || '').toLowerCase()] || 'fabric_received_at_shop';
+    return {
+      id: ro.id,
+      orderNumber: ro.order_number,
+      orderType: 'ready_made',
+      isReadyMade: true,
+      customerName: ro.customer_name,
+      customerPhone: ro.customer_phone,
+      customerEmail: ro.customer_email,
+      createdAt: ro.created_at,
+      garment: {
+        id: ro.items?.[0]?.product_id || 'rm-item',
+        nameEn: ro.items?.map((i: any) => `${i.product_name_en} (${i.selected_size} x${i.quantity})`).join(', ') || 'Ready-Made Clothing',
+        nameBn: ro.items?.map((i: any) => `${i.product_name_bn || i.product_name_en} (${i.selected_size} x${i.quantity})`).join(', ') || 'রেডিমেড পোশাক',
+        image: ro.items?.[0]?.product_image || '/images/ready-made/panjabi-front.jpg'
+      },
+      fabricDetails: {
+        fabricSource: 'ready_made_garment',
+        fabricType: 'Ready-Made Finished Garment',
+        colorName: ro.items?.map((i: any) => i.selected_color).filter(Boolean).join(', ') || 'Standard',
+        lengthGaz: 0
+      },
+      pickupAddress: {
+        fullName: ro.customer_name,
+        phone: ro.customer_phone,
+        division: ro.district || 'Bangladesh',
+        area: ro.area || ro.district || 'Bangladesh',
+        streetAddress: ro.delivery_address
+      },
+      deliveryMode: ro.deliveryMode || 'nationwide_courier',
+      courierName: ro.courierName || '',
+      courierTrackingNumber: ro.courierTrackingNumber || ro.trackingNumber || '',
+      grandTotal: ro.total,
+      paidAmount: ro.payment_status === 'paid' ? ro.total : ro.payment_status === 'advance_paid' ? Math.round((ro.total || 0) * 0.5) : 0,
+      paymentMethod: ro.payment_method,
+      paymentStatus: ro.payment_status,
+      currentStage: mappedStage,
+      status: mappedStage,
+      rawOrderStatus: ro.order_status,
+      assignedTailor: 'Ready-Made Inventory',
+      assignedRider: ro.assignedRider || ro.courierName || 'Nationwide Courier',
+      tailorNotes: ro.notes || 'Ready-made direct dispatch order'
+    };
+  });
+
+  let orders = [...bespokeOrders, ...rmOrdersMapped].sort(
+    (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+  );
+
+  if (orderType && orderType !== 'all') {
+    orders = orders.filter(o => o.orderType === orderType);
+  }
 
   if (status && status !== 'all') {
     orders = orders.filter(o => normalizeStage(o.currentStage || o.status) === status);
@@ -343,6 +413,33 @@ const handleStatusUpdate = (req: AuthenticatedRequest, res: Response) => {
       });
 
       updatedOrder = order;
+    } else {
+      // Also support updating Ready-Made order stage directly from unified AdminOrders view
+      const rmOrder = (data.ready_made_orders || []).find(ro => ro.id === id || ro.order_number === id);
+      if (rmOrder) {
+        const rmStatusMap: Record<string, any> = {
+          'delivered': 'delivered',
+          'out_for_delivery': 'shipped',
+          'quality_and_ironing': 'processing',
+          'cancelled': 'cancelled',
+          'fabric_received_at_shop': 'confirmed'
+        };
+        const nextRmStatus = rmStatusMap[status] || status;
+        rmOrder.order_status = nextRmStatus;
+        if (nextRmStatus === 'cancelled') {
+          restoreReadyMadeOrderInventory(data, rmOrder, note || 'Order Cancelled by Admin');
+        }
+        updatedOrder = {
+          id: rmOrder.id,
+          orderNumber: rmOrder.order_number,
+          orderType: 'ready_made',
+          isReadyMade: true,
+          customerName: rmOrder.customer_name,
+          customerPhone: rmOrder.customer_phone,
+          currentStage: status,
+          status
+        };
+      }
     }
   });
 
@@ -813,33 +910,39 @@ adminRouter.delete('/products/:id', requirePermission('catalog', 'delete'), (req
   res.json({ message: 'Garment deleted' });
 });
 
-// GET /api/admin/reports - Analytics & CSV Export Data
+// GET /api/admin/reports - Sales, Expenses & Net Profit Analytics + Division Breakdown
 adminRouter.get('/reports', requirePermission('reports', 'view'), (req: AuthenticatedRequest, res: Response) => {
   const data = db.getData();
   const topLevelBespoke = (data.orders || []).filter((o: any) => !o.parentCartOrderNumber);
   const rmOrders = data.ready_made_orders || [];
+  const expenses = data.expenses || [];
 
-  // Unified list of top-level revenue-bearing orders (avoids double-counting child cart orders and includes Ready-Made orders)
+  // Unified list of top-level revenue-bearing orders across all 3 divisions
   const unifiedOrders = [
-    ...topLevelBespoke.map((o: any) => ({
-      createdAt: o.createdAt,
-      amount: o.grandTotal || o.total || 0,
-      stage: normalizeStage(o.currentStage || o.status),
-      itemName: o.garment?.nameEn || 'Bespoke Item',
-      customerName: o.customerName || 'Customer',
-      customerPhone: o.customerPhone || 'N/A'
-    })),
+    ...topLevelBespoke.map((o: any) => {
+      const div = o.orderType || (o.fabricDetails?.fabricSource === 'shop_fabric' ? 'fabric_and_tailoring' : 'custom_own_fabric');
+      return {
+        createdAt: o.createdAt,
+        amount: o.grandTotal || o.total || 0,
+        stage: normalizeStage(o.currentStage || o.status),
+        division: div,
+        itemName: o.garment?.nameEn || 'Bespoke Item',
+        customerName: o.customerName || 'Customer',
+        customerPhone: o.customerPhone || 'N/A'
+      };
+    }),
     ...rmOrders.map((ro: any) => ({
       createdAt: ro.created_at,
       amount: ro.total || 0,
       stage: ro.order_status === 'delivered' ? 'delivered' : ro.order_status === 'shipped' ? 'out_for_delivery' : ro.order_status === 'cancelled' ? 'cancelled' : 'ready',
+      division: 'ready_made',
       itemName: ro.items?.[0]?.product_name_en || 'Ready-Made Clothing',
       customerName: ro.customer_name || 'Customer',
       customerPhone: ro.customer_phone || 'N/A'
     }))
-  ];
+  ].filter(o => o.stage !== 'cancelled');
 
-  // Daily, Weekly, Monthly revenue sum
+  // Daily, Weekly, Monthly revenue & expenses sum
   const now = new Date();
   const todayStr = now.toISOString().split('T')[0];
   const weekAgo = new Date(now.getTime() - 7 * 24 * 3600 * 1000);
@@ -856,6 +959,47 @@ adminRouter.get('/reports', requirePermission('reports', 'view'), (req: Authenti
   const monthlyRevenue = unifiedOrders
     .filter(o => o.createdAt && new Date(o.createdAt) >= monthAgo)
     .reduce((sum, o) => sum + o.amount, 0);
+
+  const totalRevenue = unifiedOrders.reduce((sum, o) => sum + o.amount, 0);
+
+  const dailyExpenses = expenses
+    .filter(e => e.date && e.date.startsWith(todayStr))
+    .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+  const weeklyExpenses = expenses
+    .filter(e => e.date && new Date(e.date) >= weekAgo)
+    .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+  const monthlyExpenses = expenses
+    .filter(e => e.date && new Date(e.date) >= monthAgo)
+    .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+  const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+  // Revenue by the 3 Business Divisions
+  const divisionBreakdown = [
+    {
+      key: 'custom_own_fabric',
+      nameEn: 'Custom Tailoring (Own Fabric)',
+      nameBn: 'নিজের কাপড়ে সেলাই',
+      ordersCount: unifiedOrders.filter(o => o.division === 'custom_own_fabric').length,
+      revenue: unifiedOrders.filter(o => o.division === 'custom_own_fabric').reduce((s, o) => s + o.amount, 0)
+    },
+    {
+      key: 'fabric_and_tailoring',
+      nameEn: 'Fabric Store + Tailoring',
+      nameBn: 'দোকানের কাপড় + সেলাই',
+      ordersCount: unifiedOrders.filter(o => o.division === 'fabric_and_tailoring').length,
+      revenue: unifiedOrders.filter(o => o.division === 'fabric_and_tailoring').reduce((s, o) => s + o.amount, 0)
+    },
+    {
+      key: 'ready_made',
+      nameEn: 'Ready-Made Clothing',
+      nameBn: 'রেডিমেড পোশাক',
+      ordersCount: unifiedOrders.filter(o => o.division === 'ready_made').length,
+      revenue: unifiedOrders.filter(o => o.division === 'ready_made').reduce((s, o) => s + o.amount, 0)
+    }
+  ];
 
   // Orders by Status (Pie chart data)
   const statusCounts: Record<string, number> = {};
@@ -906,12 +1050,57 @@ adminRouter.get('/reports', requirePermission('reports', 'view'), (req: Authenti
       weeklyRevenue,
       monthlyRevenue,
       totalOrders: unifiedOrders.length,
-      totalRevenue: unifiedOrders.reduce((sum, o) => sum + o.amount, 0)
+      totalRevenue,
+      dailyExpenses,
+      weeklyExpenses,
+      monthlyExpenses,
+      totalExpenses,
+      dailyProfit: dailyRevenue - dailyExpenses,
+      weeklyProfit: weeklyRevenue - weeklyExpenses,
+      monthlyProfit: monthlyRevenue - monthlyExpenses,
+      netProfit: totalRevenue - totalExpenses
     },
+    divisionBreakdown,
+    expenses,
     ordersByStatus,
     topGarmentsChart,
     topCustomers
   });
+});
+
+// POST /api/admin/expenses - Add new workshop/business expense
+adminRouter.post('/expenses', requirePermission('reports', 'view'), (req: AuthenticatedRequest, res: Response) => {
+  const { title, category, amount, date, notes } = req.body;
+  if (!title || !amount || Number(amount) <= 0) {
+    return res.status(400).json({ error: 'Expense title and positive amount are required' });
+  }
+
+  const newExpense = {
+    id: 'exp-' + Date.now().toString(36),
+    title: String(title).trim(),
+    category: category || 'fabric_purchase',
+    amount: Number(amount),
+    date: date || new Date().toISOString().split('T')[0],
+    notes: notes ? String(notes).trim() : '',
+    recordedBy: req.user?.name || 'Shop Master'
+  };
+
+  db.mutate(data => {
+    if (!data.expenses) data.expenses = [];
+    data.expenses.unshift(newExpense);
+  });
+
+  res.status(201).json({ message: 'Expense recorded', expense: newExpense, expenses: db.getData().expenses });
+});
+
+// DELETE /api/admin/expenses/:id - Delete an expense record
+adminRouter.delete('/expenses/:id', requirePermission('reports', 'view'), (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  db.mutate(data => {
+    if (!data.expenses) data.expenses = [];
+    data.expenses = data.expenses.filter(e => e.id !== id);
+  });
+  res.json({ message: 'Expense deleted', expenses: db.getData().expenses });
 });
 
 // GET /api/admin/settings - Atelier & Shop settings + SMS Templates

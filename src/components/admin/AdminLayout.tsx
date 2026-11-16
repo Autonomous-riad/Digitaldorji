@@ -49,15 +49,18 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const allNavItems = [
-    { path: '/admin/dashboard', icon: LayoutDashboard, labelEn: 'Dashboard', labelBn: 'ড্যাশবোর্ড' },
-    { path: '/admin/orders', icon: ShoppingBag, labelEn: 'Orders & Follow-up', labelBn: 'অর্ডার ও ফলো-আপ' },
-    { path: '/admin/ready-made', icon: Shirt, labelEn: 'Ready-Made Shop', labelBn: 'রেডিমেড শপ' },
-    { path: '/admin/customers', icon: Users, labelEn: 'Customers', labelBn: 'কাস্টমারস' },
-    { path: '/admin/staff', icon: Scissors, labelEn: 'Staff & Artisans', labelBn: 'স্টাফ ও কারিগর' },
-    { path: '/admin/users', icon: ShieldCheck, labelEn: 'Users & Permissions', labelBn: 'ব্যবহারকারী ও অ্যাক্সেস' },
-    { path: '/admin/products', icon: Ruler, labelEn: 'Products & Catalog', labelBn: 'পণ্য ও ক্যাটালগ' },
-    { path: '/admin/reports', icon: Database, labelEn: 'Reports & CSV', labelBn: 'রিপোর্টস' },
-    { path: '/admin/settings', icon: Settings, labelEn: 'Settings', labelBn: 'সেটিংস' },
+    { path: '/admin/dashboard', icon: LayoutDashboard, labelEn: 'Central Dashboard', labelBn: 'সেন্ট্রাল ড্যাশবোর্ড' },
+    { path: '/admin/orders', icon: ShoppingBag, labelEn: 'All Orders (3 Divisions)', labelBn: 'সব ধরনের অর্ডার' },
+    { path: '/admin/products', icon: Ruler, labelEn: 'Designs, Sizes & Fabrics', labelBn: 'ডিজাইন, সাইজ ও কাপড়' },
+    { path: '/admin/ready-made', icon: Shirt, labelEn: 'Ready-Made Stock', labelBn: 'রেডিমেড পোশাকের স্টক' },
+    { path: '/admin/production', icon: Scissors, labelEn: 'Tailor Work Assignment', labelBn: 'দর্জিদের কাজ বণ্টন' },
+    { path: '/admin/pickups', icon: Eye, labelEn: '3km Pickup Management', labelBn: '৩ কি.মি. পিকআপ' },
+    { path: '/admin/delivery', icon: ExternalLink, labelEn: 'Courier & Delivery', labelBn: 'সারাদেশের কুরিয়ার' },
+    { path: '/admin/customers', icon: Users, labelEn: 'Customer Management', labelBn: 'কাস্টমার ম্যানেজমেন্ট' },
+    { path: '/admin/reports', icon: Database, labelEn: 'Sales, Expenses & Profit', labelBn: 'বিক্রি, খরচ ও লাভ রিপোর্ট' },
+    { path: '/admin/staff', icon: UserPlus, labelEn: 'Staff & Artisans', labelBn: 'স্টাফ ও কারিগর' },
+    { path: '/admin/users', icon: ShieldCheck, labelEn: 'Access & Permissions', labelBn: 'ইউজার ও পারমিশন' },
+    { path: '/admin/settings', icon: Settings, labelEn: 'Atelier Settings', labelBn: 'সেটিংস' },
   ];
 
   // Conditionally render navigation items based on role-based access

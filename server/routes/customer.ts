@@ -14,10 +14,27 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
     return o.userId === userId || 
       (normUserPhone && oPhone && (oPhone === normUserPhone || oPhone.endsWith(normUserPhone) || normUserPhone.endsWith(oPhone))) ||
       (normUserEmail && oEmail && oEmail === normUserEmail);
-  }).map(o => ({
-    ...o,
-    orderType: o.orderType || (o.fabricDetails?.fabricSource === 'shop_fabric' ? 'fabric_and_tailoring' : 'custom_own_fabric')
-  }));
+  }).map(o => {
+    const orderType = o.orderType || (o.fabricDetails?.fabricSource === 'shop_fabric' ? 'fabric_and_tailoring' : 'custom_own_fabric');
+    const grandTotal = Number(o.grandTotal || o.total || 0);
+    const pStatus = (o.paymentStatus || 'pending').toLowerCase();
+    const paidAmount = typeof o.paidAmount === 'number'
+      ? o.paidAmount
+      : (pStatus === 'paid' ? grandTotal : pStatus === 'advance_paid' || pStatus === 'partial' ? Math.round(grandTotal * 0.5) : 0);
+    const dueAmount = Math.max(0, grandTotal - paidAmount);
+
+    return {
+      ...o,
+      orderType,
+      orderTypeLabelEn: orderType === 'fabric_and_tailoring' ? 'Shop Fabric + Tailoring' : 'Own Fabric Tailoring',
+      orderTypeLabelBn: orderType === 'fabric_and_tailoring' ? 'দোকানের কাপড় + সেলাই' : 'নিজের কাপড়ে সেলাই',
+      grandTotal,
+      paidAmount,
+      dueAmount,
+      paymentMethod: o.paymentMethod || 'cod',
+      paymentStatus: o.paymentStatus || 'pending'
+    };
+  });
 
   const readyMadeOrders = db.getReadyMadeOrders().filter(ro => {
     const roPhone = (ro.customer_phone || '').replace(/[\s-]/g, '');
@@ -34,12 +51,27 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
       'Dispatched': 'out_for_delivery',
       'Shipped': 'out_for_delivery',
       'Delivered': 'delivered',
-      'Cancelled': 'cancelled'
+      'Cancelled': 'cancelled',
+      'pending': 'fabric_received_at_shop',
+      'confirmed': 'fabric_received_at_shop',
+      'processing': 'quality_and_ironing',
+      'shipped': 'out_for_delivery',
+      'delivered': 'delivered',
+      'cancelled': 'cancelled'
     };
+    const grandTotal = Number(ro.total || 0);
+    const pStatus = (ro.payment_status || 'pending').toLowerCase();
+    const paidAmount = typeof (ro as any).paid_amount === 'number'
+      ? (ro as any).paid_amount
+      : (pStatus === 'paid' ? grandTotal : pStatus === 'advance_paid' || pStatus === 'partial' ? Math.round(grandTotal * 0.5) : 0);
+    const dueAmount = Math.max(0, grandTotal - paidAmount);
+
     return {
       id: ro.id,
       orderNumber: ro.order_number,
       orderType: 'ready_made',
+      orderTypeLabelEn: 'Ready-Made Clothing',
+      orderTypeLabelBn: 'রেডিমেড পোশাক',
       userId: ro.customer_id || userId,
       customerName: ro.customer_name,
       customerPhone: ro.customer_phone,
@@ -50,7 +82,7 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
         nameEn: ro.items.map(i => `${i.product_name_en} (${i.selected_size})`).join(', ') || 'Ready-Made Garment',
         nameBn: ro.items.map(i => `${i.product_name_bn || i.product_name_en} (${i.selected_size})`).join(', ') || 'রেডিমেড পোশাক',
         gender: 'men',
-        basePrice: ro.total,
+        basePrice: grandTotal,
         image: ro.items[0]?.product_image || '/images/ready-made/panjabi-front.jpg'
       },
       items: ro.items,
@@ -62,12 +94,17 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
         streetAddress: ro.delivery_address
       },
       deliveryUrgency: ro.delivery_method,
-      deliveryMode: 'nationwide_courier',
-      estimatedDeliveryDate: new Date(new Date(ro.created_at).getTime() + 3 * 86400000).toISOString(),
-      grandTotal: ro.total,
+      deliveryMode: (ro as any).deliveryMode || 'nationwide_courier',
+      courierName: (ro as any).courierName || '',
+      courierTrackingNumber: (ro as any).courierTrackingNumber || (ro as any).trackingNumber || '',
+      estimatedDeliveryDate: new Date(new Date(ro.created_at).getTime() + 3 * 86400000).toISOString().split('T')[0],
+      grandTotal,
+      paidAmount,
+      dueAmount,
       paymentMethod: ro.payment_method,
       paymentStatus: ro.payment_status,
       currentStage: stageMap[ro.order_status] || 'fabric_received_at_shop',
+      rawOrderStatus: ro.order_status,
       isReadyMade: true,
       statusHistory: ro.status_history?.map(h => ({
         stage: stageMap[h.status] || 'fabric_received_at_shop',
@@ -85,9 +122,43 @@ function getUserAllOrders(userId: string, userPhone?: string, userEmail?: string
     };
   });
 
-  return [...bespokeOrders, ...readyMadeOrders].sort(
+  // Deduplicate child workshop orders if parent cart order is already in readyMadeOrders
+  const rmNumbers = new Set(readyMadeOrders.map(r => r.orderNumber));
+  const filteredBespoke = bespokeOrders.filter(bo => !bo.parentCartOrderNumber || !rmNumbers.has(bo.parentCartOrderNumber));
+
+  return [...filteredBespoke, ...readyMadeOrders].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
+}
+
+function getUserSavedAddresses(userId: string, user?: any) {
+  const allAddresses = db.getData().addresses || [];
+  const matches = allAddresses.filter(a => a.customer_id === userId);
+  if (matches.length > 0) return matches;
+
+  // Seed default address from user profile if none exist yet
+  if (user) {
+    const defaultAddr = {
+      id: `addr-${userId}-default`,
+      customer_id: userId,
+      label: 'Home (বাসা)',
+      district: user.city || 'Chattogram',
+      thana: 'Bayazid Bostami',
+      area: 'Oxygen Residential Area',
+      street: user.address || 'Road 2, Oxygen Moor, Chattogram',
+      landmark: 'Near Oxygen Mosque',
+      is_default: true,
+      created_at: new Date().toISOString()
+    };
+    db.mutate(data => {
+      if (!data.addresses) data.addresses = [];
+      if (!data.addresses.some(a => a.customer_id === userId)) {
+        data.addresses.push(defaultAddr);
+      }
+    });
+    return [defaultAddr];
+  }
+  return [];
 }
 
 // GET /api/customer/dashboard
@@ -99,14 +170,18 @@ customerRouter.get('/dashboard', requireCustomer, (req: AuthenticatedRequest, re
   // Match orders by userId, phone, or email across both bespoke and ready-made
   const userOrders = getUserAllOrders(userId, userPhone, userEmail);
   const userMeasurements = db.getData().savedMeasurements.filter(m => m.userId === userId);
+  const userAddresses = getUserSavedAddresses(userId, req.user);
   const userPickups = db.getData().pickups.filter(p => {
-    const matchedOrder = userOrders.find(o => o.id === p.orderId);
+    const matchedOrder = userOrders.find(o => o.id === p.orderId || o.orderNumber === p.orderNumber);
     return !!matchedOrder;
   });
 
-  const activeOrders = userOrders.filter(o => o.currentStage !== 'delivered');
+  const activeOrders = userOrders.filter(o => o.currentStage !== 'delivered' && o.currentStage !== 'cancelled');
   const deliveredOrders = userOrders.filter(o => o.currentStage === 'delivered');
-  const totalSpent = userOrders.reduce((sum, o) => sum + (o.grandTotal || o.total || 0), 0);
+  const nonCancelledOrders = userOrders.filter(o => o.currentStage !== 'cancelled');
+  const totalSpent = nonCancelledOrders.reduce((sum, o) => sum + (o.grandTotal || 0), 0);
+  const totalPaid = nonCancelledOrders.reduce((sum, o) => sum + (o.paidAmount || 0), 0);
+  const totalDue = nonCancelledOrders.reduce((sum, o) => sum + (o.dueAmount || 0), 0);
 
   res.json({
     user: {
@@ -126,13 +201,17 @@ customerRouter.get('/dashboard', requireCustomer, (req: AuthenticatedRequest, re
       deliveredOrdersCount: deliveredOrders.length,
       savedMeasurements: userMeasurements.length,
       savedMeasurementsCount: userMeasurements.length,
+      savedAddressesCount: userAddresses.length,
       scheduledPickupsCount: userPickups.filter(p => p.status === 'pending').length,
-      totalSpent
+      totalSpent,
+      totalPaid,
+      totalDue
     },
     activeOrders,
-    recentOrders: userOrders.slice(0, 5),
-    savedMeasurements: userMeasurements.slice(0, 4),
-    measurementProfiles: userMeasurements.slice(0, 4)
+    recentOrders: userOrders,
+    savedMeasurements: userMeasurements,
+    measurementProfiles: userMeasurements,
+    addresses: userAddresses
   });
 });
 
@@ -177,7 +256,7 @@ customerRouter.post('/orders', optionalAuth, (req: AuthenticatedRequest, res: Re
     orderNumber: newOrder.orderNumber,
     customerName,
     customerPhone,
-    area: newOrder.pickupAddress?.area || 'Dhanmondi',
+    area: newOrder.pickupAddress?.area || 'Oxygen',
     address: `${newOrder.pickupAddress?.streetAddress || ''}, ${newOrder.pickupAddress?.apartmentFloor || ''}`,
     scheduledDate: newOrder.pickupAddress?.pickupDate || new Date().toISOString().split('T')[0],
     slot: newOrder.pickupAddress?.pickupSlot === 'morning' ? 'Morning (10:00 AM - 1:00 PM)' : 'Afternoon (2:00 PM - 5:00 PM)',
@@ -248,6 +327,88 @@ customerRouter.delete('/measurements/:id', requireCustomer, (req: AuthenticatedR
   });
 
   res.json({ message: 'Measurement profile removed' });
+});
+
+// GET /api/customer/addresses - Persistent Saved Addresses in Central DB
+customerRouter.get('/addresses', requireCustomer, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
+  const addresses = getUserSavedAddresses(userId, req.user);
+  res.json({ addresses });
+});
+
+// POST /api/customer/addresses - Save new pickup/delivery address
+customerRouter.post('/addresses', requireCustomer, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
+  const { label, district, thana, area, street, landmark, is_default } = req.body;
+
+  if (!street || !area || !district) {
+    return res.status(400).json({ error: 'District, Area, and Street Address are required' });
+  }
+
+  const newAddr = {
+    id: 'addr-' + Date.now().toString(36),
+    customer_id: userId,
+    label: (label || 'Home').trim(),
+    district: district.trim(),
+    thana: (thana || '').trim() || null,
+    area: area.trim(),
+    street: street.trim(),
+    landmark: (landmark || '').trim() || null,
+    is_default: Boolean(is_default),
+    created_at: new Date().toISOString()
+  };
+
+  db.mutate(data => {
+    if (!data.addresses) data.addresses = [];
+    if (newAddr.is_default) {
+      data.addresses.forEach(a => {
+        if (a.customer_id === userId) a.is_default = false;
+      });
+    }
+    data.addresses.unshift(newAddr);
+  });
+
+  res.status(201).json({
+    message: 'Address saved to Central Database',
+    address: newAddr,
+    addresses: db.getData().addresses.filter(a => a.customer_id === userId)
+  });
+});
+
+// PUT /api/customer/addresses/:id/default - Mark address as default
+customerRouter.put('/addresses/:id/default', requireCustomer, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
+  const addrId = req.params.id;
+
+  db.mutate(data => {
+    if (!data.addresses) data.addresses = [];
+    data.addresses.forEach(a => {
+      if (a.customer_id === userId) {
+        a.is_default = a.id === addrId;
+      }
+    });
+  });
+
+  res.json({
+    message: 'Default address updated',
+    addresses: db.getData().addresses.filter(a => a.customer_id === userId)
+  });
+});
+
+// DELETE /api/customer/addresses/:id - Remove saved address
+customerRouter.delete('/addresses/:id', requireCustomer, (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
+  const addrId = req.params.id;
+
+  db.mutate(data => {
+    if (!data.addresses) data.addresses = [];
+    data.addresses = data.addresses.filter(a => !(a.id === addrId && a.customer_id === userId));
+  });
+
+  res.json({
+    message: 'Address removed',
+    addresses: db.getData().addresses.filter(a => a.customer_id === userId)
+  });
 });
 
 // GET /api/customer/profile

@@ -237,6 +237,16 @@ export interface Notification {
   notification?: any;
 }
 
+export interface Expense {
+  id: string;
+  title: string;
+  category: 'fabric_purchase' | 'artisan_wages' | 'shop_rent_utility' | 'courier_packaging' | 'marketing_other';
+  amount: number;
+  date: string;
+  notes?: string;
+  recordedBy?: string;
+}
+
 export interface DatabaseSchema {
   users: User[];
   staff: AdminStaff[];
@@ -247,6 +257,7 @@ export interface DatabaseSchema {
   garments_catalog: any[];
   fabrics_catalog: any[];
   sessions?: any[];
+  expenses?: Expense[];
 
   // 12 Core Relational Tables
   customers: Customer[];
@@ -1167,7 +1178,36 @@ const INITIAL_DB: DatabaseSchema = {
   ready_made_orders: [],
   ready_made_order_items: [],
   inventory_transactions: [],
-  coupons: INITIAL_COUPONS
+  coupons: INITIAL_COUPONS,
+  expenses: [
+    {
+      id: 'exp-01',
+      title: 'Giza Egyptian Cotton & Linen Roll Restock (45 Gaz)',
+      category: 'fabric_purchase',
+      amount: 12500,
+      date: new Date(Date.now() - 5 * 86400000).toISOString().split('T')[0],
+      notes: 'Wholesale fabric supplier from Khatunganj, Chattogram',
+      recordedBy: 'Master Tailor Kabir Hossain'
+    },
+    {
+      id: 'exp-02',
+      title: 'Weekly Artisan & Cutting Master Settlement',
+      category: 'artisan_wages',
+      amount: 8500,
+      date: new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0],
+      notes: 'Piece-rate stitching wages for 14 bespoke garments',
+      recordedBy: 'Master Tailor Kabir Hossain'
+    },
+    {
+      id: 'exp-03',
+      title: 'Steadfast Courier & Packaging Poly/Boxes',
+      category: 'courier_packaging',
+      amount: 1850,
+      date: new Date().toISOString().split('T')[0],
+      notes: 'Garment covers, collar stays & courier booking charges',
+      recordedBy: 'Sadia Rahman'
+    }
+  ]
 };
 
 class Database {
@@ -1208,7 +1248,8 @@ class Database {
           ready_made_orders: parsed.ready_made_orders || [],
           ready_made_order_items: parsed.ready_made_order_items || [],
           inventory_transactions: parsed.inventory_transactions || [],
-          coupons: parsed.coupons?.length ? parsed.coupons : INITIAL_DB.coupons
+          coupons: parsed.coupons?.length ? parsed.coupons : INITIAL_DB.coupons,
+          expenses: parsed.expenses?.length ? parsed.expenses : INITIAL_DB.expenses
         };
         // Always ensure the isolated demo order is registered in orders table
         if (!merged.orders.some((o: any) => o.orderNumber === 'DEMO-2026-0001')) {
