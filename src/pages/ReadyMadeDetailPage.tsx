@@ -358,7 +358,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`min-w-[48px] py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer min-h-[38px] ${
+                        className={`min-w-[48px] py-2 px-3.5 rounded-xl text-xs font-bold border transition-all cursor-pointer min-h-[42px] ${
                           isSelected
                             ? 'bg-purple-950 text-cream-50 border-purple-950 shadow-sm'
                             : inStockForSize
@@ -616,7 +616,7 @@ export const ReadyMadeDetailPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
               {related.map((rel) => (
                 <ProductCard key={rel.id} product={rel} />
               ))}

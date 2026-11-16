@@ -43,8 +43,8 @@ export const Footer: React.FC = () => {
 
             <p className="text-xs text-[#434C5E] leading-relaxed max-w-md">
               {t(
-                "Bangladesh's premier doorstep bespoke tailoring platform. We collect your unstitched fabric from your doorstep across Dhaka, Chattogram & Sylhet, digitize your anatomical measurements, hand-cut with master dorjis, and deliver in 4 days with a 100% fit guarantee.",
-                'বাংলাদেশের শীর্ষস্থানীয় ডোরস্টেপ টেইলারিং সেবা। আপনার বাসা থেকে আনস্টিচ কাপড় সংগ্রহ, মাস্টার কারিগরের নিখুঁত কাটিং এবং ৪ দিনে পারফেক্ট ফিটিংসহ হোম ডেলিভারি নিশ্চিত করছি আমরা।'
+                "Bangladesh's complete online tailoring and clothing platform based in Oxygen, Chattogram. Offering custom tailoring with 3km doorstep fabric pickup, premium fabric by the yard with tailoring, and ready-made clothing delivered nationwide.",
+                'চট্টগ্রামের অক্সিজেনে অবস্থিত পূর্ণাঙ্গ অনলাইন টেইলারিং ও ক্লোদিং প্ল্যাটফর্ম। ৩ কি.মি. এলাকায় বাসা থেকে কাপড় সংগ্রহ করে কাস্টম সেলাই, দোকানের গজ কাপড় ও সেলাই, এবং সারাদেশে রেডিমেড পোশাক ডেলিভারি।'
               )}
             </p>
           </div>
@@ -139,11 +139,11 @@ export const Footer: React.FC = () => {
             <div className="space-y-2 text-xs text-purple-950/80">
               <p className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-purple-800 shrink-0 mt-0.5" />
-                <span>House 42, Road 9/A, Dhanmondi & 114 Elephant Road, Dhaka-1205</span>
+                <span>{t('Oxygen Moor, Bayazid Bostami, Chattogram, Bangladesh', 'অক্সিজেন মোড়, বায়েজিদ বোস্তামী, চট্টগ্রাম, বাংলাদেশ')}</span>
               </p>
               <p className="flex items-center gap-2 font-bold text-purple-950 font-mono">
                 <Phone className="w-3.5 h-3.5 text-purple-800 shrink-0" />
-                <span>09612-445566 / 01711-002233</span>
+                <span>+880 1800-000000</span>
               </p>
               <p className="flex items-center gap-2">
                 <Mail className="w-3.5 h-3.5 text-purple-800 shrink-0" />
@@ -151,7 +151,7 @@ export const Footer: React.FC = () => {
               </p>
               <p className="flex items-center gap-2 text-[11px] text-purple-950/70">
                 <Clock className="w-3.5 h-3.5 text-purple-800 shrink-0" />
-                <span>{t('Sat - Thu: 9:00 AM - 10:00 PM', 'শনি - বৃহস্পতি: সকাল ৯টা - রাত ১০টা')}</span>
+                <span>{t('Sat - Thu: 10:00 AM - 9:00 PM', 'শনি - বৃহস্পতি: সকাল ১০টা - রাত ৯টা')}</span>
               </p>
             </div>
           </div>

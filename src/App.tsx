@@ -13,6 +13,7 @@ import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
 import { MobileBottomNav } from './components/MobileBottomNav';
 import { MobileQuickTrack } from './components/MobileQuickTrack';
 import { MobileOrderStepBar } from './components/MobileOrderStepBar';
+import { HomePage } from './components/HomePage';
 import { GarmentCatalog } from './components/GarmentCatalog';
 import { FabricCatalog } from './components/FabricCatalog';
 import { CustomizerForm } from './components/CustomizerForm';
@@ -101,7 +102,9 @@ const AppRouterContent: React.FC = () => {
 
   // Sync route changes with activeStep for storefront
   useEffect(() => {
-    if (currentPath === '/catalog' || currentPath === '/') {
+    if (currentPath === '/' || currentPath === '/home') {
+      setActiveStep('home');
+    } else if (currentPath === '/catalog') {
       setActiveStep('catalog');
     } else if (currentPath === '/fabric-catalog') {
       setActiveStep('fabric_catalog');
@@ -276,7 +279,6 @@ const AppRouterContent: React.FC = () => {
           {currentPath === '/customer/measurements' && <CustomerMeasurements />}
           {currentPath === '/customer/profile' && <CustomerProfile />}
         </main>
-        <Footer />
         <MobileQuickTrack />
         <MobileBottomNav />
       </div>
@@ -305,7 +307,6 @@ const AppRouterContent: React.FC = () => {
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
           <OrderPaymentSuccess orderNumber={orderNum} />
         </main>
-        <Footer />
         <MobileQuickTrack />
         <MobileBottomNav />
       </div>
@@ -322,7 +323,6 @@ const AppRouterContent: React.FC = () => {
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
           <OrderPaymentFailed orderNumber={orderNum} />
         </main>
-        <Footer />
         <MobileQuickTrack />
         <MobileBottomNav />
       </div>
@@ -356,7 +356,6 @@ const AppRouterContent: React.FC = () => {
           {currentPath === '/about' && <AboutPage />}
           {currentPath === '/contact' && <ContactPage />}
         </main>
-        <Footer />
         <MobileQuickTrack />
         <MobileBottomNav />
       </div>
@@ -378,7 +377,6 @@ const AppRouterContent: React.FC = () => {
         <CheckoutModal />
         <MobileQuickTrack />
         <MobileBottomNav />
-        <Footer />
       </div>
     );
   }
@@ -395,7 +393,6 @@ const AppRouterContent: React.FC = () => {
         <CheckoutModal />
         <MobileQuickTrack />
         <MobileBottomNav />
-        <Footer />
       </div>
     );
   }
@@ -411,6 +408,7 @@ const AppRouterContent: React.FC = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-28 md:pb-12">
         <MobileOrderStepBar />
         <div key={activeStep} className="animate-stepFadeIn">
+          {activeStep === 'home' && <HomePage />}
           {activeStep === 'catalog' && <GarmentCatalog />}
           {activeStep === 'fabric_catalog' && <FabricCatalog />}
           {activeStep === 'customize' && <CustomizerForm />}
@@ -433,8 +431,8 @@ const AppRouterContent: React.FC = () => {
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomNav />
 
-      {/* Storefront Footer */}
-      <Footer />
+      {/* Storefront Footer — Shown on Homepage ONLY */}
+      {activeStep === 'home' && <Footer />}
     </div>
   );
 };

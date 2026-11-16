@@ -87,59 +87,14 @@ export const FabricCatalog: React.FC = () => {
 
   return (
     <div className="space-y-6 sm:space-y-8 pb-12">
-      {/* Hero Header - Brushed Silver & Slate-Atelier Eye-Comfort */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#232E42] via-[#2C3A52] to-[#354662] text-[#FCFBF8] p-4 sm:p-7 lg:p-8 border border-[#9BA3B0] shadow-sm">
-        {/* Subtle decorative background light */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-[#E8ECF2]/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#1E2530]/40 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-[#E8ECF2]/15 text-[#FCFBF8] text-[11px] sm:text-xs font-semibold border border-[#C5CBD4]/35 mb-2 sm:mb-3 backdrop-blur-xs shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#E8ECF2] shrink-0" />
-            <span className="truncate">{t('Digital Dorji Sourced Atelier Fabrics', 'ডিজিটাল দর্জি প্রিমিয়াম ফেব্রিক শোরুম')}</span>
-          </div>
-
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight leading-snug mb-1.5 sm:mb-2 text-[#FCFBF8] font-serif-title">
-            {t('Premium Men & Women Fabrics Directly at Our Atelier', 'আটেলিয়ার প্রিমিয়াম কাপড় বেছে নিয়ে সেলাই অর্ডার করুন')}
-          </h1>
-
-          <p className="text-xs sm:text-sm text-[#E8ECF2]/95 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
-            {t(
-              'Don\'t have unstitched fabric at home? Browse our curated collection of Egyptian Giza Cotton, Irish Linen, Suiting Merino Wool, Pure Mulberry Silk, Georgette, Chiffon, and Zari Brocade Jamdani.',
-              'আপনার বাসায় কাপড় কেনা না থাকলেও চিন্তা নেই! আমাদের সেরা মিশরীয় গিজা কটন, আইরিশ লিনেন, র সিল্ক, জর্জেট, স্যুট ক্লথ ও জামদানি ব্রাউজ করুন এবং ঘরে বসেই সেলাই অর্ডার দিন।'
-            )}
-          </p>
-
-          {/* 4-Step Visual Process */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-[#C5CBD4]/25">
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fabric', 'কাপড় পছন্দ')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Cotton, Linen, Silk & Suiting', 'সুতি, লিনেন ও সিল্ক থান')}</p>
-            </div>
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Color & Yardage', 'রং ও গজ নির্বাচন')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Accurate length for your fit', 'প্রয়োজনীয় মাপ অনুযায়ী গজ')}</p>
-            </div>
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Bespoke Stitching', 'মাস্টার সেলাই')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Direct tailored with custom sizing', 'মাপ অনুযায়ী নিখুঁত সেলাই')}</p>
-            </div>
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Doorstep Delivery', 'হোম ডেলিভারি')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Delivered in 4 days with guarantee', '৪ দিনে ডেলিভারি + গ্যারান্টি')}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Filter and Search Controls */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-cream-50 p-3 sm:p-4 rounded-2xl border border-cream-300 shadow-xs">
+      <div className="space-y-2.5 sm:space-y-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 bg-cream-50 p-2.5 sm:p-4 rounded-2xl border border-cream-300 shadow-xs">
           {/* Primary Material Switcher Tabs */}
           <div className="grid grid-cols-3 sm:flex bg-cream-200 p-1 rounded-xl border border-cream-300 w-full sm:w-auto gap-1" role="tablist" aria-label="কাপড়ের বিভাগ ফিল্টার">
             <button
               onClick={() => setSelectedMaterial('all')}
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 min-h-[38px] focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedMaterial === 'all'
                   ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
                   : 'text-purple-950 hover:text-purple-900'
@@ -155,7 +110,7 @@ export const FabricCatalog: React.FC = () => {
 
             <button
               onClick={() => setSelectedMaterial('cotton')}
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 min-h-[38px] focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedMaterial === 'cotton'
                   ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
                   : 'text-purple-950 hover:text-purple-900'
@@ -167,7 +122,7 @@ export const FabricCatalog: React.FC = () => {
 
             <button
               onClick={() => setSelectedMaterial('linen')}
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 min-h-[38px] focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedMaterial === 'linen'
                   ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
                   : 'text-purple-950 hover:text-purple-900'
@@ -188,13 +143,13 @@ export const FabricCatalog: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('Search Cotton, Linen, Silk, Color...', 'কটন, লিনেন, সিল্ক বা রঙ খুঁজুন...')}
-                className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 placeholder:text-purple-950/50 focus:bg-cream-50 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800 transition-colors"
+                className="w-full h-10 pl-9 pr-4 py-2 text-xs sm:text-sm rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 placeholder:text-purple-950/50 focus:bg-cream-50 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800 transition-colors"
               />
             </div>
 
             <button
               onClick={() => setIsFilterPanelOpen(!isFilterPanelOpen)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-all cursor-pointer whitespace-nowrap min-h-[38px] ${
+              className={`flex items-center gap-1.5 h-10 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-all cursor-pointer whitespace-nowrap ${
                 isFilterPanelOpen || activeFiltersCount > 0
                   ? 'bg-purple-950 text-cream-50 border-purple-950 shadow-xs font-bold'
                   : 'bg-cream-200 text-purple-950 border-cream-300 hover:bg-cream-300'

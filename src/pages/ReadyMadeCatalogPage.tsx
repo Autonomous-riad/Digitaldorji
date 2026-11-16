@@ -235,61 +235,15 @@ export const ReadyMadeCatalogPage: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 pb-28 sm:pb-24">
-      
-      {/* Hero Banner Section - Brushed Silver & Slate-Atelier Eye-Comfort */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#232E42] via-[#2C3A52] to-[#354662] text-[#FCFBF8] p-4 sm:p-7 lg:p-8 border border-[#9BA3B0] shadow-sm">
-        {/* Subtle decorative background light */}
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-[#E8ECF2]/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#1E2530]/40 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-[#E8ECF2]/15 border border-[#C5CBD4]/35 text-[#FCFBF8] text-[11px] sm:text-xs font-semibold backdrop-blur-xs mb-2 sm:mb-3 shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#E8ECF2] shrink-0" />
-            <span className="truncate">{t('Handcrafted & Ready-To-Wear Atelier Collection', 'হস্তনির্মিত ও রেডিমেড কালেকশন')}</span>
-          </div>
-
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight leading-snug mb-1.5 sm:mb-2 text-[#FCFBF8] font-serif-title">
-            {t('Ready-Made Atelier Collection — Express Delivery', 'রেডিমেড প্রিমিয়াম পোশাক — ২৪-৪৮ ঘণ্টায় ঘরে ডেলিভারি')}
-          </h1>
-
-          <p className="text-xs sm:text-sm text-[#E8ECF2]/95 mb-3 sm:mb-5 leading-relaxed max-w-2xl line-clamp-2 sm:line-clamp-none font-normal">
-            {t(
-              'Explore our ready-to-ship sartorial collection. Designed with bespoke tailoring craftsmanship, available in standardized sizes with instant custom modification options.',
-              'রেডি টু শিপ পোশাকের চমৎকার সমাহার। ডিজিটাল দরজির সুনিপুণ ফিটিংস, প্রিমিয়াম ফেব্রিক ও তাৎক্ষণিক কাস্টমাইজেশন সুবিধা সহ ঘরে বসেই অর্ডার করুন।'
-            )}
-          </p>
-
-          {/* 4-Step Visual Process */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 pt-2.5 sm:pt-3 border-t border-[#C5CBD4]/25">
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">01. {t('Select Fit & Size', 'ডিজাইন ও সাইজ')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Panjabi, Shirt, Pajama & Kurti', 'পাঞ্জাবি, শার্ট ও কুর্তি')}</p>
-            </div>
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">02. {t('Custom Fitting', 'কাস্টম অলটার')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Sleeve, length & fit options', 'প্রয়োজনে সাইজ কাস্টমাইজ')}</p>
-            </div>
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">03. {t('Express Dispatch', 'দ্রুত ডিসপ্যাচ')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('Packed & dispatched in 24-48h', '২৪-৪৮ ঘণ্টায় ডেলিভারি')}</p>
-            </div>
-            <div className="p-2 sm:p-2.5 bg-[#FCFBF8]/10 hover:bg-[#FCFBF8]/15 rounded-xl border border-[#C5CBD4]/25 transition-colors">
-              <span className="text-[#DCE0E6] font-bold text-[10px] sm:text-xs uppercase tracking-wider block mb-0.5">04. {t('Exchange Guarantee', 'সহজ রিটার্ন')}</span>
-              <p className="text-[11px] sm:text-xs text-[#FCFBF8] font-medium leading-tight">{t('7-day free size exchange', '৭ দিনে ফ্রি সাইজ এক্সচেঞ্জ')}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Filter and Search Controls */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-cream-50 p-3 sm:p-4 rounded-2xl border border-cream-300 shadow-xs">
+      <div className="space-y-2.5 sm:space-y-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 bg-cream-50 p-2.5 sm:p-4 rounded-2xl border border-cream-300 shadow-xs">
           
           {/* Primary Gender Switcher Tabs */}
           <div className="grid grid-cols-3 sm:flex bg-cream-200 p-1 rounded-xl border border-cream-300 w-full sm:w-auto gap-1" role="tablist" aria-label="পোশাক ক্যাটাগরি ফিল্টার">
             <button
               onClick={() => setSelectedCategory('all')}
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 min-h-[38px] focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedCategory === 'all'
                   ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
                   : 'text-purple-950 hover:text-purple-900'
@@ -305,7 +259,7 @@ export const ReadyMadeCatalogPage: React.FC = () => {
 
             <button
               onClick={() => setSelectedCategory('panjabi')}
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 min-h-[38px] focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedCategory === 'panjabi'
                   ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
                   : 'text-purple-950 hover:text-purple-900'
@@ -317,7 +271,7 @@ export const ReadyMadeCatalogPage: React.FC = () => {
 
             <button
               onClick={() => setSelectedCategory('women-kurti')}
-              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
+              className={`flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer min-w-0 min-h-[38px] focus-visible:ring-2 focus-visible:ring-purple-950/20 ${
                 selectedCategory === 'women-kurti'
                   ? 'bg-purple-950 text-cream-50 shadow-xs font-bold'
                   : 'text-purple-950 hover:text-purple-900'
@@ -337,7 +291,7 @@ export const ReadyMadeCatalogPage: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('Search Panjabi, Shirt, Pajama...', 'পাঞ্জাবি, শার্ট বা পায়জামা খুঁজুন...')}
-                className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 placeholder:text-purple-950/50 focus:bg-cream-50 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800 transition-all"
+                className="w-full h-10 pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl border border-cream-300 bg-cream-100/50 text-purple-950 placeholder:text-purple-950/50 focus:bg-cream-50 focus:outline-none focus:ring-2 focus:ring-purple-950/20 focus:border-purple-800 transition-all"
               />
               {searchQuery && (
                 <button
@@ -353,7 +307,7 @@ export const ReadyMadeCatalogPage: React.FC = () => {
             {/* In Stock toggle button */}
             <button
               onClick={() => setOnlyInStock(!onlyInStock)}
-              className={`px-3 py-2 text-xs font-semibold rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap min-h-[38px] ${
+              className={`h-10 px-3 py-2 text-xs font-semibold rounded-xl border transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 onlyInStock
                   ? 'bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs font-bold'
                   : 'bg-cream-200 text-purple-950 border-cream-300 hover:bg-cream-300'
@@ -403,19 +357,18 @@ export const ReadyMadeCatalogPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Secondary Filter Bar: Size Chips & Active Filter Tags */}
-        <div className="bg-cream-50 p-3 sm:p-3.5 rounded-xl border border-cream-300 flex flex-wrap items-center justify-between gap-3 text-xs shadow-2xs">
-          
+        {/* Secondary Filter Bar: Horizontal Scrollable Size Chips on Mobile */}
+        <div className="bg-cream-50 p-2.5 sm:p-3.5 rounded-xl border border-cream-300 flex items-center justify-between gap-2 text-xs shadow-2xs overflow-x-auto no-scrollbar">
           {/* Sizes */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="font-semibold text-purple-950/70 mr-1 text-[11px] uppercase tracking-wider">
-              {t('Filter by Size:', 'সাইজ অনুযায়ী:')}
+          <div className="flex items-center gap-1.5 shrink-0 sm:flex-wrap">
+            <span className="font-semibold text-purple-950/70 mr-1 text-[11px] uppercase tracking-wider shrink-0">
+              {t('Size:', 'সাইজ:')}
             </span>
             {allSizes.map((s) => (
               <button
                 key={s}
                 onClick={() => setSelectedSize(selectedSize === s ? '' : s)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer min-h-[30px] ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer min-h-[32px] min-w-[34px] shrink-0 ${
                   selectedSize === s
                     ? 'bg-purple-950 text-cream-50 shadow-2xs'
                     : 'bg-cream-100 text-purple-950 border border-cream-300 hover:bg-cream-200'
@@ -430,10 +383,10 @@ export const ReadyMadeCatalogPage: React.FC = () => {
           {hasActiveFilters && (
             <button
               onClick={clearAllFilters}
-              className="text-xs text-rose-700 hover:text-rose-900 font-bold flex items-center gap-1 hover:underline cursor-pointer ml-auto sm:ml-0"
+              className="text-xs text-rose-700 hover:text-rose-900 font-bold flex items-center gap-1 hover:underline cursor-pointer shrink-0 pl-2"
             >
               <X className="w-3.5 h-3.5" />
-              <span>{t('Reset Filters', 'ফিল্টার রিসেট')}</span>
+              <span>{t('Reset', 'রিসেট')}</span>
             </button>
           )}
         </div>

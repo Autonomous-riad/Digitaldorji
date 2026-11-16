@@ -26,6 +26,7 @@ import { createNotificationFromOrder } from '../utils/orderStageMeta';
 export type AppLanguage = 'en' | 'bn';
 export type AppRole = 'customer' | 'tailor_master';
 export type AppStep = 
+  | 'home'
   | 'catalog'
   | 'fabric_catalog'
   | 'customize'
@@ -199,7 +200,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }
   };
   const [role, setRole] = useState<AppRole>('customer');
-  const [activeStep, setActiveStep] = useState<AppStep>('catalog');
+  const [activeStep, setActiveStep] = useState<AppStep>('home');
   
   // Fabrics data & active selection (Dynamically synchronized with the database)
   const [fabrics, setFabrics] = useState<FabricProduct[]>(DIGITAL_FABRICS_DATA);

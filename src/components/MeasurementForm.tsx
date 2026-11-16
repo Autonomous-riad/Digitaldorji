@@ -241,21 +241,21 @@ export const MeasurementForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Sizing Method Selection Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* Sizing Method Selection Cards - 2x2 Grid on Mobile */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Option 1: Use My Clothes (Photo + Dimensions) */}
         <button
           onClick={() => setMeasurementMethod('use_my_clothes')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
+          className={`p-3 sm:p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'use_my_clothes'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
           }`}
         >
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="w-8 h-8 rounded-lg bg-purple-950 text-cream-50 flex items-center justify-center font-bold text-xs">
-                <Shirt className="w-4 h-4 text-cream-50" />
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-950 text-cream-50 flex items-center justify-center font-bold text-xs">
+                <Shirt className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cream-50" />
               </span>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'use_my_clothes' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
@@ -263,32 +263,32 @@ export const MeasurementForm: React.FC = () => {
                 {measurementMethod === 'use_my_clothes' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
-            <h3 className="text-sm font-bold text-purple-950 mb-1 flex items-center gap-1">
-              <span>{t('Use My Clothes (Photo/Fit)', 'পছন্দের জামার ফটো ও মাপ')}</span>
+            <h3 className="text-xs sm:text-sm font-bold text-purple-950 mb-0.5 sm:mb-1 leading-snug">
+              {t('Use My Clothes', 'পছন্দের জামার মাপ')}
             </h3>
-            <p className="text-xs text-purple-950/70 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-purple-950/70 leading-relaxed line-clamp-2 hidden sm:block">
               {t('Upload a photo or input flat dimensions of a garment that fits you well.', 'আপনার পছন্দের ফিটিং জামার ছবি আপলোড করুন বা মেপে সংক্ষেপে মাপ দিন।')}
             </p>
           </div>
-          <span className="text-[11px] font-bold text-purple-950 mt-3 pt-2 border-t border-cream-300 block flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5 text-purple-800" />
-            {t('Smart Photo & Flat Reference', 'সহজ ও ফটো রেফারেন্স')}
+          <span className="text-[10px] sm:text-[11px] font-bold text-purple-950 mt-2 sm:mt-3 pt-1.5 sm:pt-2 border-t border-cream-300 flex items-center gap-1 truncate">
+            <Sparkles className="w-3 h-3 text-purple-800 shrink-0" />
+            <span className="truncate">{t('Photo / Flat Fit', 'ফটো ও মাপ')}</span>
           </span>
         </button>
 
         {/* Option 2: Custom Manual Tape Input */}
         <button
           onClick={() => setMeasurementMethod('custom_manual')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
+          className={`p-3 sm:p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'custom_manual'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
           }`}
         >
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="w-8 h-8 rounded-lg bg-cream-200 text-[#0F172A] border border-cream-300 flex items-center justify-center font-bold text-xs">
-                <Ruler className="w-4 h-4 text-[#0F172A] stroke-[2.25]" />
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cream-200 text-[#0F172A] border border-cream-300 flex items-center justify-center font-bold text-xs">
+                <Ruler className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0F172A] stroke-[2.25]" />
               </span>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'custom_manual' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
@@ -296,31 +296,31 @@ export const MeasurementForm: React.FC = () => {
                 {measurementMethod === 'custom_manual' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
-            <h3 className="text-sm font-bold text-purple-950 mb-1">
-              {t('Custom Manual Measurements', 'কাস্টম ফিতার মাপ')}
+            <h3 className="text-xs sm:text-sm font-bold text-purple-950 mb-0.5 sm:mb-1 leading-snug">
+              {t('Manual Tape Fit', 'কাস্টম ফিতার মাপ')}
             </h3>
-            <p className="text-xs text-purple-950/70 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-purple-950/70 leading-relaxed line-clamp-2 hidden sm:block">
               {t('Input exact body measurements for shoulder, chest, length, sleeves with fine steps.', 'ঝুল, বুক, হাতা, কলারের সরাসরি পরিমাপ ফিতা দিয়ে মেপে বসান।')}
             </p>
           </div>
-          <span className="text-[11px] font-bold text-purple-950 mt-3 pt-2 border-t border-cream-300 block">
-            {t('Most Recommended for Bespoke Fit', 'সবচেয়ে নিখুঁত পরিমাপ')}
+          <span className="text-[10px] sm:text-[11px] font-bold text-purple-950 mt-2 sm:mt-3 pt-1.5 sm:pt-2 border-t border-cream-300 block truncate">
+            {t('Recommended Fit', 'সবচেয়ে নিখুঁত মাপ')}
           </span>
         </button>
 
         {/* Option 3: Standard Size Presets */}
         <button
           onClick={() => setMeasurementMethod('preset_size')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
+          className={`p-3 sm:p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'preset_size'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
           }`}
         >
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="w-8 h-8 rounded-lg bg-cream-200 text-[#0F172A] border border-cream-300 flex items-center justify-center font-bold text-xs">
-                <Layers className="w-4 h-4 text-[#0F172A] stroke-[2.25]" />
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-cream-200 text-[#0F172A] border border-cream-300 flex items-center justify-center font-bold text-xs">
+                <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0F172A] stroke-[2.25]" />
               </span>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'preset_size' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
@@ -328,14 +328,14 @@ export const MeasurementForm: React.FC = () => {
                 {measurementMethod === 'preset_size' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
-            <h3 className="text-sm font-bold text-purple-950 mb-1">
-              {t('Standard Size Preset (S, M, L, XL)', 'রেডি সাইজ প্রিসেট')}
+            <h3 className="text-xs sm:text-sm font-bold text-purple-950 mb-0.5 sm:mb-1 leading-snug">
+              {t('Standard Size (S–XXL)', 'রেডি সাইজ প্রিসেট')}
             </h3>
-            <p className="text-xs text-purple-950/70 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-purple-950/70 leading-relaxed line-clamp-2 hidden sm:block">
               {t('Pick standard S, M, L, XL or XXL and fine-tune individual numbers.', 'স্ট্যান্ডার্ড সাইজ বেছে নিন এবং চাইলে নির্দিষ্ট মাপ বদলান।')}
             </p>
           </div>
-          <span className="text-[11px] font-bold text-purple-950 mt-3 pt-2 border-t border-cream-300 block">
+          <span className="text-[10px] sm:text-[11px] font-bold text-purple-950 mt-2 sm:mt-3 pt-1.5 sm:pt-2 border-t border-cream-300 block truncate">
             {t('Quick 1-Click Setup', 'সহজ ও দ্রুত নির্বাচন')}
           </span>
         </button>
@@ -343,16 +343,16 @@ export const MeasurementForm: React.FC = () => {
         {/* Option 4: Send Sample Reference Clothing */}
         <button
           onClick={() => setMeasurementMethod('reference_sample')}
-          className={`p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
+          className={`p-3 sm:p-4 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out ${
             measurementMethod === 'reference_sample'
               ? 'border-purple-950 bg-cream-100 ring-2 ring-purple-950/20 shadow-xs'
               : 'border-cream-300 bg-cream-50 hover:border-purple-800'
           }`}
         >
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
-                <Truck className="w-4 h-4 text-emerald-800" />
+            <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">
+                <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-800" />
               </span>
               <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
                 measurementMethod === 'reference_sample' ? 'bg-purple-950 border-purple-950 text-cream-50' : 'border-cream-300'
@@ -360,23 +360,23 @@ export const MeasurementForm: React.FC = () => {
                 {measurementMethod === 'reference_sample' && <Check className="w-3 h-3 animate-checkmarkPop" />}
               </div>
             </div>
-            <h3 className="text-sm font-bold text-purple-950 mb-1 flex items-center gap-1.5">
-              <span>{t('Provide Sample Cloth as Reference', 'স্যাম্পল জামা পিকআপ')}</span>
+            <h3 className="text-xs sm:text-sm font-bold text-purple-950 mb-0.5 sm:mb-1 leading-snug">
+              {t('Sample Pickup', 'স্যাম্পল জামা পিকআপ')}
             </h3>
-            <p className="text-xs text-purple-950/70 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-purple-950/70 leading-relaxed line-clamp-2 hidden sm:block">
               {t('Our runner collects your physical garment from home to duplicate fit.', 'আমাদের রাইডার বাসা থেকে স্যাম্পল জামা নিয়ে টেইলারকে বুঝিয়ে দেবে।')}
             </p>
           </div>
-          <span className="text-[11px] font-bold text-emerald-800 mt-3 pt-2 border-t border-cream-300 block flex items-center gap-1">
-            <Truck className="w-3 h-3 text-emerald-700" />
-            {t('100% Guaranteed Exact Fit', '১০০% গ্যারান্টিযুক্ত ফিটিং')}
+          <span className="text-[10px] sm:text-[11px] font-bold text-emerald-800 mt-2 sm:mt-3 pt-1.5 sm:pt-2 border-t border-cream-300 flex items-center gap-1 truncate">
+            <Truck className="w-3 h-3 text-emerald-700 shrink-0" />
+            <span className="truncate">{t('100% Exact Fit', '১০০% গ্যারান্টি ফিট')}</span>
           </span>
         </button>
       </div>
 
       {/* Profile quick load bar if matching profiles exist */}
       {matchingProfiles.length > 0 && (
-        <div className="bg-orange-50/40 p-4 rounded-xl border border-orange-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="bg-orange-50/40 p-3.5 sm:p-4 rounded-xl border border-orange-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 sm:gap-3">
           <div className="flex items-center gap-2 text-xs text-purple-900">
             <BookmarkCheck className="w-4 h-4 text-orange-600 shrink-0" />
             <span className="font-bold">{t('Saved Profiles available for this garment:', 'এই পোশাকের জন্য সেভ করা প্রোফাইল আছে:')}</span>
@@ -406,20 +406,20 @@ export const MeasurementForm: React.FC = () => {
 
       {/* 1. CUSTOM MANUAL INCH/CM FIELDS & PRESET SIZES */}
       {(measurementMethod === 'custom_manual' || measurementMethod === 'preset_size') && (
-        <div className="bg-white rounded-2xl border border-stone-200 p-4 sm:p-6 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl border border-stone-200 p-3.5 sm:p-6 shadow-xs space-y-5 sm:space-y-6">
           {/* Preset size quick toggle row */}
           {activeGarment.sizePresets && Object.keys(activeGarment.sizePresets).length > 0 && (
-            <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="p-3.5 sm:p-4 bg-stone-50 rounded-xl border border-stone-200 space-y-2.5">
+              <div className="flex items-center justify-between gap-2">
                 <span className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5 text-amber-700" />
                   {t('Quick Base Size Preset:', 'স্ট্যান্ডার্ড রেডি সাইজ:')}
                 </span>
-                <span className="text-[11px] text-amber-900 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                  {t('Auto-fills all fields', 'সব মাপ পূরণ হবে')}
+                <span className="text-[10px] sm:text-[11px] text-amber-900 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200 shrink-0">
+                  {t('Auto-fills all', 'সব মাপ পূরণ হবে')}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
                 {Object.keys(activeGarment.sizePresets).map(presetKey => {
                   const isSelected = selectedSizePreset === presetKey;
                   return (
@@ -427,7 +427,7 @@ export const MeasurementForm: React.FC = () => {
                       key={presetKey}
                       type="button"
                       onClick={() => applySizePreset(presetKey)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 min-h-[38px] ${
                         isSelected
                           ? 'bg-amber-900 text-white shadow-xs ring-2 ring-amber-700/30'
                           : 'bg-white text-stone-800 border border-stone-200 hover:bg-amber-50 hover:border-amber-300'
@@ -448,11 +448,11 @@ export const MeasurementForm: React.FC = () => {
           )}
 
           {/* Fit Silhouette Profile (Slim / Regular / Comfort) */}
-          <div className="p-4 bg-stone-50/70 rounded-xl border border-stone-200 space-y-2.5">
-            <div className="flex items-center justify-between">
+          <div className="p-3.5 sm:p-4 bg-stone-50/70 rounded-xl border border-stone-200 space-y-2.5">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1">
               <span className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
                 <Shirt className="w-3.5 h-3.5 text-amber-800" />
-                {t('Desired Wearing Comfort & Silhouette (ফিটিং স্বাচ্ছন্দ্য):', 'ফিটিং স্বাচ্ছন্দ্য:')}
+                {t('Wearing Comfort & Fit:', 'ফিটিং স্বাচ্ছন্দ্য:')}
               </span>
               <span className="text-[11px] text-amber-900 font-semibold">
                 {fitSilhouette === 'slim' && t('Body Contoured (-0.5" ease)', 'বডি ফিট (-০.৫" লুজ)')}
@@ -463,22 +463,22 @@ export const MeasurementForm: React.FC = () => {
 
             <div className="grid grid-cols-3 gap-2">
               {[
-                { id: 'slim', labelEn: 'Slim / Modern', labelBn: 'স্লিম ফিট', desc: 'Sharp silhouette' },
-                { id: 'regular', labelEn: 'Standard Regular', labelBn: 'রেগুলার ক্লাসিক', desc: 'Timeless drape' },
-                { id: 'comfort', labelEn: 'Comfort / Relaxed', labelBn: 'লুজ / কমফোর্ট', desc: 'Airy & spacious' },
+                { id: 'slim', labelEn: 'Slim Fit', labelBn: 'স্লিম ফিট', desc: 'Sharp cut' },
+                { id: 'regular', labelEn: 'Regular', labelBn: 'রেগুলার ফিট', desc: 'Classic drape' },
+                { id: 'comfort', labelEn: 'Comfort', labelBn: 'লুজ / কমফোর্ট', desc: 'Relaxed fit' },
               ].map((fit) => (
                 <button
                   key={fit.id}
                   type="button"
                   onClick={() => setFitSilhouette(fit.id as any)}
-                  className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+                  className={`p-2 sm:p-2.5 rounded-xl border text-center transition-all cursor-pointer min-h-[44px] flex flex-col items-center justify-center ${
                     fitSilhouette === fit.id
                       ? 'bg-amber-900 text-white border-amber-900 shadow-xs font-bold'
                       : 'bg-white text-stone-800 border-stone-200 hover:bg-stone-100/60'
                   }`}
                 >
                   <span className="block text-xs font-bold leading-tight">{t(fit.labelEn, fit.labelBn)}</span>
-                  <span className={`text-[10px] block mt-0.5 ${fitSilhouette === fit.id ? 'text-cream-100' : 'text-stone-600'}`}>
+                  <span className={`text-[10px] hidden sm:block mt-0.5 ${fitSilhouette === fit.id ? 'text-cream-100' : 'text-stone-600'}`}>
                     {fit.desc}
                   </span>
                 </button>
@@ -489,12 +489,12 @@ export const MeasurementForm: React.FC = () => {
           {/* Header Bar with Points count and Guide Toggle */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
+              <h3 className="text-sm sm:text-base font-bold text-stone-900 flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-800"></span>
                 {t(`Garment Measurement Specifications (${displayUnit.toUpperCase()})`, `পোশাকের প্রতিটি অংশের সুনির্দিষ্ট মাপ (${displayUnit === 'inch' ? 'ইঞ্চিতে' : 'সেমিতে'})`)}
               </h3>
               <p className="text-[11px] text-stone-500 mt-0.5">
-                {t('Hover over any field below to view animated step-by-step visual measuring guidance.', 'যেকোনো মাপের বক্সে মাউস ধরুন (হোভার করুন) অ্যানিমেটেড চিত্রসহ মাপার নিয়ম দেখার জন্য।')}
+                {t('Tap or hover any field below to view step-by-step visual measuring guidance.', 'যেকোনো মাপের বক্সে ট্যাপ বা মাউস ধরুন চিত্রসহ মাপার নিয়ম দেখার জন্য।')}
               </p>
             </div>
 

@@ -87,33 +87,33 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       {/* Product Body: flex-1 column with padding matching tailoring ItemCard */}
-      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2.5">
-        <div className="space-y-1.5">
+      <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between space-y-2 sm:space-y-2.5">
+        <div className="space-y-1 sm:space-y-1.5">
           {/* Category & Rating Subheader */}
-          <div className="flex items-center justify-between text-[11px] sm:text-xs font-mono font-semibold text-[#3B4454] uppercase tracking-wider line-clamp-1">
+          <div className="flex items-center justify-between text-[10px] sm:text-xs font-mono font-semibold text-[#3B4454] uppercase tracking-wider line-clamp-1">
             <span className="truncate">{product.category}</span>
-            <div className="flex items-center gap-1 text-purple-950 font-sans font-bold shrink-0 ml-1">
-              <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+            <div className="flex items-center gap-0.5 sm:gap-1 text-purple-950 font-sans font-bold shrink-0 ml-1">
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 fill-amber-500" />
               <span>{product.rating.toFixed(1)}</span>
-              <span className="text-[11px] text-[#4B5565]">({product.review_count})</span>
+              <span className="text-[10px] sm:text-[11px] text-[#4B5565] hidden xs:inline">({product.review_count})</span>
             </div>
           </div>
 
           {/* Bilingual Title Area: min-height identical to ItemCard */}
-          <div className="min-h-[2.6rem] sm:min-h-[3.4rem] flex flex-col justify-start">
+          <div className="min-h-[2.4rem] sm:min-h-[3.4rem] flex flex-col justify-start">
             <h3 
               onClick={() => navigate(`/ready-made/${product.slug}`)}
-              className="font-bold text-sm sm:text-[17px] font-serif-title text-purple-950 leading-snug sm:leading-normal line-clamp-2 cursor-pointer group-hover:text-purple-800 transition-colors"
+              className="font-bold text-xs sm:text-[17px] font-serif-title text-purple-950 leading-snug sm:leading-normal line-clamp-2 cursor-pointer group-hover:text-purple-800 transition-colors"
             >
               {lang === 'bn' ? product.name_bn : product.name_en}
             </h3>
             {lang === 'en' && product.name_bn && (
-              <span className="text-xs text-[#3B4454] font-medium line-clamp-1 leading-relaxed font-bengali">
+              <span className="text-[11px] sm:text-xs text-[#3B4454] font-medium line-clamp-1 leading-relaxed font-bengali">
                 {product.name_bn}
               </span>
             )}
             {lang === 'bn' && product.name_en && (
-              <span className="text-xs text-[#3B4454] font-medium line-clamp-1 leading-relaxed">
+              <span className="text-[11px] sm:text-xs text-[#3B4454] font-medium line-clamp-1 leading-relaxed">
                 {product.name_en}
               </span>
             )}
@@ -124,15 +124,22 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {lang === 'bn' ? product.description_bn : product.description_en}
           </p>
 
-          {/* Specs / Meta Pill Container: 2-column grid identical to ItemCard */}
-          <div className="grid grid-cols-1 gap-1.5 xs:grid-cols-2 sm:grid-cols-2 sm:gap-2 text-xs">
-            <div className="flex items-center justify-between px-2 py-1.5 sm:p-2 rounded-lg bg-cream-200/90 border border-cream-300">
+          {/* Specs / Meta Pill Container */}
+          {/* Compact single-line pill on mobile */}
+          <div className="sm:hidden flex items-center justify-between px-2 py-1 rounded-lg bg-cream-200/90 border border-cream-300 text-[11px] font-semibold text-purple-950">
+            <span className="truncate">{product.available_sizes?.slice(0, 3).join(', ') || 'S-XL'}</span>
+            <span className="text-cream-400">•</span>
+            <span className="shrink-0">{lang === 'bn' ? '২৪-৪৮ঘ' : '24-48h'}</span>
+          </div>
+          {/* 2-box grid on tablet/desktop */}
+          <div className="hidden sm:grid sm:grid-cols-2 sm:gap-2 text-xs">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-cream-200/90 border border-cream-300">
               <span className="text-[#3B4454] font-medium truncate">{t('Sizes:', 'সাইজ:')}</span>
               <span className="font-bold text-purple-950 truncate ml-1">
                 {product.available_sizes?.slice(0, 3).join(', ') || 'S-XL'}
               </span>
             </div>
-            <div className="flex items-center justify-between px-2 py-1.5 sm:p-2 rounded-lg bg-cream-200/90 border border-cream-300">
+            <div className="flex items-center justify-between p-2 rounded-lg bg-cream-200/90 border border-cream-300">
               <span className="text-[#3B4454] font-medium truncate">{t('Dispatch:', 'ডেলিভারি:')}</span>
               <span className="font-bold text-purple-950 shrink-0 ml-1">
                 {lang === 'bn' ? '২৪-৪৮ঘ' : '24-48h'}
@@ -142,28 +149,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Pricing and Actions: bottom aligned with mt-auto */}
-        <div className="mt-auto pt-2.5 border-t border-cream-300 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+        <div className="mt-auto pt-2 sm:pt-2.5 border-t border-cream-300 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
           <div className="flex items-baseline justify-between sm:block">
-            <span className="text-[11px] font-medium text-[#3B4454] block leading-none mb-0.5">
-              {isSale ? t('Special Price', 'অফার মূল্য') : t('Price', 'মূল্য')}
+            <span className="text-[10px] sm:text-[11px] font-medium text-[#3B4454] block leading-none mb-0.5">
+              {isSale ? t('Offer', 'অফার মূল্য') : t('Price', 'মূল্য')}
             </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-base sm:text-lg font-extrabold text-purple-950 font-mono leading-tight">
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm sm:text-lg font-extrabold text-purple-950 font-mono leading-tight">
                 {formatBDT(product.sale_price ?? product.base_price, { useBanglaNumerals: lang === 'bn' })}
               </span>
               {isSale && (
-                <span className="text-xs text-[#656B60] line-through font-mono">
+                <span className="text-[10px] sm:text-xs text-[#656B60] line-through font-mono">
                   {formatBDT(product.base_price, { useBanglaNumerals: lang === 'bn' })}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-1.5 w-full sm:w-auto">
+          <div className="flex items-center gap-1.5 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => navigate(`/ready-made/${product.slug}`)}
-              className="flex-1 sm:flex-none px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-cream-200 hover:bg-cream-300 text-purple-950 text-[10px] sm:text-xs font-semibold transition-colors cursor-pointer min-h-[34px] sm:min-h-[40px] flex items-center justify-center whitespace-nowrap"
+              className="hidden sm:flex px-3 py-2 rounded-xl bg-cream-200 hover:bg-cream-300 text-purple-950 text-xs font-semibold transition-colors cursor-pointer min-h-[40px] items-center justify-center whitespace-nowrap"
               title={t('View Details', 'বিস্তারিত')}
             >
               <span>{t('Details', 'বিস্তারিত')}</span>
@@ -173,13 +180,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               type="button"
               onClick={() => navigate(`/ready-made/${product.slug}`)}
               disabled={isOutOfStock}
-              className={`flex-1 sm:flex-none px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-xs cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out min-h-[34px] sm:min-h-[40px] whitespace-nowrap ${
+              className={`w-full sm:w-auto px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer active:scale-[0.98] transition-transform duration-100 ease-out min-h-[38px] sm:min-h-[40px] whitespace-nowrap ${
                 isOutOfStock
                   ? 'bg-cream-300 text-purple-950/40 cursor-not-allowed'
                   : 'bg-purple-950 hover:bg-purple-900 active:bg-purple-950 text-cream-50'
               }`}
             >
-              <ShoppingBag className="w-3.5 h-3.5 text-cream-50" />
+              <ShoppingBag className="w-3.5 h-3.5 text-cream-50 shrink-0" />
               <span>{isOutOfStock ? t('Sold Out', 'স্টক শেষ') : t('Buy / Cart', 'কিনুন')}</span>
             </button>
           </div>

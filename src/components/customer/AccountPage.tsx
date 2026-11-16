@@ -274,12 +274,7 @@ export const AccountPage: React.FC = () => {
             {user?.name ? user.name[0].toUpperCase() : 'C'}
           </div>
           <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold font-serif-title text-white">{user?.name || 'Customer'}</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-cream-50 text-[#0F172A]">
-                {t('Unified Customer Account', 'এক অ্যাকাউন্টে সব সার্ভিস')}
-              </span>
-            </div>
+            <h1 className="text-xl sm:text-2xl font-bold font-serif-title text-white">{user?.name || 'Customer'}</h1>
             <p className="text-xs text-slate-200 mt-1 flex flex-wrap items-center gap-3">
               <span className="flex items-center gap-1"><Phone className="w-3.5 h-3.5 text-slate-200" /> {user?.phone || 'No Phone'}</span>
               {user?.email && <span className="flex items-center gap-1"><Mail className="w-3.5 h-3.5 text-slate-200" /> {user.email}</span>}
@@ -303,81 +298,6 @@ export const AccountPage: React.FC = () => {
             <span>{t('Sign Out', 'লগআউট')}</span>
           </button>
         </div>
-      </div>
-
-      {/* 3 BUSINESS DIVISIONS — 1-CLICK SERVICE LAUNCHERS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button
-          type="button"
-          onClick={() => handleStartService('own_fabric')}
-          className="p-4 rounded-2xl bg-cream-50 hover:bg-white border border-cream-300 hover:border-purple-950 text-left transition-all shadow-xs flex items-start justify-between gap-3 group cursor-pointer"
-        >
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-xl bg-purple-950 text-white flex items-center justify-center shrink-0">
-                <Scissors className="w-4 h-4 text-white" />
-              </span>
-              <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-cream-200 text-[#0F172A]">
-                {t('3km Oxygen Pickup', '৩ কি.মি. হোম পিকআপ')}
-              </span>
-            </div>
-            <h3 className="text-sm font-bold text-purple-950 pt-1">
-              {t('1. Custom Tailoring (Own Fabric)', '১. নিজের কাপড় দিয়ে সেলাই অর্ডার')}
-            </h3>
-            <p className="text-xs text-purple-950/70">
-              {t('Select design & measurements — our rider collects your fabric from home.', 'ডিজাইন ও মাপ দিন, আমাদের রাইডার বাসা থেকে কাপড় সংগ্রহ করবে।')}
-            </p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-purple-950 shrink-0 mt-1 group-hover:translate-x-1 transition-transform" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleStartService('shop_fabric')}
-          className="p-4 rounded-2xl bg-cream-50 hover:bg-white border border-cream-300 hover:border-purple-950 text-left transition-all shadow-xs flex items-start justify-between gap-3 group cursor-pointer"
-        >
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-xl bg-purple-950 text-white flex items-center justify-center shrink-0">
-                <Layers className="w-4 h-4 text-white" />
-              </span>
-              <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-cream-200 text-[#0F172A]">
-                {t('Fabric + Stitching', 'কাপড় + সেলাই')}
-              </span>
-            </div>
-            <h3 className="text-sm font-bold text-purple-950 pt-1">
-              {t('2. Buy Shop Fabric + Tailoring', '২. দোকানের কাপড় কিনে সেলাই')}
-            </h3>
-            <p className="text-xs text-purple-950/70">
-              {t('Choose fabric in Gaz + bespoke tailoring — delivered nationwide.', 'পছন্দের গজ কাপড় ও ডিজাইন বেছে নিন — সারাদেশে ডেলিভারি।')}
-            </p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-purple-950 shrink-0 mt-1 group-hover:translate-x-1 transition-transform" />
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleStartService('ready_made')}
-          className="p-4 rounded-2xl bg-cream-50 hover:bg-white border border-cream-300 hover:border-purple-950 text-left transition-all shadow-xs flex items-start justify-between gap-3 group cursor-pointer"
-        >
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-xl bg-purple-950 text-white flex items-center justify-center shrink-0">
-                <Shirt className="w-4 h-4 text-white" />
-              </span>
-              <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900">
-                {t('Nationwide Delivery', 'সারাদেশে কুরিয়ার')}
-              </span>
-            </div>
-            <h3 className="text-sm font-bold text-purple-950 pt-1">
-              {t('3. Ready-Made Clothing Store', '৩. রেডিমেড পোশাক কিনুন')}
-            </h3>
-            <p className="text-xs text-purple-950/70">
-              {t('Pick size (S–XXL) & order directly with fast courier delivery.', 'সাইজ বেছে সরাসরি অর্ডার করুন — সারা বাংলাদেশে হোম ডেলিভারি।')}
-            </p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-purple-950 shrink-0 mt-1 group-hover:translate-x-1 transition-transform" />
-        </button>
       </div>
 
       {/* Unified Account Summary & Payment Ledger KPIs */}
@@ -410,52 +330,52 @@ export const AccountPage: React.FC = () => {
       </div>
 
       {/* Account Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-cream-300 pb-2 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-cream-300 pb-2 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('orders')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap min-h-[42px] shrink-0 ${
             activeTab === 'orders'
               ? 'bg-purple-950 text-cream-50 shadow-xs'
               : 'text-purple-950 hover:bg-cream-200'
           }`}
         >
-          <ShoppingBag className="w-4 h-4" />
+          <ShoppingBag className="w-4 h-4 shrink-0" />
           <span>{t('Orders, Payments & Live Status', 'অর্ডার, পেমেন্ট ও লাইভ স্ট্যাটাস')} ({allOrders.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('measurements')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap min-h-[42px] shrink-0 ${
             activeTab === 'measurements'
               ? 'bg-purple-950 text-cream-50 shadow-xs'
               : 'text-purple-950 hover:bg-cream-200'
           }`}
         >
-          <Ruler className="w-4 h-4" />
+          <Ruler className="w-4 h-4 shrink-0" />
           <span>{t('Saved Measurements', 'নিজের মাপ সংরক্ষণ')} ({measurementProfiles.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('addresses')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap min-h-[42px] shrink-0 ${
             activeTab === 'addresses'
               ? 'bg-purple-950 text-cream-50 shadow-xs'
               : 'text-purple-950 hover:bg-cream-200'
           }`}
         >
-          <MapPin className="w-4 h-4" />
+          <MapPin className="w-4 h-4 shrink-0" />
           <span>{t('Saved Addresses', 'একাধিক ঠিকানা সংরক্ষণ')} ({addresses.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('profile')}
-          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap ${
+          className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap min-h-[42px] shrink-0 ${
             activeTab === 'profile'
               ? 'bg-purple-950 text-cream-50 shadow-xs'
               : 'text-purple-950 hover:bg-cream-200'
           }`}
         >
-          <User className="w-4 h-4" />
+          <User className="w-4 h-4 shrink-0" />
           <span>{t('Account Profile', 'প্রোফাইল বিবরণ')}</span>
         </button>
       </div>
@@ -465,12 +385,12 @@ export const AccountPage: React.FC = () => {
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <h2 className="text-base font-bold text-purple-950 font-serif-title flex items-center gap-2">
-              <Package className="w-5 h-5 text-purple-950" />
+              <Package className="w-5 h-5 text-purple-950 shrink-0" />
               <span>{t('All Orders, Payment Ledger & Live Tracking', 'সকল অর্ডার, পেমেন্ট হিসাব ও লাইভ স্ট্যাটাস')}</span>
             </h2>
 
-            {/* Division Filter Pills */}
-            <div className="flex flex-wrap items-center gap-1.5 bg-cream-100 p-1 rounded-xl border border-cream-300 text-xs">
+            {/* Division Filter Pills - Horizontal scroll on mobile */}
+            <div className="flex items-center gap-1.5 bg-cream-100 p-1 rounded-xl border border-cream-300 text-xs overflow-x-auto no-scrollbar">
               {[
                 { id: 'all', labelEn: 'All Services', labelBn: 'সব সার্ভিস' },
                 { id: 'custom_own_fabric', labelEn: 'Own Fabric', labelBn: 'নিজের কাপড়' },
@@ -481,7 +401,7 @@ export const AccountPage: React.FC = () => {
                   key={tab.id}
                   type="button"
                   onClick={() => setOrderDivisionFilter(tab.id as any)}
-                  className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 min-h-[34px] ${
                     orderDivisionFilter === tab.id
                       ? 'bg-purple-950 text-white shadow-2xs'
                       : 'text-purple-950/70 hover:text-purple-950'

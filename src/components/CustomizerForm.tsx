@@ -71,7 +71,7 @@ export const CustomizerForm: React.FC = () => {
 
   const [activeCompareGroup, setActiveCompareGroup] = useState<GarmentCustomizationGroup | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'detailed'>('grid');
-  const [showMobileVisualizer, setShowMobileVisualizer] = useState(true);
+  const [showMobileVisualizer, setShowMobileVisualizer] = useState(false);
   const [showFloatingPreviewModal, setShowFloatingPreviewModal] = useState(false);
   const [selectedGroupTab, setSelectedGroupTab] = useState<string>('all');
   const [appliedPresetToast, setAppliedPresetToast] = useState<string | null>(null);
@@ -347,8 +347,8 @@ export const CustomizerForm: React.FC = () => {
                   )}
                 </div>
 
-                {/* Presets Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Presets Grid - Horizontal Swipe Strip on Mobile, 3-Column Grid on Tablet/Desktop */}
+                <div className="flex sm:grid sm:grid-cols-3 gap-2.5 sm:gap-3 overflow-x-auto no-scrollbar pb-1 snap-x">
                   {presets.map((preset) => {
                     const active = isPresetActive(preset);
 
@@ -356,7 +356,7 @@ export const CustomizerForm: React.FC = () => {
                       <div
                         key={preset.id}
                         onClick={() => applyPreset(preset)}
-                        className={`p-3.5 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer group ${
+                        className={`min-w-[235px] sm:min-w-0 snap-start p-3 sm:p-3.5 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer group shrink-0 ${
                           active
                             ? 'border-[#2C3A52] bg-[#E8ECF2]/70 ring-2 ring-[#2C3A52]/20 shadow-xs'
                             : 'border-[#DCE0E6] bg-[#F6F4EF] hover:bg-[#EFECE6] hover:border-[#9BA3B0]'

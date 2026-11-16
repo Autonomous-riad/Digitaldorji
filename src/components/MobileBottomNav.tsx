@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTailor } from '../context/TailorContext';
 import { useRouter } from '../context/RouterContext';
 import { useReadyMadeCart } from '../context/ReadyMadeCartContext';
-import { Scissors, Layers, Shirt, ShoppingBag, ArrowRight, X } from 'lucide-react';
+import { Scissors, Layers, Shirt, ShoppingBag, ArrowRight, X, Home } from 'lucide-react';
 
 export const MobileBottomNav: React.FC = () => {
   const { 
@@ -22,11 +22,12 @@ export const MobileBottomNav: React.FC = () => {
   }
 
   // Authoritative single active tab resolution (guarantees mutual exclusion: only one tab can be selected at a time)
-  const getActiveTab = (): 'tailoring' | 'fabrics' | 'clothes' | 'cart' | null => {
+  const getActiveTab = (): 'home' | 'tailoring' | 'fabrics' | 'clothes' | 'cart' | null => {
     if (isCartOpen) return 'cart';
     if (currentPath.startsWith('/ready-made')) return 'clothes';
-    if (currentPath === '/fabric-catalog' || (currentPath === '/' && activeStep === 'fabric_catalog')) return 'fabrics';
-    if ((currentPath === '/' || currentPath === '/catalog') && activeStep === 'catalog') return 'tailoring';
+    if (currentPath === '/fabric-catalog' || activeStep === 'fabric_catalog') return 'fabrics';
+    if (currentPath === '/catalog' || (currentPath === '/' && activeStep === 'catalog')) return 'tailoring';
+    if (currentPath === '/' && activeStep === 'home') return 'home';
     return null;
   };
 
@@ -68,13 +69,37 @@ export const MobileBottomNav: React.FC = () => {
       )}
 
       {/* Core Tab Buttons matching the Main Header */}
-      <div className="grid grid-cols-4 gap-1" role="navigation" aria-label="মোবাইল নেভিগেশন (Mobile Navigation)">
+      <div className="grid grid-cols-5 gap-1" role="navigation" aria-label="মোবাইল নেভিগেশন (Mobile Navigation)">
+        {/* Tab 0: হোম (Home) */}
+        <button
+          onClick={() => {
+            setIsCartOpen(false);
+            setActiveStep('home');
+            navigate('/');
+          }}
+          aria-label="হোম (Home)"
+          className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all cursor-pointer min-h-[42px] focus-visible:ring-2 focus-visible:ring-[#2C3A52] ${
+            activeTab === 'home'
+              ? 'bg-[#E8ECF2] text-[#1E2530] font-bold shadow-2xs border border-[#C5CBD4]'
+              : 'text-[#5C6677] hover:text-[#1E2530] active:scale-95'
+          }`}
+        >
+          <div className="relative">
+            <Home className={`w-4 h-4 transition-transform ${
+              activeTab === 'home' ? 'text-[#2C3A52] scale-110' : 'text-[#5C6677]'
+            }`} />
+          </div>
+          <span className="text-[10px] mt-0.5 font-semibold tracking-tight">
+            {t('Home', 'হোম')}
+          </span>
+        </button>
+
         {/* Tab 1: সেলাই (Tailoring / Garments Catalog) */}
         <button
           onClick={() => {
             setIsCartOpen(false);
             setActiveStep('catalog');
-            navigate('/');
+            navigate('/catalog');
           }}
           aria-label="সেলাই (Tailoring)"
           className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all cursor-pointer min-h-[42px] focus-visible:ring-2 focus-visible:ring-[#2C3A52] ${

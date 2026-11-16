@@ -52,50 +52,6 @@ export const CustomerDashboard: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-      {/* Welcome Banner */}
-      <div className="bg-purple-950 rounded-3xl p-6 sm:p-8 text-cream-50 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative overflow-hidden border border-purple-900">
-        <div className="space-y-2 z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream-50/15 backdrop-blur-xs text-xs font-semibold text-cream-200">
-            <Sparkles className="w-3.5 h-3.5 text-purple-300" />
-            <span>{t('Welcome to Digital Dorji Atelier Client Portal', 'ডিজিটাল দর্জি ক্লায়েন্ট পোর্টালে স্বাগতম')}</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold font-serif-title text-cream-50">
-            {t('Hello,', 'আসসালামু আলাইকুম,')} {user?.name || 'Valued Client'}
-          </h1>
-          <p className="text-sm text-cream-200 max-w-xl">
-            {t(
-              'Track your bespoke tailoring orders, schedule doorstep fabric collection, and manage your precision measurement profiles.',
-              'আপনার সেলাই অর্ডারের লাইভ অগ্রগতি দেখুন, ডোরস্টেপ কাপড় সংগ্রহের রিকোয়েস্ট করুন এবং মাপের প্রোফাইল সংরক্ষণ করুন।'
-            )}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap gap-3 z-10">
-          <button
-            onClick={() => {
-              setActiveStep('catalog');
-              navigate('/catalog');
-            }}
-            aria-label={t('Order new tailoring', 'নতুন পোশাক সেলাই দিন')}
-            className="px-5 py-3 bg-cream-50 text-purple-950 hover:bg-cream-200 font-bold rounded-2xl text-xs sm:text-sm shadow-md flex items-center gap-2 cursor-pointer transition-all transform hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-purple-300 focus-visible:outline-none"
-          >
-            <Scissors className="w-4 h-4 text-purple-950" />
-            <span>{t('Order New Tailoring', 'নতুন পোশাক সেলাই দিন')}</span>
-          </button>
-          <button
-            onClick={() => {
-              setActiveStep('pickup_details');
-              navigate('/pickup');
-            }}
-            aria-label={t('Book fabric pickup', 'কাপড় সংগ্রহের বুকিং')}
-            className="px-4 py-3 bg-purple-900 hover:bg-purple-800 backdrop-blur-xs text-cream-50 font-semibold rounded-2xl text-xs sm:text-sm border border-purple-700 flex items-center gap-2 cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-cream-100 focus-visible:outline-none"
-          >
-            <Truck className="w-4 h-4" />
-            <span>{t('Book Fabric Pickup', 'কাপড় সংগ্রহের বুকিং')}</span>
-          </button>
-        </div>
-      </div>
-
       {/* Quick Statistics Grid */}
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4" aria-busy="true">
@@ -343,28 +299,6 @@ export const CustomerDashboard: React.FC = () => {
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{t('Add New Measurement Profile', 'নতুন মাপ যোগ করুন')}</span>
-            </button>
-          </div>
-
-          {/* Doorstep Pickup CTA Card */}
-          <div className="bg-cream-50 rounded-2xl border border-cream-300 p-5 space-y-3 shadow-2xs">
-            <div className="w-10 h-10 rounded-xl bg-purple-950 text-white flex items-center justify-center">
-              <Truck className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-purple-950">
-                {t('Need fabric picked up from your home?', 'বাসা থেকে কাপড় সংগ্রহ প্রয়োজন?')}
-              </h4>
-              <p className="text-xs text-purple-950/75 mt-1">
-                {t('Our dedicated rider collects unstitched fabric within 3km of Oxygen, Chattogram — and we deliver ready-made & shop-fabric garments nationwide across Bangladesh.', 'অক্সিজেন, চট্টগ্রামের ৩ কি.মি. এরিয়ায় আমাদের নিজস্ব রাইডার বাসা থেকে কাপড় সংগ্রহ করে এবং দোকানের কাপড় ও রেডিমেড পোশাক সারাদেশে কুরিয়ারে ডেলিভারি দেওয়া হয়।')}
-              </p>
-            </div>
-            <button
-              onClick={() => navigate('/account')}
-              className="w-full py-2.5 bg-purple-950 hover:bg-purple-900 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-            >
-              <span>{t('Open Unified Customer Panel', 'পূর্ণাঙ্গ কাস্টমার প্যানেল খুলুন')}</span>
-              <ArrowRight className="w-3.5 h-3.5 text-white" />
             </button>
           </div>
         </div>

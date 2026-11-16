@@ -85,7 +85,7 @@ export const MobileBottomActionBar: React.FC<MobileBottomActionBarProps> = ({
           <button
             type="button"
             onClick={onOpenPreview}
-            className="h-10 px-3 bg-[#EFECE6] hover:bg-[#E8ECF2] text-[#1E2530] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 border border-[#C5CBD4]"
+            className="h-11 px-3.5 bg-[#EFECE6] hover:bg-[#E8ECF2] text-[#1E2530] rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 border border-[#C5CBD4]"
             title={t('Live Preview', 'লাইভ প্রিভিউ')}
           >
             <span>{t('2D Live', 'প্রিভিউ')}</span>
@@ -97,7 +97,7 @@ export const MobileBottomActionBar: React.FC<MobileBottomActionBarProps> = ({
           type="button"
           disabled={isProcessing}
           onClick={handleNextClick}
-          className="flex-1 max-w-[210px] h-10 sm:h-11 bg-[#2C3A52] hover:bg-[#1F2A3D] active:bg-[#161F2E] text-[#FCFBF8] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98] transition-transform duration-100 ease-out cursor-pointer disabled:opacity-50 border border-[#243044]"
+          className="flex-1 max-w-[215px] h-11 bg-[#2C3A52] hover:bg-[#1F2A3D] active:bg-[#161F2E] text-[#FCFBF8] rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-[0.98] transition-transform duration-100 ease-out cursor-pointer disabled:opacity-50 border border-[#243044]"
         >
           {step === 'measurements' && (
             <>
