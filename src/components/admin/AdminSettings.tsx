@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { adminApi } from '../../services/api';
 import { useTailor } from '../../context/TailorContext';
-import { Settings, Save, CheckCircle2, Phone, MapPin, Clock, DollarSign, RefreshCw } from 'lucide-react';
+import { HomepageVisualBuilder } from './HomepageVisualBuilder';
+import { HomepageCustomizationConfig } from '../../data/defaultHomepageConfig';
+import { Settings, Save, CheckCircle2, Phone, MapPin, Clock, DollarSign, Sparkles, Sliders } from 'lucide-react';
 
 export const AdminSettings: React.FC = () => {
-  const { t } = useTailor();
+  const { t, updateShopSettingsState } = useTailor();
   const [settings, setSettings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState<'homepage_studio' | 'operations'>('homepage_studio');
 
   const fetchSettings = async () => {
     setLoading(true);
     try {
       const res = await adminApi.getSettings();
-      setSettings(res.settings || {});
+      const loaded = res.settings || {};
+      setSettings(loaded);
+      updateShopSettingsState(loaded);
     } catch (err) {
       console.error('Failed to load settings:', err);
     } finally {
@@ -25,16 +31,25 @@ export const AdminSettings: React.FC = () => {
     fetchSettings();
   }, []);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const persistSettings = async (nextSettings: any) => {
+    setSaving(true);
     setSavedSuccess(false);
     try {
-      await adminApi.updateSettings(settings);
+      await adminApi.updateSettings(nextSettings);
+      setSettings(nextSettings);
+      updateShopSettingsState(nextSettings);
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 4000);
     } catch (err) {
       console.error('Failed to save settings:', err);
+    } finally {
+      setSaving(false);
     }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await persistSettings(settings);
   };
 
   if (loading || !settings) {
@@ -47,21 +62,74 @@ export const AdminSettings: React.FC = () => {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold font-serif-title text-slate-950 flex items-center gap-2">
             <Settings className="w-5 h-5 text-indigo-700" />
-            <span>{t('Atelier Operations & Business Settings', 'কারখানা অপারেশনাল সেটিংস')}</span>
+            <span>{t('Master Atelier Settings & Homepage Visual Customizer', 'মাস্টার সেটিংস ও হোমপেজ কাস্টমাইজার')}</span>
           </h1>
           <p className="text-xs text-slate-600 mt-1">
-            {t('Configure turnaround delivery schedules, rush fees, active pickup zones, and customer support channels.', 'ডেলিভারি সময়সীমা, এক্সপ্রেস ফি, পিকআপ কভারেজ এলাকা এবং হেল্পলাইন নম্বর কনফিগার করুন।')}
+            {t(
+              'Freely customize all homepage tabs, buttons, text, bar positions, sizes, logos, backgrounds, images, and operational rules.',
+              'হোমপেজের সকল বাটন, ট্যাব, বার পজিশন, সাইজ, লোগো, ব্যাকগ্রাউন্ড, রঙ এবং কারখানার অপারেশনাল নিয়মাবলী কাস্টমাইজ করুন।'
+            )}
           </p>
         </div>
 
         {savedSuccess && (
           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-200 text-green-700 rounded-xl text-xs font-bold shadow-xs">
             <CheckCircle2 className="w-4 h-4 text-green-700" />
-            <span>{t('Settings saved to database!', 'সেটিংস সফলভাবে সংরক্ষিত হয়েছে!')}</span>
+            <span>{t('Settings saved & published live!', 'সেটিংস সফলভাবে সংরক্ষিত ও লাইভ আপডেট হয়েছে!')}</span>
           </div>
         )}
       </div>
 
+      {/* Master Settings Mode Switcher */}
+      <div className="flex flex-wrap items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+        <button
+          type="button"
+          onClick={() => setActiveSettingsTab('homepage_studio')}
+          className={`flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeSettingsTab === 'homepage_studio'
+              ? 'bg-indigo-700 text-white shadow-xs'
+              : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+          }`}
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>{t('1. Homepage & Storefront Customizer (Drag & Drop)', '১. হোমপেজ ও স্টোরফ্রন্ট কাস্টমাইজার (ড্র্যাগ অ্যান্ড ড্রপ)')}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSettingsTab('operations')}
+          className={`flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeSettingsTab === 'operations'
+              ? 'bg-indigo-700 text-white shadow-xs'
+              : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-200'
+          }`}
+        >
+          <Sliders className="w-4 h-4" />
+          <span>{t('2. Atelier Operations, Delivery Fees & SMS Settings', '২. কারখানা অপারেশন, ডেলিভারি চার্জ ও এসএমএস সেটিংস')}</span>
+        </button>
+      </div>
+
+      {activeSettingsTab === 'homepage_studio' && (
+        <HomepageVisualBuilder
+          value={settings.homepageCustomization}
+          saving={saving}
+          onChange={(nextHomepageConfig: HomepageCustomizationConfig) => {
+            setSettings((prev: any) => ({
+              ...prev,
+              homepageCustomization: nextHomepageConfig,
+            }));
+          }}
+          onSaveNow={async (configToSave: HomepageCustomizationConfig) => {
+            const nextSettings = {
+              ...settings,
+              homepageCustomization: configToSave,
+            };
+            await persistSettings(nextSettings);
+          }}
+        />
+      )}
+
+      {activeSettingsTab === 'operations' && (
       <form onSubmit={handleSave} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Turnaround times & Fees */}
@@ -348,13 +416,15 @@ export const AdminSettings: React.FC = () => {
         <div className="flex justify-end">
           <button
             type="submit"
+            disabled={saving}
             className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-xs"
           >
             <Save className="w-4 h-4" />
-            <span>{t('Save Atelier Configuration', 'সেটিংস সংরক্ষণ করুন')}</span>
+            <span>{saving ? 'Saving...' : t('Save Atelier Configuration', 'সেটিংস সংরক্ষণ করুন')}</span>
           </button>
         </div>
       </form>
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { TailorProvider, useTailor } from './context/TailorContext';
+import { mergeHomepageConfig } from './data/defaultHomepageConfig';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { RouterProvider, useRouter, Navigate } from './context/RouterContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -98,7 +99,8 @@ const AdminLoadingFallback = () => (
 const AppRouterContent: React.FC = () => {
   const { currentPath } = useRouter();
   const { user, isLoading } = useAuth();
-  const { activeStep, setActiveStep } = useTailor();
+  const { activeStep, setActiveStep, shopSettings } = useTailor();
+  const hpConfig = mergeHomepageConfig(shopSettings?.homepageCustomization);
 
   // Sync route changes with activeStep for storefront
   useEffect(() => {
@@ -396,11 +398,22 @@ const AppRouterContent: React.FC = () => {
   // 6. PUBLIC STOREFRONT & BESPOKE ORDERING FLOW
   // ==========================================
   return (
-    <div className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]">
+    <div
+      style={{
+        backgroundColor: hpConfig.pageTheme.pageBgColor,
+        color: hpConfig.pageTheme.primaryTextColor,
+        backgroundImage: hpConfig.pageTheme.pageBgImageUrl
+          ? `url(${hpConfig.pageTheme.pageBgImageUrl})`
+          : undefined,
+        backgroundSize: hpConfig.pageTheme.pageBgImageUrl ? 'cover' : undefined,
+        backgroundAttachment: hpConfig.pageTheme.pageBgImageUrl ? 'fixed' : undefined,
+      }}
+      className="min-h-screen bg-cream flex flex-col font-sans text-[#1E2530] selection:bg-[#DCE0E6] selection:text-[#1E2530]"
+    >
       <SEOHead {...seo} />
       <Header />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-28 md:pb-12">
+      <main className={`flex-1 ${hpConfig.pageTheme.containerWidth || 'max-w-7xl'} w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-28 md:pb-12`}>
         <MobileOrderStepBar />
         <div key={activeStep} className="animate-stepFadeIn">
           {activeStep === 'home' && <HomePage />}
@@ -427,7 +440,7 @@ const AppRouterContent: React.FC = () => {
       <MobileBottomNav />
 
       {/* Storefront Footer — Shown on Homepage ONLY */}
-      {activeStep === 'home' && <Footer />}
+      {activeStep === 'home' && hpConfig.footer.visible && <Footer />}
     </div>
   );
 };

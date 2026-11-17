@@ -22,6 +22,7 @@ import { ordersApi, adminApi } from '../services/api';
 import { createMeasurementsSnapshot } from '../utils/measurementConverter';
 import { realtimeNotificationService } from '../services/realtimeNotifications';
 import { createNotificationFromOrder } from '../utils/orderStageMeta';
+import { HomepageCustomizationConfig } from '../data/defaultHomepageConfig';
 
 export type AppLanguage = 'en' | 'bn';
 export type AppRole = 'customer' | 'tailor_master';
@@ -53,6 +54,8 @@ interface TailorContextType {
   shopSettings: {
     shopName?: string;
     address?: string;
+    hotline?: string;
+    email?: string;
     shopCity?: string;
     shopArea?: string;
     shopLat: number;
@@ -61,7 +64,9 @@ interface TailorContextType {
     localPickupFee: number;
     chattogramCityDeliveryFee: number;
     nationwideCourierFee: number;
+    homepageCustomization?: HomepageCustomizationConfig;
   };
+  updateShopSettingsState: (newSettings: Record<string, any>) => void;
   selectedShopFabric: FabricProduct | null;
   selectShopFabric: (fabric: FabricProduct | null) => void;
   startOrderWithFabric: (fabric: FabricProduct, targetGarment?: GarmentItem) => void;
@@ -252,7 +257,21 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     () => initialDraft?.activeGarment ?? null
   );
 
-  const [shopSettings, setShopSettings] = useState({
+  const [shopSettings, setShopSettings] = useState<{
+    shopName?: string;
+    address?: string;
+    hotline?: string;
+    email?: string;
+    shopCity?: string;
+    shopArea?: string;
+    shopLat: number;
+    shopLng: number;
+    pickupServiceRadiusKm: number;
+    localPickupFee: number;
+    chattogramCityDeliveryFee: number;
+    nationwideCourierFee: number;
+    homepageCustomization?: HomepageCustomizationConfig;
+  }>({
     shopName: 'Digital Dorji BD - Bespoke Tailoring & Clothing Atelier',
     address: 'Oxygen Mor, Bayazid Bostami Road, Chattogram-4211, Bangladesh',
     shopCity: 'Chattogram',
@@ -264,6 +283,19 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     chattogramCityDeliveryFee: 80,
     nationwideCourierFee: 120
   });
+
+  const updateShopSettingsState = (newSettings: Record<string, any>) => {
+    setShopSettings(prev => ({
+      ...prev,
+      ...newSettings,
+      shopLat: typeof newSettings.shopLat === 'number' ? newSettings.shopLat : prev.shopLat,
+      shopLng: typeof newSettings.shopLng === 'number' ? newSettings.shopLng : prev.shopLng,
+      pickupServiceRadiusKm: typeof newSettings.pickupServiceRadiusKm === 'number' ? newSettings.pickupServiceRadiusKm : prev.pickupServiceRadiusKm,
+      localPickupFee: typeof newSettings.localPickupFee === 'number' ? newSettings.localPickupFee : prev.localPickupFee,
+      chattogramCityDeliveryFee: typeof newSettings.chattogramCityDeliveryFee === 'number' ? newSettings.chattogramCityDeliveryFee : prev.chattogramCityDeliveryFee,
+      nationwideCourierFee: typeof newSettings.nationwideCourierFee === 'number' ? newSettings.nationwideCourierFee : prev.nationwideCourierFee
+    }));
+  };
 
   // Unified dynamic database fetch
   useEffect(() => {
@@ -1147,6 +1179,7 @@ export const TailorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         fabrics,
         garments,
         shopSettings,
+        updateShopSettingsState,
         selectedShopFabric,
         selectShopFabric,
         startOrderWithFabric,
