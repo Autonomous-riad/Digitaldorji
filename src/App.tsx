@@ -10,9 +10,7 @@ import { RealtimeToastBanner } from './components/notifications/RealtimeToastBan
 // Core UI & Layout Components
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
 import { MobileBottomNav } from './components/MobileBottomNav';
-import { MobileQuickTrack } from './components/MobileQuickTrack';
 import { MobileOrderStepBar } from './components/MobileOrderStepBar';
 import { HomePage } from './components/HomePage';
 import { GarmentCatalog } from './components/GarmentCatalog';
@@ -276,7 +274,6 @@ const AppRouterContent: React.FC = () => {
           {currentPath === '/customer/measurements' && <CustomerMeasurements />}
           {currentPath === '/customer/profile' && <CustomerProfile />}
         </main>
-        <MobileQuickTrack />
         <MobileBottomNav />
       </div>
     );
@@ -304,7 +301,6 @@ const AppRouterContent: React.FC = () => {
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
           <OrderPaymentSuccess orderNumber={orderNum} />
         </main>
-        <MobileQuickTrack />
         <MobileBottomNav />
       </div>
     );
@@ -320,7 +316,6 @@ const AppRouterContent: React.FC = () => {
         <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
           <OrderPaymentFailed orderNumber={orderNum} />
         </main>
-        <MobileQuickTrack />
         <MobileBottomNav />
       </div>
     );
@@ -353,7 +348,6 @@ const AppRouterContent: React.FC = () => {
           {currentPath === '/about' && <AboutPage />}
           {currentPath === '/contact' && <ContactPage />}
         </main>
-        <MobileQuickTrack />
         <MobileBottomNav />
       </div>
     );
@@ -372,7 +366,6 @@ const AppRouterContent: React.FC = () => {
         </main>
         <CartDrawer />
         <CheckoutModal />
-        <MobileQuickTrack />
         <MobileBottomNav />
       </div>
     );
@@ -388,7 +381,6 @@ const AppRouterContent: React.FC = () => {
         </main>
         <CartDrawer />
         <CheckoutModal />
-        <MobileQuickTrack />
         <MobileBottomNav />
       </div>
     );
@@ -432,9 +424,6 @@ const AppRouterContent: React.FC = () => {
       {/* Global Ready-Made Cart Drawer and Checkout Modal */}
       <CartDrawer />
       <CheckoutModal />
-
-      {/* Floating Mobile Quick Track Button */}
-      <MobileQuickTrack />
 
       {/* Persistent Mobile Bottom Navigation Bar */}
       <MobileBottomNav />

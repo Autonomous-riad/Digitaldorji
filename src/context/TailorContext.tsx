@@ -15,7 +15,7 @@ import {
   GarmentCustomizationGroup,
   GarmentCustomizationOption
 } from '../types/tailor';
-import { GARMENTS_DATA, SAMPLE_ORDERS, DELIVERY_SPEED_OPTIONS, BANGLADESH_DIVISIONS_AREAS } from '../data/garments';
+import { GARMENTS_DATA, DELIVERY_SPEED_OPTIONS } from '../data/garments';
 import { DIGITAL_FABRICS_DATA } from '../data/fabrics';
 import { getDeliveryChargeForDistrict } from '../data/bangladeshGeo';
 import { ordersApi, adminApi } from '../services/api';
